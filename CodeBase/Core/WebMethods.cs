@@ -22,8 +22,7 @@ namespace CodeBase
             {
                 WebClient.PostRequest(ReceiverURL, fields, response);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 MainWindow.Error(ex.ToString(), ex.GetType().Name);
             }
 

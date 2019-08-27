@@ -24,7 +24,7 @@ namespace CodeBase
             //Backend
             ".php", ".py", ".go", ".htaccess",      
             // Frontend & UI
-            ".html", ".htm", ".css", ".xaml", ".js", 
+            ".html", ".htm", ".css", ".xaml", ".js", ".cshtml",
             // .NET
             ".cs", ".vb",
             // Java
