@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Windows;
 
 namespace CodeBase
 {
     [DataContract]
     public class ApplicationData
     {
+        [DataMember]
+        public double WindowWidth;
+        [DataMember]
+        public double WindowHeight;
+        [DataMember]
+        public WindowState WindowState;
         [DataMember]
         public bool AutoUpdate = true;
         [DataMember]

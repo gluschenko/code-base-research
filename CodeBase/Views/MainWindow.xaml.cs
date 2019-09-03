@@ -86,14 +86,23 @@ namespace CodeBase
 
         }
 
+        // Load & Save methods
+
         public void Load()
         {
             Data = DataManager.Load(ex => {
-                Error(ex.ToString(), ex.GetType().Name);
+                ThrowException(ex);
                 Close();
             });
-
+            //
             WebMethods.ReceiverURL = Data.ReceiverURL ?? "";
+            
+            if (Data.WindowWidth > 0)
+                Width = Data.WindowWidth;
+            if (Data.WindowHeight > 0)
+                Height = Data.WindowHeight;
+
+            WindowState = Data.WindowState;
         }
 
         public void Save()
@@ -101,9 +110,11 @@ namespace CodeBase
             Data.ReceiverURL = WebMethods.ReceiverURL;
             Data.Projects = Projects.ToArray();
 
-            DataManager.Save(Data, ex => {
-                Error(ex.ToString(), ex.GetType().Name);
-            });
+            Data.WindowWidth = Width;
+            Data.WindowHeight = Height;
+            Data.WindowState = WindowState;
+            //
+            DataManager.Save(Data, ThrowException);
         }
 
         private void WakeUp()
@@ -310,11 +321,11 @@ namespace CodeBase
             win.Show();
         }
 
-        //
-
-        public static void Error(string text, string title = "")
-        {
-            MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+        // Alert windows
+        public static void Alert(string text, string title = "Alert") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Information);
+        public static void Warning(string text, string title = "Warning") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Warning);
+        public static void Error(string text, string title = "Error") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Error);
+        // Safer exception throwing (useful for live debugging OR I AM CODE MONKEY)
+        public static void ThrowException(Exception exception) => Error(exception.ToString(), exception.GetType().Name);
     }
 }
