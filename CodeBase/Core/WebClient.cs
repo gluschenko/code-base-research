@@ -37,7 +37,7 @@ namespace CodeBase
             }
             catch (Exception ex)
             {
-                MainWindow.Error(ex.ToString(), ex.GetType().Name);
+                MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             }
         }
 
@@ -57,7 +57,7 @@ namespace CodeBase
             }
             catch (Exception ex)
             {
-                MainWindow.Error(ex.ToString(), ex.GetType().Name);
+                MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             }
         }
 

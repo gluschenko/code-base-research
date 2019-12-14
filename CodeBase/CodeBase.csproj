@@ -124,6 +124,7 @@
     <Compile Include="Core\DataManager.cs" />
     <Compile Include="Core\Hardware.cs" />
     <Compile Include="Core\Heart.cs" />
+    <Compile Include="Core\MessageHelper.cs" />
     <Compile Include="Core\UnixTime.cs" />
     <Compile Include="Core\WebMethods.cs" />
     <Compile Include="Views\ProjectWindow.xaml.cs">

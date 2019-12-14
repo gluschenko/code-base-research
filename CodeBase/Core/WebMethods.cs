@@ -23,7 +23,7 @@ namespace CodeBase
                 WebClient.PostRequest(ReceiverURL, fields, response);
             }
             catch (Exception ex) {
-                MainWindow.Error(ex.ToString(), ex.GetType().Name);
+                MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             }
 
             /*var pairs = new List<string>();

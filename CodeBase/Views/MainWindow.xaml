@@ -5,40 +5,58 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CodeBase"
         mc:Ignorable="d"
-        Title="Code Base Research" MinHeight="200" Height="400" MinWidth="400" Width="400">
+        Title="Code Base Research" MinHeight="200" Height="420" MinWidth="420" Width="420">
     <Grid>
         <Grid Height="50" VerticalAlignment="Top" Background="#FFEEEEEE">
             <CheckBox x:Name="AutorunCheckBox" Content="Run with Windows" HorizontalAlignment="Left" Margin="10,19,0,0" VerticalAlignment="Top" Click="AutorunCheckBox_Click"/>
             <Button x:Name="ServerAccessButton" Style="{StaticResource LiteButtonStyle}" Content="Server access" Margin="0,9,115,9" Width="119" HorizontalAlignment="Right" Click="ServerAccessButton_Click"/>
             <Button x:Name="AddProjectButton" Content="Add Project" Margin="0,9,10,9" Width="100" HorizontalAlignment="Right" Click="AddProjectButton_Click"/>
         </Grid>
-        <ListBox x:Name="listBox" HorizontalContentAlignment="Stretch" Margin="0,51,0,51" RenderTransformOrigin="0.5,0.5" Background="{x:Null}">
 
-            <local:Project x:Name="_1" Title="Lorem ipsum" Path="www"/>
-            <local:Project x:Name="_2" Title="Test" Path="www"/>
-            <local:Project x:Name="_3" Title="Test test test" Path="www"/>
+        <ScrollViewer Margin="0,51,0,51" RenderTransformOrigin="0.5,0.5">
+            <ItemsControl x:Name="listBox" HorizontalContentAlignment="Stretch" Margin="5" Background="{x:Null}">
 
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderThickness="5,0,0,0" BorderBrush="{Binding Path=BrushColor}">
-                        <Grid>
-                            <Label FontSize="16" Content="{Binding Path=TitleText}" />
-                            <Label FontSize="16" Content="{Binding Path=Info.SourceLinesText}" HorizontalAlignment="Right" Margin="0,0,70,0" />
-                            <Button Width="32" Content="✎" 
+                <local:Project x:Name="_1" Title="Lorem ipsum" Path="www"/>
+                <local:Project x:Name="_2" Title="Test" Path="www"/>
+                <local:Project x:Name="_3" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_4" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_5" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_6" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_7" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_8" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_9" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_0" Title="Test test test" Path="www"/>
+                <local:Project x:Name="_10" Title="Test test test" Path="www"/>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="5,0,0,0" Margin="0, 2" BorderBrush="{Binding Path=BrushColor}">
+                            <Grid>
+                                <Label FontSize="16" Content="{Binding Path=TitleText}" />
+                                <Label FontSize="16" Content="{Binding Path=Info.SourceLinesText}" 
+                                   HorizontalAlignment="Right" Margin="0,0,105,0" />
+                                <Button Width="32" Content="🡲" 
+                                    HorizontalAlignment="Right" Margin="0,0,70,0" 
+                                    Tag="{Binding Path=Title}" 
+                                    Style="{StaticResource LiteButtonStyle}" 
+                                    Click="ProjectOpenButton_Click" />
+                                <Button Width="32" Content="✎" 
                                     HorizontalAlignment="Right" Margin="0,0,35,0" 
                                     Tag="{Binding Path=Title}" 
                                     Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectEditButton_Click" />
-                            <Button Width="32" Content="✖" Margin="0" 
+                                <Button Width="32" Content="✖" Margin="0" 
                                     HorizontalAlignment="Right"
                                     Tag="{Binding Path=Title}" 
                                     Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectDeleteButton_Click"/>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+            
         <Grid Height="50" VerticalAlignment="Bottom" Background="#FFEEEEEE">
             <ProgressBar x:Name="ProgressBar" Height="5" Margin="0" VerticalAlignment="Top" Visibility="Hidden" />
             <ProgressBar x:Name="ProgressBar2" Height="2" Margin="0,5,0,0" VerticalAlignment="Top" Visibility="Hidden" Foreground="#FF0183CD" />

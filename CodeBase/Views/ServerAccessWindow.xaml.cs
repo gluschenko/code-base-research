@@ -93,7 +93,7 @@ namespace CodeBase
                         }
                         else
                         {
-                            MainWindow.Error("Wrong login or password", "Auth");
+                            MessageHelper.Error("Wrong login or password", "Auth");
                         }
 
                         WakeUp();
@@ -103,7 +103,7 @@ namespace CodeBase
             }
             else
             {
-                MainWindow.Error("All fields should be filled!", "");
+                MessageHelper.Error("All fields should be filled!", "");
             }
         }
 

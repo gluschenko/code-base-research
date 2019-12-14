@@ -2,63 +2,71 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Diagnostics;
+using NotifyIcon = System.Windows.Forms.NotifyIcon;
+
+/*
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+*/
 
 namespace CodeBase
 {
     public partial class MainWindow : Window
     {
-        public Heart Heart;
-
         public DataManager<ApplicationData> DataManager = new DataManager<ApplicationData>("ApplicationData.json");
         public ApplicationData Data;
 
-        private ObservableCollection<Project> Projects;
-        private readonly Autorun Autorun = new Autorun();
-        private readonly Inspector Inspector = new Inspector();
+        private readonly ObservableCollection<Project> Projects;
+
+        public readonly Heart Heart;
+        private readonly Autorun Autorun;
+        private readonly Inspector Inspector;
 
         private AddProjectWindow AddProjectWindow;
         private ServerAccessWindow ServerAccessWindow;
 
-        private System.Windows.Forms.NotifyIcon NotifyIcon;
+        private NotifyIcon NotifyIcon;
 
         public MainWindow()
         {
             InitializeComponent();
+            CheckRunningOnce();
             //
             Load();
             //
-            Projects = new ObservableCollection<Project>(Data.Projects);
-            //
-            listBox.Items.Clear();
-            listBox.ItemsSource = Projects;
-            listBox.SelectionChanged += ListBox_SelectionChanged;
-            WakeUp();
-            //
-            AutorunCheckBox.IsChecked = Autorun.GetState();
-            //
             Heart = new Heart(Data, () => StartInspector());
+            Autorun = new Autorun();
+            Inspector = new Inspector();
             //
+            Projects = new ObservableCollection<Project>(Data.Projects);
+            UpdateProjectsList();
+            //
+            CreateTrayIcon();
+            BindWindowEvents();
+            Activate();
+        }
 
-            // Поведение иконки в tray
-            NotifyIcon = new System.Windows.Forms.NotifyIcon();
-            var Hicon = Properties.Resources.CodeBaseLogo.GetHicon();
-            NotifyIcon.Icon = System.Drawing.Icon.FromHandle(Hicon);
-            NotifyIcon.MouseClick += (sender, e) => {
-                WindowState = WindowState.Normal;
-                Activate(); // brings this window to forward
-            };
+        ~MainWindow() 
+        {
+            NotifyIcon.Dispose();
+        }
+
+        #region Other Methods
+
+        void BindWindowEvents()
+        {
+            AutorunCheckBox.IsChecked = Autorun.GetState();
 
             // Поведение окна
             KeyDown += (sender, e) => { if (e.Key == Key.Tab) SendData(); };
@@ -83,15 +91,46 @@ namespace CodeBase
                     ShowInTaskbar = true;
                 }
             };
-
         }
 
-        // Load & Save methods
+        void CheckRunningOnce() 
+        {
+            var processes = Process.GetProcesses();
+            var currentProcess = Process.GetCurrentProcess();
+            foreach (var process in processes)
+            {
+                if (process.ProcessName == currentProcess.ProcessName)
+                {
+                    if (process.Id != currentProcess.Id)
+                    {
+                        MessageHelper.Alert($"{process.ProcessName} is already running! Close all instances and try again", "Error");
+                        Close();
+                        return;
+                    }
+                }
+            }
+        }
+
+        void CreateTrayIcon() 
+        {
+            // Поведение иконки в tray
+            NotifyIcon = new NotifyIcon();
+            var Hicon = Properties.Resources.CodeBaseLogo.GetHicon();
+            NotifyIcon.Icon = System.Drawing.Icon.FromHandle(Hicon);
+            NotifyIcon.MouseClick += (sender, e) => {
+                WindowState = WindowState.Normal;
+                Activate(); // brings this window to forward
+            };
+        }
+
+        #endregion
+
+        #region Load & Save methods
 
         public void Load()
         {
             Data = DataManager.Load(ex => {
-                ThrowException(ex);
+                MessageHelper.ThrowException(ex);
                 Close();
             });
             //
@@ -114,111 +153,25 @@ namespace CodeBase
             Data.WindowHeight = Height;
             Data.WindowState = WindowState;
             //
-            DataManager.Save(Data, ThrowException);
+            DataManager.Save(Data, MessageHelper.ThrowException);
         }
 
-        private void WakeUp()
+        private void UpdateProjectsList()
         {
-            Projects = new ObservableCollection<Project>(Projects.OrderBy(proj => -proj.LastEdit));
-            listBox.ItemsSource = Projects;
+            var list = new ObservableCollection<Project>(Projects.OrderBy(proj => -proj.LastEdit));
+            Projects.Clear();
+            foreach (var proj in list) 
+            {
+                Projects.Add(proj);
+            }
+
+            if (listBox.ItemsSource == null) 
+            {
+                listBox.Items.Clear();
+                listBox.ItemsSource = Projects;
+            }
             listBox.Items.Refresh();
             listBox.UpdateLayout();
-        }
-
-        //
-
-        private void AutorunCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            CheckBox ch = (CheckBox)sender;
-            ch.IsChecked = Autorun.SetState(ch.IsChecked.Value, ex => {
-                Error(ex.ToString(), ex.GetType().Name);
-            });
-        }
-
-        private void AddProjectButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (AddProjectWindow != null)
-            {
-                AddProjectWindow.Close();
-                AddProjectWindow = null;
-            }
-
-            AddProjectWindow = new AddProjectWindow((project) =>
-            {
-                Projects.Insert(0, project);
-                AddProjectWindow.Close();
-                //
-                WakeUp();
-                //
-                Save();
-            })
-            {
-                Owner = this
-            };
-
-            AddProjectWindow.Show();
-        }
-
-        private void ServerAccessButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ServerAccessWindow != null)
-            {
-                ServerAccessWindow.Close();
-                ServerAccessWindow = null;
-            }
-
-            ServerAccessWindow = new ServerAccessWindow(Data, () => Save()) { Owner = this };
-            ServerAccessWindow.Show();
-        }
-
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Project P = (Project)listBox.SelectedItem;
-            ProjectWindow win = new ProjectWindow(P) { Owner = this };
-            win.Show();
-        }
-
-        private void ProjectDeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            string title = (string)((Button)sender).Tag;
-
-            foreach (var proj in Projects)
-            {
-                if (proj.Title == title)
-                {
-                    DeleteProjectDialog dialog = new DeleteProjectDialog(proj, () => {
-                        Projects.Remove(proj);
-                        //
-                        WakeUp();
-                        //
-                        Save();
-                    });
-                    dialog.Show();
-                }
-            }
-        }
-
-        private void ProjectEditButton_Click(object sender, RoutedEventArgs e)
-        {
-            string title = (string)((Button)sender).Tag;
-
-            foreach (var proj in Projects)
-            {
-                if (proj.Title == title)
-                {
-                    EditProjectWindow win = new EditProjectWindow(proj, () => {
-                        WakeUp();
-                        //
-                        Save();
-                    });
-                    win.Show();
-                }
-            }
-        }
-
-        private void UpdateButton_Click(object sender, RoutedEventArgs e)
-        {
-            StartInspector();
         }
 
         public void StartInspector()
@@ -247,7 +200,7 @@ namespace CodeBase
                             break;
                         case InspectorStage.Completed:
                             StatusText.Content = "Complete";
-                            WakeUp();
+                            UpdateProjectsList();
                             Save();
                             SendData();
                             //
@@ -263,15 +216,120 @@ namespace CodeBase
         {
             if (Data.SendData)
             {
-                WebMethods.UpdateProjects(Data, Projects.Select(proj => (ProjectEntity)proj).ToArray(), result => 
+                WebMethods.UpdateProjects(Data, Projects.Select(proj => (ProjectEntity)proj).ToArray(), result =>
                 {
                     WebClient.ProcessResponse(result, data =>
                     {
-                        if(data != "1")
+                        if (data != "1")
                             MessageBox.Show(data);
                     });
                 });
             }
+        }
+
+        #endregion
+
+        #region Window Events
+
+        private void AutorunCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox ch = (CheckBox)sender;
+            ch.IsChecked = Autorun.SetState(ch.IsChecked.Value, ex => {
+                MessageHelper.Error(ex.ToString(), ex.GetType().Name);
+            });
+        }
+
+        private void AddProjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (AddProjectWindow != null)
+            {
+                AddProjectWindow.Close();
+                AddProjectWindow = null;
+            }
+
+            AddProjectWindow = new AddProjectWindow((project) =>
+            {
+                Projects.Insert(0, project);
+                AddProjectWindow.Close();
+                //
+                UpdateProjectsList();
+                //
+                Save();
+            })
+            {
+                Owner = this
+            };
+
+            AddProjectWindow.Show();
+        }
+
+        private void ServerAccessButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ServerAccessWindow != null)
+            {
+                ServerAccessWindow.Close();
+                ServerAccessWindow = null;
+            }
+
+            ServerAccessWindow = new ServerAccessWindow(Data, () => Save()) { Owner = this };
+            ServerAccessWindow.Show();
+        }
+
+        private void ProjectOpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            string title = (string)((Button)sender).Tag;
+
+            foreach (var proj in Projects)
+            {
+                if (proj.Title == title)
+                {
+                    ProjectWindow win = new ProjectWindow(proj) { Owner = this };
+                    win.Show();
+                }
+            }
+        }
+
+        private void ProjectDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            string title = (string)((Button)sender).Tag;
+
+            foreach (var proj in Projects)
+            {
+                if (proj.Title == title)
+                {
+                    DeleteProjectDialog dialog = new DeleteProjectDialog(proj, () => {
+                        Projects.Remove(proj);
+                        //
+                        UpdateProjectsList();
+                        //
+                        Save();
+                    });
+                    dialog.Show();
+                }
+            }
+        }
+
+        private void ProjectEditButton_Click(object sender, RoutedEventArgs e)
+        {
+            string title = (string)((Button)sender).Tag;
+
+            foreach (var proj in Projects)
+            {
+                if (proj.Title == title)
+                {
+                    EditProjectWindow win = new EditProjectWindow(proj, () => {
+                        UpdateProjectsList();
+                        //
+                        Save();
+                    });
+                    win.Show();
+                }
+            }
+        }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            StartInspector();
         }
 
         private void SummaryButton_Click(object sender, RoutedEventArgs e)
@@ -305,7 +363,6 @@ namespace CodeBase
                     {
                         if (!A.ContainsKey(pair.Key))
                             A.Add(pair.Key, pair.Value);
-
                         else
                             A[pair.Key] += pair.Value;
                     }
@@ -321,11 +378,6 @@ namespace CodeBase
             win.Show();
         }
 
-        // Alert windows
-        public static void Alert(string text, string title = "Alert") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Information);
-        public static void Warning(string text, string title = "Warning") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Warning);
-        public static void Error(string text, string title = "Error") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Error);
-        // Safer exception throwing (useful for live debugging OR I AM CODE MONKEY)
-        public static void ThrowException(Exception exception) => Error(exception.ToString(), exception.GetType().Name);
+        #endregion
     }
 }
