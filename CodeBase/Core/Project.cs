@@ -58,27 +58,17 @@ namespace CodeBase
     [DataContract]
     public class Project
     {
-        [DataMember]
-        public string Path { get; set; }
-        [DataMember]
-        public string Title { get; set; }
-        [DataMember]
-        public string Color { get; set; }
-        [DataMember]
-        public List<string> Folders { get; set; }
-        [DataMember]
-        public List<string> IgnoredFolders { get; set; }
-        [DataMember]
-        public bool IsPublic { get; set; }
-        [DataMember]
-        public bool IsLocal { get; set; }
-        [DataMember]
-        public bool IsNameHidden { get; set; }
-        [DataMember]
-        public long LastEdit { get; set; }
+        [DataMember] public string Path { get; set; }
+        [DataMember] public string Title { get; set; }
+        [DataMember] public string Color { get; set; }
+        [DataMember] public List<string> Folders { get; set; }
+        [DataMember] public List<string> IgnoredFolders { get; set; }
+        [DataMember] public bool IsPublic { get; set; }
+        [DataMember] public bool IsLocal { get; set; }
+        [DataMember] public bool IsNameHidden { get; set; }
+        [DataMember] public long LastEdit { get; set; }
 
-        [DataMember]
-        public ProjectInfo Info { get; set; }
+        [DataMember] public ProjectInfo Info { get; set; }
         //
         public string TitleText {
             get => Title + (IsPublic ? " ✔" : "") + (IsLocal ? " [local]" : "") + (IsNameHidden ? " [hidden]" : "");
@@ -140,7 +130,7 @@ namespace CodeBase
                             {
                                 foreach (string folder in IgnoredFolders)
                                 {
-                                    string ignoredDir = System.IO.Path.Combine(Path, folder.Replace('/', '\\'));
+                                    string ignoredDir = System.IO.Path.Combine(Path, folder);
                                     if (ignoredDir == _dir)
                                     {
                                         return false;
