@@ -16,36 +16,12 @@ namespace CodeBase
 
     public class Inspector
     {
+        public delegate void StageUpdate(InspectorStage stage, object info);
+
         private Thread thread;
-        private Action<InspectorStage, object> onUpdate;
+        private StageUpdate onUpdate;
 
-        private readonly List<string> codeExtensions = new List<string>
-        {
-            //Backend
-            ".php", ".py", ".go", ".htaccess",      
-            // Frontend & UI
-            ".html", ".htm", ".css", ".xaml", ".js", ".cshtml",
-            // .NET
-            ".cs", ".vb",
-            // Java
-            ".java", ".kt",
-            // Low-level
-            ".h", ".cpp", ".hpp", ".c", ".s",
-            // Chaders
-            ".vs", ".fs", ".shader",
-        };
-
-        private readonly List<string> blackList = new List<string>
-        {
-            ".i.g.cs", ".g.i.cs", ".i.cs", ".g.cs", ".Designer.cs", "AssemblyInfo.cs",
-        };
-
-        public Inspector()
-        {
-            
-        }
-
-        public void Start(List<Project> projects, Action<InspectorStage, object> onUpdate)
+        public void Start(List<Project> projects, StageUpdate onUpdate)
         {
             this.onUpdate = onUpdate;
             //
@@ -59,8 +35,6 @@ namespace CodeBase
             thread.Start();
         }
 
-        private delegate void UpdateDelegate(InspectorStage stage, object info);
-
         private void Update(InspectorStage stage, object info)
         {
             onUpdate?.Invoke(stage, info);
@@ -71,28 +45,27 @@ namespace CodeBase
             string message = (string)resObj.AsyncState;
             Console.WriteLine(message);
             Console.WriteLine("Работа асинхронного делегата завершена");
-            //onCallbackComplete?.Invoke(message);
         }
 
         private void Process(List<Project> projects)
         {
             void ProcessUpdate(InspectorStage stage, object info)
             {
-                UpdateDelegate update = new UpdateDelegate(Update);
+                StageUpdate update = new StageUpdate(Update);
                 IAsyncResult result = update.BeginInvoke(stage, info, new AsyncCallback(AsyncCompleted), "");
             }
             //
             List<string> AllFiles = new List<string>();
 
-            int i = 0;
+            int i = 0, j = 0;
+
             foreach (var project in projects)
             {
                 ProcessUpdate(InspectorStage.Progress, (progress: ++i, total: projects.Count));
                 //
-                List<string> files = project.GetFiles(codeExtensions, blackList);
-                project.Info.ExtensionsVolume.Clear();
-                project.Info.FilesVolume.Clear();
-                project.Info.Errors.Clear();
+                List<string> files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList);
+
+                project.Info.Clear();
                 //
                 CodeVolume projectVolume = new CodeVolume();
                 //int filesCount = 0;
@@ -102,7 +75,7 @@ namespace CodeBase
                     project.Info.Error("This project has no files to analyse");
                 }
 
-                int j = 0;
+                j = 0;
                 foreach (string file in files)
                 {
                     ProcessUpdate(InspectorStage.Progress2, (progress: ++j, total: files.Count));
@@ -110,7 +83,7 @@ namespace CodeBase
                     if (!AllFiles.Contains(file))
                     {
                         AllFiles.Add(file);
-
+                        
                         ProcessUpdate(InspectorStage.FetchingFiles, AllFiles.Count);
                     }
                     else
@@ -122,6 +95,7 @@ namespace CodeBase
                 {
                     ProcessUpdate(InspectorStage.Progress2, (progress: ++j, total: files.Count));
                     ProcessUpdate(InspectorStage.FetchingLines, projectVolume.Lines);
+
                     //
                     if (File.Exists(file))
                     {
@@ -144,18 +118,18 @@ namespace CodeBase
                         int linesCount = lines.Length;
                         int sloc = 0;
 
-                        bool stop = false;
+                        bool skip = false;
                         foreach (string line in lines)
                         {
-                            string L = line.Trim();
+                            string s = line.Trim();
                             //
-                            if (L.StartsWith("/*")) stop = true;
-                            if (L.EndsWith("*/") && stop) stop = false;
+                            if (s.StartsWith("/*")) skip = true;
+                            if (s.EndsWith("*/") && skip) skip = false;
                             //
-                            if (!stop)
+                            if (!skip)
                             {
-                                if (L.StartsWith("//") || L.StartsWith("#")) continue;
-                                if ("{}()[]".Contains(L)) continue;
+                                if (s.StartsWith("//") || s.StartsWith("#")) continue;
+                                if ("{}()[]".Contains(s)) continue;
                                 sloc++;
                             }
                         }
@@ -167,17 +141,20 @@ namespace CodeBase
                         string ext = Path.GetExtension(file);
 
                         // Пушим список расширений
-                        var list_ext = project.Info.ExtensionsVolume;
+                        project.Info.ExtensionsVolume.Push(ext, volume, (A, B) => A + B);
+                        // Пушим список файлов
+                        project.Info.FilesVolume.Push(localPath, volume);
+
+                        /*var list_ext = project.Info.ExtensionsVolume;
                         if (list_ext.ContainsKey(ext))
                             list_ext[ext] += volume;
                         else
-                            list_ext.Add(ext, volume);
-                        // Пушим список файлов
-                        var list_files = project.Info.FilesVolume;
+                            list_ext.Add(ext, volume);*/
+                        /*var list_files = project.Info.FilesVolume;
                         if (list_files.ContainsKey(localPath))
                             list_files[localPath] = volume;
                         else
-                            list_files.Add(localPath, volume);
+                            list_files.Add(localPath, volume);*/
                     }
                     else
                     {
@@ -191,10 +168,8 @@ namespace CodeBase
             //
 
             //
-            Thread.Sleep(500);
-            ProcessUpdate(InspectorStage.Completed, new ProcessEndData {
-                projects = projects,
-            });
+            Thread.Sleep(300);
+            ProcessUpdate(InspectorStage.Completed, new ProcessEndData(projects));
 
             GC.Collect();
         }
@@ -202,6 +177,11 @@ namespace CodeBase
         public struct ProcessEndData
         {
             public List<Project> projects;
+
+            public ProcessEndData(List<Project> projects)
+            {
+                this.projects = projects;
+            }
         }
     }
 }

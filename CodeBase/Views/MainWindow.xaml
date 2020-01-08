@@ -24,9 +24,6 @@
                 <local:Project x:Name="_6" Title="Test test test" Path="www"/>
                 <local:Project x:Name="_7" Title="Test test test" Path="www"/>
                 <local:Project x:Name="_8" Title="Test test test" Path="www"/>
-                <local:Project x:Name="_9" Title="Test test test" Path="www"/>
-                <local:Project x:Name="_0" Title="Test test test" Path="www"/>
-                <local:Project x:Name="_10" Title="Test test test" Path="www"/>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

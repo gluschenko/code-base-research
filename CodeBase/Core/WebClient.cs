@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Net;
 using System.IO;
 using System.Linq;
-using System.Windows;
 
 namespace CodeBase
 {
@@ -14,7 +13,7 @@ namespace CodeBase
 
         public static readonly Action<HttpStatusCode> HTTPError = (code) => 
         {
-            MessageBox.Show($"{(int)code}/{code}", "HTTP Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageHelper.Error($"{(int)code}/{code}", "HTTP Error");
         };
 
         public static async void InitClient()
@@ -22,7 +21,7 @@ namespace CodeBase
             if (client == null)
             {
                 client = new HttpClient();
-                client.DefaultRequestHeaders.Add("User-Agent", await Hardware.GetID());
+                client.DefaultRequestHeaders.Add("User-Agent", Hardware.GetID());
             }
         }
 
@@ -37,7 +36,7 @@ namespace CodeBase
             }
             catch (Exception ex)
             {
-                MessageHelper.Error(ex.ToString(), ex.GetType().Name);
+                MessageHelper.ThrowException(ex);
             }
         }
 
@@ -45,19 +44,21 @@ namespace CodeBase
         {
             InitClient();
 
-            var message = new HttpRequestMessage(HttpMethod.Post, URL);
-            var pairs = fields.Select(pair => $"{pair.Key}={pair.Value}");
-            var query = string.Join("&", pairs);
-            message.Content = new StringContent(query, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
+            using (var message = new HttpRequestMessage(HttpMethod.Post, URL)) 
+            {
+                var pairs = fields.Select(pair => $"{pair.Key}={pair.Value}");
+                var query = string.Join("&", pairs);
+                message.Content = new StringContent(query, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
 
-            try
-            {
-                var res = await client.SendAsync(message);
-                response(res);
-            }
-            catch (Exception ex)
-            {
-                MessageHelper.Error(ex.ToString(), ex.GetType().Name);
+                try
+                {
+                    var res = await client.SendAsync(message);
+                    response(res);
+                }
+                catch (Exception ex)
+                {
+                    MessageHelper.ThrowException(ex);
+                }
             }
         }
 

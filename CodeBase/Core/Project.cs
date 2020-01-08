@@ -4,10 +4,11 @@ using System.IO;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Windows.Media;
+using PathIO = System.IO.Path;
 
 namespace CodeBase
 {
-    // Сущность кастуемая от Project для передачи в сеть
+    // Сущность кастуемая от Project для передачи по WebAPI
     public struct ProjectEntity
     {
         public string Title { get; set; }
@@ -67,22 +68,17 @@ namespace CodeBase
         [DataMember] public bool IsLocal { get; set; }
         [DataMember] public bool IsNameHidden { get; set; }
         [DataMember] public long LastEdit { get; set; }
-
         [DataMember] public ProjectInfo Info { get; set; }
-        //
-        public string TitleText {
-            get => Title + (IsPublic ? " ✔" : "") + (IsLocal ? " [local]" : "") + (IsNameHidden ? " [hidden]" : "");
-        }
 
-        public Brush BrushColor {
-            get => new SolidColorBrush((Color)ColorConverter.ConvertFromString(Color ?? RandomizeColor()));
-        }
+        //
+        public string TitleText { get => GetTitle(); }
+        public Brush BrushColor { get => GetBrush(); }
         //
         public Project(string path, string title)
         {
             Path = path;
             Title = title;
-            Color = "#FFFF00";
+            Color = RandomizeColor(); //"#FFFF00";
             Folders = new List<string>();
             IgnoredFolders = new List<string>();
             Info = new ProjectInfo();
@@ -94,6 +90,26 @@ namespace CodeBase
         public Project() : this("", "") { }
 
         //
+
+        public string GetTitle() 
+        {
+            return string.Join(string.Empty, 
+                Title, 
+                IsPublic ? " ✔" : "", 
+                IsLocal ? " [local]" : "", 
+                IsNameHidden ? " [hidden]" : "");
+                
+            /*Title + 
+             (IsPublic ? " ✔" : "") + 
+             (IsLocal ? " [local]" : "") + 
+             (IsNameHidden ? " [hidden]" : "");*/
+        }
+
+        public Brush GetBrush() 
+        {
+            var color = (Color)ColorConverter.ConvertFromString(Color ?? RandomizeColor());
+            return new SolidColorBrush(color);
+        }
 
         public List<string> GetFiles(List<string> extensions, List<string> blackList)
         {
@@ -112,7 +128,7 @@ namespace CodeBase
 
                     foreach (string folder in Folders)
                     {
-                        string dir = System.IO.Path.Combine(Path, folder);
+                        string dir = PathIO.Combine(Path, folder);
                         if (Directory.Exists(dir) && !subDirs.Contains(dir))
                         {
                             subDirs.Add(dir);
@@ -130,7 +146,7 @@ namespace CodeBase
                             {
                                 foreach (string folder in IgnoredFolders)
                                 {
-                                    string ignoredDir = System.IO.Path.Combine(Path, folder);
+                                    string ignoredDir = PathIO.Combine(Path, folder);
                                     if (ignoredDir == _dir)
                                     {
                                         return false;
@@ -140,10 +156,8 @@ namespace CodeBase
                             return true;
                         }).ToArray();
 
-                        //string[] _files = Directory.EnumerateFiles(dir).Where(p => extensions.Contains(System.IO.Path.GetExtension(p))).ToArray();
-
                         string[] _files = Directory.EnumerateFiles(dir).Where(_file => {
-                            if (extensions.Contains(System.IO.Path.GetExtension(_file)))
+                            if (extensions.Contains(PathIO.GetExtension(_file)))
                             {
                                 foreach (string b in blackList)
                                 {
@@ -168,10 +182,13 @@ namespace CodeBase
         }
 
         //
+        static Random random;
 
         private string RandomizeColor()
         {
-            var random = new Random(GetHashCode());
+            if(random == null)
+                random = new Random(GetHashCode());
+
             int rgb = random.Next(0, 0xFFFFFF);
             Color = "#" + Convert.ToString(rgb, 16).PadLeft(6, '0');
             return Color;
@@ -195,6 +212,13 @@ namespace CodeBase
         {
             Errors.Add(text);
         }
+
+        public void Clear() 
+        {
+            ExtensionsVolume?.Clear();
+            FilesVolume?.Clear();
+            Errors?.Clear();
+        }
     }
 
     public struct CodeVolume
@@ -203,28 +227,32 @@ namespace CodeBase
         public int Lines;
         public int Files;
 
-        public double Ratio { get => Lines != 0 ? Math.Round((double)SLOC / Lines, 4) : 1; }
+        public double Ratio { get => GetLineRatio(); }
 
-        public CodeVolume(int SLOC, int Lines, int Files)
+        // { get => Lines != 0 ? Math.Round((double)SLOC / Lines, 4) : 1; }
+
+        public CodeVolume(int sloc, int lines, int files)
         {
-            this.SLOC = SLOC;
-            this.Lines = Lines;
-            this.Files = Files;
+            SLOC = sloc;
+            Lines = lines;
+            Files = files;
         }
 
-        public override string ToString()
+        public double GetLineRatio() 
         {
-            return $"{SLOC}/{Lines}";
+            if (Lines != 0) 
+            {
+                return Math.Round((double)SLOC / Lines, 4);
+            }
+            return 1;
         }
 
-        public static CodeVolume operator +(CodeVolume A, CodeVolume B)
-        {
-            return new CodeVolume(A.SLOC + B.SLOC, A.Lines + B.Lines, A.Files + B.Files);
-        }
+        public override string ToString() => $"{SLOC}/{Lines}";
 
-        public static CodeVolume operator -(CodeVolume A, CodeVolume B)
-        {
-            return new CodeVolume(A.SLOC - B.SLOC, A.Lines - B.Lines, A.Files - B.Files);
-        }
+        public static CodeVolume operator +(CodeVolume A, CodeVolume B) => 
+            new CodeVolume(A.SLOC + B.SLOC, A.Lines + B.Lines, A.Files + B.Files);
+
+        public static CodeVolume operator -(CodeVolume A, CodeVolume B) => 
+            new CodeVolume(A.SLOC - B.SLOC, A.Lines - B.Lines, A.Files - B.Files);
     }
 }

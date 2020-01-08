@@ -7,12 +7,58 @@
         mc:Ignorable="d"
         Title="Project: {Title}" Height="400" Width="400">
     <Grid>
-        <TextBox Name="OutputTextBox" 
-            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            ScrollViewer.CanContentScroll="True"
-            TextWrapping="NoWrap" AcceptsReturn="True" FontFamily="Consolas">
-            SOME TEXT
-        </TextBox>
+        <TabControl SelectionChanged="TabControl_SelectionChanged">
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="3">Info</TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Grid>
+                        <TextBox Name="OutputTextBox" 
+                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            ScrollViewer.CanContentScroll="True"
+                            TextWrapping="NoWrap" AcceptsReturn="True" FontFamily="Consolas">
+                            SOME TEXT
+                        </TextBox>
+                    </Grid>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem Selector.Selected="SourceFilesItem_Selected">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="3">Source Files</TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Grid>
+                        <ScrollViewer Margin="0,0,0,28">
+                            <ItemsControl x:Name="SourceFilesList">
+                                <local:FilesListItem Text="Lorem ipsum" Color="#ff0000"></local:FilesListItem>
+                                <local:FilesListItem Text="Ipsum lorem" Color="#00ff00"></local:FilesListItem>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderThickness="5,0,0,0" Margin="0, 2" BorderBrush="{Binding Path=Color}">
+                                            <Label Foreground="Black" FontSize="13" Content="{Binding Path=Text}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <Grid VerticalAlignment="Bottom" Height="28">
+                            <Label Content="Files excluded by .gitignore"></Label>
+                        </Grid>
+                    </Grid>
+                </TabItem.Content>
+            </TabItem>
+
+        </TabControl>
+        
+        
     </Grid>
 </Window>

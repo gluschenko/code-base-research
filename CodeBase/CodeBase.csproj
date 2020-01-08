@@ -85,7 +85,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
@@ -122,8 +122,11 @@
     </ApplicationDefinition>
     <Compile Include="Core\ApplicationData.cs" />
     <Compile Include="Core\DataManager.cs" />
+    <Compile Include="Core\DictionaryExtension.cs" />
+    <Compile Include="Core\GitIgnoreReader.cs" />
     <Compile Include="Core\Hardware.cs" />
     <Compile Include="Core\Heart.cs" />
+    <Compile Include="Core\InspectorConfig.cs" />
     <Compile Include="Core\MessageHelper.cs" />
     <Compile Include="Core\UnixTime.cs" />
     <Compile Include="Core\WebMethods.cs" />

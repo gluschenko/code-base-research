@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,13 +11,12 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CodeBase
 {
     public partial class ProjectWindow : Window
     {
-        private Project[] Projects;
+        public readonly Project[] Projects;
 
         public ProjectWindow(Project project)
             : this(new Project[] { project }) {}
@@ -31,7 +31,15 @@ namespace CodeBase
             Height *= 1.5f;
 
             OutputTextBox.Text = "";
-            foreach (var proj in Projects) FillText(proj);
+            foreach (var proj in Projects) 
+            {
+                try {
+                    OutputTextBox.Text += GetText(proj);
+                }
+                catch (Exception ex) {
+                    OutputTextBox.Text += ex.ToString();
+                }
+            }
 
             if (Projects.Length == 1)
             {
@@ -39,13 +47,17 @@ namespace CodeBase
             }
         }
 
-        public void FillText(Project Project)
+        public string GetText(Project Project)
         {
-            if (Project == null) return;
+            if (Project == null) return string.Empty;
 
-            string text = "";
+            var text = new StringBuilder();
 
-            void push(string line) { text += line + Environment.NewLine; }
+            void push(string line) 
+            {
+                text.Append(line);
+                text.Append(Environment.NewLine);
+            }
             //
             if(Project.Title != "")
                 push(Project.Title);
@@ -90,7 +102,7 @@ namespace CodeBase
 
             if (info.FilesVolume.Count > 0)
             {
-                FileTree tree = new FileTree("root");
+                FileTreeNode tree = new FileTreeNode("root");
 
                 push($"Files ({info.FilesVolume.Count}): ");
                 foreach (var pair in info.FilesVolume)
@@ -115,14 +127,66 @@ namespace CodeBase
             push("".PadRight(50, '_'));
             push("");
             //
-            OutputTextBox.Text += text;
+            return text.ToString();
         }
 
-        class FileTree
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Dictionary<string, FileTree> nodes = new Dictionary<string, FileTree>();
+        }
 
-            public string Key = "";
+        private void SourceFilesItem_Selected(object sender, RoutedEventArgs e)
+        {
+            if (Projects == null) return;
+
+            SourceFilesList.Items.Clear();
+
+            foreach (var proj in Projects)
+            {
+                if (Path.IsPathRooted(proj.Path))
+                {
+                    Clipboard.SetText(string.Join("\n", Directory.GetFiles(proj.Path, "*", SearchOption.AllDirectories)).Replace('\\', '/'));
+
+                    var files = new List<FilesListItem>();
+                    GetFiles(files, proj.Path);
+
+                    var projectString = $"Project: {proj.Path} ({files.Count} files)";
+                    SourceFilesList.Items.Add(new FilesListItem(projectString, FilesListItem.Default));
+
+                    foreach (var file in files)
+                    {
+                        file.Text = file.Text.Substring(proj.Path.Length);
+                        SourceFilesList.Items.Add(file);
+                    }
+                }
+            }
+        }
+
+        public void GetFiles(List<FilesListItem> list, string dir, GitIgnoreReader gitIgnore = null) 
+        {
+            var subs = Directory.GetDirectories(dir).Select(s => s.Replace('\\', '/'));
+            var files = Directory.GetFiles(dir).Select(s => s.Replace('\\', '/'));
+
+            if (gitIgnore == null)
+            {
+                gitIgnore = GitIgnoreReader.Load(dir, true);
+            }
+
+            foreach (var file in files) 
+            {
+                list.Add(new FilesListItem(file, gitIgnore.IsMatch(file) ? FilesListItem.Green : FilesListItem.Red));
+            }
+
+            foreach (var sub in subs)
+            {
+                GetFiles(list, sub, gitIgnore);
+            }
+        }
+
+        //
+
+        private class FileTreeNode
+        {
+            public string Key { get; set; } = "";
             public CodeVolume Volume
             {
                 get
@@ -136,9 +200,11 @@ namespace CodeBase
                     return _Volume;
                 }
             }
-            private CodeVolume _Volume;
 
-            public FileTree(string key)
+            private CodeVolume _Volume;
+            readonly Dictionary<string, FileTreeNode> nodes = new Dictionary<string, FileTreeNode>();
+
+            public FileTreeNode(string key)
             {
                 Key = key;
                 _Volume = new CodeVolume();
@@ -158,7 +224,7 @@ namespace CodeBase
 
                     if (!nodes.ContainsKey(key))
                     {
-                        nodes.Add(key, new FileTree(key));
+                        nodes.Add(key, new FileTreeNode(key));
                     }
                     nodes[key].Add(path, volume);
                 }
@@ -166,11 +232,6 @@ namespace CodeBase
                 {
                     _Volume = volume;
                 }
-            }
-
-            public override string ToString()
-            {
-                return ToString(0);
             }
 
             public string ToString(int span)
@@ -192,6 +253,32 @@ namespace CodeBase
 
                 return output;
             }
+
+            public override string ToString() => ToString(0);
         }
+    }
+
+    public class FilesListItem
+    {
+        public static Brush 
+            Default = GetBrush("#222"),
+            Green = GetBrush("#0F0"),
+            Red = GetBrush("#F00");
+
+        private static Brush GetBrush(string rgb) => 
+            new SolidColorBrush((Color) ColorConverter.ConvertFromString(rgb));
+
+        //
+
+        public string Text { get; set; }
+        public Brush Color { get; set; }
+
+        public FilesListItem(string text, Brush color)
+        {
+            Text = text;
+            Color = color;
+        }
+
+        public FilesListItem() : this("", Green) { }
     }
 }
