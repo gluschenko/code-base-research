@@ -31,7 +31,7 @@
             <TabItem Selector.Selected="SourceFilesItem_Selected">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="3">Source Files</TextBlock>
+                        <TextBlock Margin="3">Files</TextBlock>
                     </StackPanel>
                 </TabItem.Header>
                 <TabItem.Content>
@@ -53,6 +53,19 @@
                         <Grid VerticalAlignment="Bottom" Height="28">
                             <Label Content="Files excluded by .gitignore"></Label>
                         </Grid>
+                    </Grid>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="3">.gitignore</TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Grid>
+                        
                     </Grid>
                 </TabItem.Content>
             </TabItem>

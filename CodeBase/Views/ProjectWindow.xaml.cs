@@ -144,41 +144,56 @@ namespace CodeBase
             {
                 if (Path.IsPathRooted(proj.Path))
                 {
-                    Clipboard.SetText(string.Join("\n", Directory.GetFiles(proj.Path, "*", SearchOption.AllDirectories)).Replace('\\', '/'));
+                    Task.Run(() => {
+                        var files = new List<FilesListItem>();
+                        GetFiles(files, proj.Path);
 
-                    var files = new List<FilesListItem>();
-                    GetFiles(files, proj.Path);
+                        var projectString = $"Project: {proj.Path} ({files.Count} files)";
 
-                    var projectString = $"Project: {proj.Path} ({files.Count} files)";
-                    SourceFilesList.Items.Add(new FilesListItem(projectString, FilesListItem.Default));
+                        Dispatcher.Invoke(() => {
+                            SourceFilesList.Items.Add(new FilesListItem(projectString, FilesListItem.Default));
 
-                    foreach (var file in files)
-                    {
-                        file.Text = file.Text.Substring(proj.Path.Length);
-                        SourceFilesList.Items.Add(file);
-                    }
+                            foreach (var file in files)
+                            {
+                                file.Text = file.Text.Substring(proj.Path.Length);
+                                SourceFilesList.Items.Add(file);
+                            }
+                        });
+                    });
                 }
             }
         }
 
-        public void GetFiles(List<FilesListItem> list, string dir, GitIgnoreReader gitIgnore = null) 
+        public void GetFiles(List<FilesListItem> list, string dir, List<GitIgnoreReader> gitIgnores = null) 
         {
             var subs = Directory.GetDirectories(dir).Select(s => s.Replace('\\', '/'));
             var files = Directory.GetFiles(dir).Select(s => s.Replace('\\', '/'));
 
-            if (gitIgnore == null)
+            if (gitIgnores == null)
             {
-                gitIgnore = GitIgnoreReader.Load(dir, true);
+                var git_files = GitIgnoreReader.Find(dir, SearchOption.AllDirectories);
+                gitIgnores = new List<GitIgnoreReader>();
+
+                foreach (var git_file in git_files)
+                    gitIgnores.Add(GitIgnoreReader.Load(git_file));
             }
+
+            var ddd = gitIgnores.Where(f => !f.Path.StartsWith(dir) || Path.GetDirectoryName(f.Path) != dir);
 
             foreach (var file in files) 
             {
-                list.Add(new FilesListItem(file, gitIgnore.IsMatch(file) ? FilesListItem.Green : FilesListItem.Red));
+                bool is_match = true;
+                foreach (var git_file in gitIgnores) 
+                {
+                    if(!git_file.IsMatch(file)) is_match = false;
+                }
+
+                list.Add(new FilesListItem(file, is_match ? FilesListItem.Green : FilesListItem.Red));
             }
 
             foreach (var sub in subs)
             {
-                GetFiles(list, sub, gitIgnore);
+                GetFiles(list, sub, gitIgnores);
             }
         }
 
