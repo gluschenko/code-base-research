@@ -28,7 +28,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem Selector.Selected="SourceFilesItem_Selected">
+            <TabItem Selector.Selected="SourceFilesTab_Selected">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="3">Files</TextBlock>
@@ -57,7 +57,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem>
+            <TabItem Selector.Selected="GitIgnoreTab_Selected">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Margin="3">.gitignore</TextBlock>
@@ -65,7 +65,23 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <Grid>
-                        
+                        <ScrollViewer Margin="0,0,0,28">
+                            <ItemsControl x:Name="GitIgnoreList">
+                                <local:FilesListItem Text="Lorem ipsum" Color="#ff0000"></local:FilesListItem>
+                                <local:FilesListItem Text="Ipsum lorem" Color="#00ff00"></local:FilesListItem>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderThickness="5,0,0,0" Margin="0, 2" BorderBrush="{Binding Path=Color}">
+                                            <Label Foreground="Black" FontSize="13" Content="{Binding Path=Text}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                        <Grid VerticalAlignment="Bottom" Height="28">
+                            <Label Content="Files excluded by .gitignore"></Label>
+                        </Grid>
                     </Grid>
                 </TabItem.Content>
             </TabItem>

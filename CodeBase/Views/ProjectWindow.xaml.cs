@@ -45,6 +45,9 @@ namespace CodeBase
             {
                 if (Projects[0] == null) Close();
             }
+
+            SourceFilesList.Items.Clear();
+            GitIgnoreList.Items.Clear();
         }
 
         public string GetText(Project Project)
@@ -130,39 +133,78 @@ namespace CodeBase
             return text.ToString();
         }
 
+        #region HANDLERS
+
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }
 
-        private void SourceFilesItem_Selected(object sender, RoutedEventArgs e)
+        private void SourceFilesTab_Selected(object sender, RoutedEventArgs e)
         {
             if (Projects == null) return;
 
-            SourceFilesList.Items.Clear();
-
-            foreach (var proj in Projects)
+            if (SourceFilesList.Items.Count == 0) 
             {
-                if (Path.IsPathRooted(proj.Path))
+                foreach (var proj in Projects)
                 {
-                    Task.Run(() => {
-                        var files = new List<FilesListItem>();
-                        GetFiles(files, proj.Path);
+                    if (Path.IsPathRooted(proj.Path))
+                    {
+                        Task.Run(() => {
+                            var files = new List<FilesListItem>();
+                            GetFiles(files, proj.Path);
 
-                        var projectString = $"Project: {proj.Path} ({files.Count} files)";
+                            var projectString = $"Project: {proj.Path} ({files.Count} files)";
 
-                        Dispatcher.Invoke(() => {
-                            SourceFilesList.Items.Add(new FilesListItem(projectString, FilesListItem.Default));
+                            Dispatcher.Invoke(() => {
+                                SourceFilesList.Items.Add(new FilesListItem(projectString, FilesListItem.Default));
 
-                            foreach (var file in files)
-                            {
-                                file.Text = file.Text.Substring(proj.Path.Length);
-                                SourceFilesList.Items.Add(file);
-                            }
+                                foreach (var file in files)
+                                {
+                                    file.Text = file.Text.Substring(proj.Path.Length);
+                                    SourceFilesList.Items.Add(file);
+                                }
+                            });
                         });
-                    });
+                    }
                 }
             }
         }
+
+        private void GitIgnoreTab_Selected(object sender, RoutedEventArgs e)
+        {
+            if (Projects == null) return;
+
+            if (GitIgnoreList.Items.Count == 0)
+            {
+                foreach (var proj in Projects)
+                {
+                    if (Path.IsPathRooted(proj.Path))
+                    {
+                        Task.Run(() => {
+                            var files = new List<FilesListItem>();
+                            var git_files = GitIgnoreReader
+                                .Find(proj.Path, SearchOption.AllDirectories)
+                                .Select(p => GitIgnoreReader.Load(p));
+
+                            Dispatcher.Invoke(() => {
+                                foreach (var git_file in git_files) {
+                                    GitIgnoreList.Items.Add(new FilesListItem(git_file.Path, FilesListItem.Default));
+
+                                    foreach (var rule in git_file.Rules)
+                                    {
+                                        var item = new FilesListItem($"{rule.Text} -> {rule.Pattern}", 
+                                            rule.IsValid ? FilesListItem.Green : FilesListItem.Red);
+                                        GitIgnoreList.Items.Add(item);
+                                    }
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         public void GetFiles(List<FilesListItem> list, string dir, List<GitIgnoreReader> gitIgnores = null) 
         {
