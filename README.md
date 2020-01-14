@@ -1,4 +1,4 @@
 # Code-Base-Research
-Internal client-server code base analysts complex (WPF, PHP)
+My client-server codebase metrics utility (client: WPF, backend: PHP)
 
 ![GUI](Media/Demo.jpg) 
