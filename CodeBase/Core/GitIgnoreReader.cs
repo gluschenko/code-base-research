@@ -12,11 +12,12 @@ namespace CodeBase
      * Также здесь содержатся статические методы для парсинга.
      * 
      * Парсинг выполняется, согласно формата, изложенного в официальной документации: 
-     * https://git-scm.com/docs/gitignore
+     * https://git-scm.com/docs/gitignore#_pattern_format
      * 
      * Решение с решулярками частично подсмотрено здесь:
      * https://github.com/codemix/gitignore-parser/blob/master/lib/index.js
-     * Базовое решение было урезано, но была добавлена валидация синтаксиса регулярных выражений.
+     * Базовое решение не покрывало все кейсы. Пришлось писать юнит-тесты и фиксить руками, 
+     * а также делать валидацию синтаксиса регулярных выражений.
      */
 
     /// <summary>
@@ -27,17 +28,20 @@ namespace CodeBase
         const string gitFileName = ".gitignore";
         // public
         public string Path { get; private set; }
+        public string BaseDir { get; private set; }
         public bool IsParsed { get => positives != null && negatives != null; }
-        public IReadOnlyCollection<GitIgnoreRule> Rules { get => rules; }
+        public IReadOnlyCollection<GitIgnoreRule> Rules { get => rules_; }
         // private
-        private readonly List<GitIgnoreRule> rules;
+        private readonly List<GitIgnoreRule> rules_;
         private Regex positives, negatives;
 
         // ctor
-        public GitIgnoreReader(string path)
+        public GitIgnoreReader(string path = "")
         {
-            Path = path;
-            rules = new List<GitIgnoreRule>();
+            Path = PreparePath(path, relative: false);
+            BaseDir = PathIO.GetDirectoryName(Path) ?? "";
+
+            rules_ = new List<GitIgnoreRule>();
         }
 
         #region PUBLIC
@@ -60,13 +64,16 @@ namespace CodeBase
 
         public void Parse(string[] lines)
         {
-            var rules = lines
+            var rules = new string[] { ".git/" }       // Git исключает из репозитория сам себя (c) Кэп
+                .Concat(lines)
                 .Select(s => s.Trim())
-                .Where(s => !s.StartsWith("#") && !string.IsNullOrWhiteSpace(s));
+                .Where(s => !s.StartsWith("#")         // Исключаем комментарии
+                    && !string.IsNullOrWhiteSpace(s)   // Пустые строки
+                    && !s.All(ch => ch == '-')
+                    && !s.All(ch => ch == '_'));       // Исключаем строки разделения ("black lines" в документации Git)
 
-            InspectorConfig.DirsBlackList.ForEach(dir => rules.Append(dir));
-
-            this.rules.AddRange(rules.Select(r => new GitIgnoreRule(r)));
+            rules_.Clear();
+            rules_.AddRange(rules.Select(r => new GitIgnoreRule(r)));
 
             CreateRegex();
         }
@@ -75,13 +82,24 @@ namespace CodeBase
         {
             if (IsParsed)
             {
-                if (path.StartsWith("/"))
-                    path = path.Substring(1);
+                path = PreparePath(path, relative: true);
 
                 return !positives.IsMatch(path) || negatives.IsMatch(path);
             }
             return true;
         }
+
+        /*public string Filter(string path, string alt = "_")
+        {
+            if (IsParsed)
+            {
+                path = PreparePath(path, relative: true);
+
+                return positives.Replace(path, alt);
+                //return !positives.IsMatch(path) || negatives.IsMatch(path);
+            }
+            return path;
+        }*/
 
         public static string[] Find(string path, SearchOption search)
         {
@@ -94,6 +112,24 @@ namespace CodeBase
             return File.Exists(path);
         }
 
+        public string PreparePath(string path, bool relative) 
+        {
+            path = path.Replace(@"\", "/");
+
+            if (relative) 
+            {
+                if (!string.IsNullOrEmpty(BaseDir) && path.StartsWith(BaseDir))
+                {
+                    path = path.Substring(BaseDir.Length);
+                }
+            }
+
+            if (path.StartsWith("/"))
+                path = path.Substring(1);
+
+            return path;
+        }
+
         #endregion
 
         #region PRIVATE
@@ -104,7 +140,7 @@ namespace CodeBase
                 positiveRules = new List<GitIgnoreRule>(),
                 negativeRules = new List<GitIgnoreRule>();
 
-            rules.ForEach(e => {
+            rules_.ForEach(e => {
                 if (e.IsValid) 
                 {
                     if (e.IsNegative)
@@ -124,10 +160,30 @@ namespace CodeBase
 
         internal static string PrepareRegexPattern(string pattern)
         {
-            return pattern
+            Console.WriteLine(pattern);
+
+            if (pattern.StartsWith("**/"))
+            {
+                pattern = pattern.Substring(3);
+                pattern = "(.+|.?)(/?)" + pattern;
+            }
+
+            if (pattern.EndsWith("/**")) 
+            {
+                pattern = pattern.Substring(0, pattern.Length - 3);
+                pattern += "(/?)(.+|.?)";
+            }
+
+            pattern = pattern
+                .Replace("/**/", "(/?)(.+|.?)/") // ?. -- для случая, когда последовательность пуста и есть только '/'
+                //
                 .Replace("/", @"\/")
-                .Replace("**", "(.+)")
-                .Replace("*", "([^\\/]+)");
+                .Replace("**", "(.+)")      // любая последрвательность любых символов
+                .Replace("*", @"([^\/]+)"); // аналогично за исключением '/'
+
+            Console.WriteLine(pattern);
+
+            return pattern;
         }
 
         internal static Regex BuildRegex(string[] items) 
@@ -143,14 +199,14 @@ namespace CodeBase
 
     public struct GitIgnoreRule
     {
-        public string Text { get; private set; }
+        public string Source { get; private set; }
         public string Pattern { get; private set; }
         public bool IsNegative { get; private set; }
         public bool IsValid { get; private set; }
 
         public GitIgnoreRule(string text)
         {
-            Text = text;
+            Source = text;
             Pattern = "";
             IsNegative = false;
             IsValid = true;
@@ -162,9 +218,9 @@ namespace CodeBase
         #region PRIVATE
         private void Bake() 
         {
-            if (!string.IsNullOrWhiteSpace(Text))
+            if (!string.IsNullOrWhiteSpace(Source))
             {
-                var rule = Text;
+                var rule = Source;
 
                 IsNegative = rule.StartsWith("!");
 
@@ -182,10 +238,11 @@ namespace CodeBase
         {
             if (!string.IsNullOrWhiteSpace(Pattern))
             {
+                IsValid = true;
+
                 try
                 {
-                    Regex.IsMatch("(" + Pattern + ")", "");
-                    IsValid = true;
+                    Regex.IsMatch("", "(" + Pattern + ")");
                 }
                 catch
                 {

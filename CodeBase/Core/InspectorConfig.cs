@@ -25,7 +25,7 @@ namespace CodeBase
 
             FilesBlackList = List(".i.g.cs", ".g.i.cs", ".i.cs", ".g.cs", ".Designer.cs", "AssemblyInfo.cs");
 
-            DirsBlackList = List(".git/", ".vs/");
+            //DirsBlackList = List(".git/", ".vs/");
         }
 
         static List<T> List<T>(params T[] list) => new List<T>(list); 

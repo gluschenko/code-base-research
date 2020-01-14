@@ -192,7 +192,7 @@ namespace CodeBase
 
                                     foreach (var rule in git_file.Rules)
                                     {
-                                        var item = new FilesListItem($"{rule.Text} -> {rule.Pattern}", 
+                                        var item = new FilesListItem($"{rule.Source} -> {rule.Pattern}" + (rule.IsNegative ? " [NEGATIVE]" : ""), 
                                             rule.IsValid ? FilesListItem.Green : FilesListItem.Red);
                                         GitIgnoreList.Items.Add(item);
                                     }
