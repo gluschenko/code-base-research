@@ -140,7 +140,7 @@ namespace CodeBase
                 {
                     foreach (string dir in dirs)
                     {
-                        string[] _dirs = Directory.EnumerateDirectories(dir).Where(_dir =>
+                        var subdirs = Directory.EnumerateDirectories(dir).Where(_dir =>
                         {
                             if (IgnoredFolders != null)
                             {
@@ -156,22 +156,27 @@ namespace CodeBase
                             return true;
                         }).ToArray();
 
-                        string[] _files = Directory.EnumerateFiles(dir).Where(_file => {
+                        var _files = Directory.EnumerateFiles(dir).Where(_file => {
                             if (extensions.Contains(PathIO.GetExtension(_file)))
                             {
-                                foreach (string b in blackList)
+                                return blackList.All(p => !_file.EndsWith(p));
+
+                                /*foreach (string b in blackList)
                                 {
                                     if (_file.EndsWith(b))
                                         return false;
                                 }
-                                return true;
+                                return true;*/
                             }
                             return false;
-                        }).ToArray();
+                        });
 
                         files.AddRange(_files);
                         //
-                        if (_dirs.Length > 0) getFiles(_dirs);
+                        if (subdirs.Length > 0) 
+                        {
+                            getFiles(subdirs);
+                        }
                     }
                 }
 

@@ -4,7 +4,7 @@ namespace CodeBase
 {
     public class InspectorConfig
     {
-        public static readonly List<string> CodeExtensions, FilesBlackList, DirsBlackList;
+        public static readonly List<string> CodeExtensions, FilesBlackList;
 
         static InspectorConfig() 
         {
@@ -24,8 +24,6 @@ namespace CodeBase
             );
 
             FilesBlackList = List(".i.g.cs", ".g.i.cs", ".i.cs", ".g.cs", ".Designer.cs", "AssemblyInfo.cs");
-
-            //DirsBlackList = List(".git/", ".vs/");
         }
 
         static List<T> List<T>(params T[] list) => new List<T>(list); 

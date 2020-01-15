@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Project: {Title}" Height="400" Width="400">
     <Grid>
-        <TabControl SelectionChanged="TabControl_SelectionChanged">
+        <TabControl x:Name="TabControl" SelectionChanged="TabControl_SelectionChanged">
 
             <TabItem>
                 <TabItem.Header>
@@ -87,7 +87,14 @@
             </TabItem>
 
         </TabControl>
-        
-        
+
+        <Grid x:Name="FreezeOverlay" Background="#AA000000" Visibility="Hidden">
+            <Label x:Name="FreezeText" Content="Wait..." 
+                   Foreground="#fff" 
+                   FontSize="14"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"
+                   HorizontalContentAlignment="Center"></Label>
+        </Grid>
     </Grid>
 </Window>

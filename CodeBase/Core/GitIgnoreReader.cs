@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using PathIO = System.IO.Path;
@@ -20,16 +21,26 @@ namespace CodeBase
      * а также делать валидацию синтаксиса регулярных выражений.
      */
 
+    /* 16.01.19: В текущем виде это слишком медлено работает. Нужна оптимизация (хвостовые рекурсии, деревья, хеши) 
+     */
+
     /// <summary>
     /// Reads .gitignore files
     /// </summary>
     public class GitIgnoreReader
     {
         const string gitFileName = ".gitignore";
+        const string gitDefaultDir = ".git/";
         // public
+        /// <summary>Path to the .gitignore file</summary>
         public string Path { get; private set; }
+
+        /// <summary>Directiry where .gitignoe is located</summary>
         public string BaseDir { get; private set; }
+
+        /// <summary>Does this reader instance is ready to work?</summary>
         public bool IsParsed { get => positives != null && negatives != null; }
+
         public IReadOnlyCollection<GitIgnoreRule> Rules { get => rules_; }
         // private
         private readonly List<GitIgnoreRule> rules_;
@@ -48,12 +59,12 @@ namespace CodeBase
 
         public static GitIgnoreReader Load(string path)
         {
-            if (!path.EndsWith(gitFileName)) 
+            if (!path.EndsWith(gitFileName))
                 path = PathIO.Combine(path, gitFileName);
 
             var reader = new GitIgnoreReader(path);
 
-            if (File.Exists(path)) 
+            if (File.Exists(path))
             {
                 var lines = File.ReadAllLines(path);
                 reader.Parse(lines);
@@ -64,7 +75,7 @@ namespace CodeBase
 
         public void Parse(string[] lines)
         {
-            var rules = new string[] { ".git/" }       // Git исключает из репозитория сам себя (c) Кэп
+            var rules = new string[] { gitDefaultDir } // Git исключает из репозитория сам себя (c) Кэп
                 .Concat(lines)
                 .Select(s => s.Trim())
                 .Where(s => !s.StartsWith("#")         // Исключаем комментарии
@@ -89,27 +100,45 @@ namespace CodeBase
             return true;
         }
 
-        /*public string Filter(string path, string alt = "_")
+        public (MatchCollection pos, MatchCollection neg) GetMatches(string path)
         {
             if (IsParsed)
             {
                 path = PreparePath(path, relative: true);
-
-                return positives.Replace(path, alt);
-                //return !positives.IsMatch(path) || negatives.IsMatch(path);
+                return (positives.Matches(path), negatives.Matches(path));
             }
-            return path;
-        }*/
-
-        public static string[] Find(string path, SearchOption search)
-        {
-            return Directory.GetFiles(path, gitFileName, search);
+            return (null, null);
         }
 
-        public static bool HasFile(string path)
+        public string MatchesToString(MatchCollection pos, MatchCollection neg) 
         {
-            path = PathIO.Combine(path, gitFileName);
-            return File.Exists(path);
+            string bake(MatchCollection matches) {
+                var mt = matches.Cast<Match>().Select(m => {
+                    var _res = new List<string>();
+                    for (int i = 0; i < m.Groups.Count; i++)
+                    {
+                        var group = m.Groups[i];
+                        var captures = new List<string>();
+                        for (int j = 0; j < group.Captures.Count; j++) 
+                        {
+                            captures.Add(group.Captures[j].Value);
+                        }
+
+                        if(captures.Count > 0)
+                            _res.Add($"{string.Join(", ", captures)} ({i})");
+                    }
+                    return string.Join(" | ", _res);
+                });
+                return string.Join(" match -> ", mt);
+            }
+
+            var res = new List<string>();
+            if (pos.Count > 0)
+                res.Add("pos: " + bake(pos) + "\n");
+            if (neg.Count > 0)
+                res.Add("neg: " + bake(neg) + "\n");
+
+            return string.Join("\n", res);
         }
 
         public string PreparePath(string path, bool relative) 
@@ -128,6 +157,24 @@ namespace CodeBase
                 path = path.Substring(1);
 
             return path;
+        }
+
+        public static string[] Find(string path, SearchOption search)
+        {
+            return Directory.GetFiles(path, gitFileName, search);
+        }
+
+        public static bool HasFile(string path)
+        {
+            path = PathIO.Combine(path, gitFileName);
+            return File.Exists(path);
+        }
+
+        public static bool IsChildedPath(string parent, string child) 
+        {
+            var potentialBase = new Uri(parent);
+            var potentialChild = new Uri(child);
+            return potentialBase.IsBaseOf(potentialChild);
         }
 
         #endregion
@@ -160,7 +207,12 @@ namespace CodeBase
 
         internal static string PrepareRegexPattern(string pattern)
         {
+#if DEBUG
             Console.WriteLine(pattern);
+#endif
+
+            pattern = pattern
+                .Replace(".", @"\.");
 
             if (pattern.StartsWith("**/"))
             {
@@ -181,7 +233,9 @@ namespace CodeBase
                 .Replace("**", "(.+)")      // любая последрвательность любых символов
                 .Replace("*", @"([^\/]+)"); // аналогично за исключением '/'
 
+#if DEBUG
             Console.WriteLine(pattern);
+#endif
 
             return pattern;
         }
@@ -194,7 +248,7 @@ namespace CodeBase
             return new Regex(regex, RegexOptions.Compiled);
         }
 
-        #endregion
+#endregion
     }
 
     public struct GitIgnoreRule
@@ -215,7 +269,7 @@ namespace CodeBase
             Validate();
         }
 
-        #region PRIVATE
+#region PRIVATE
         private void Bake() 
         {
             if (!string.IsNullOrWhiteSpace(Source))
@@ -254,6 +308,6 @@ namespace CodeBase
                 IsValid = false;
             }
         }
-        #endregion
+#endregion
     }
 }

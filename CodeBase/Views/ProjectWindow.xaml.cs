@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 
 namespace CodeBase
@@ -133,6 +134,24 @@ namespace CodeBase
             return text.ToString();
         }
 
+        public void Freeze(bool state, string message = "Wait...") 
+        {
+            if (state) 
+            {
+                FreezeOverlay.Visibility = Visibility.Visible;
+                TabControl.Effect = new BlurEffect() { Radius = 10, KernelType = KernelType.Gaussian };
+            }
+            else 
+            {
+                FreezeOverlay.Visibility = Visibility.Hidden;
+                TabControl.Effect = null;
+            }
+
+            FreezeText.Content = message;
+        }
+
+        public void Freeze(string message = "Wait...") => Freeze(true, message);
+
         #region HANDLERS
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -149,9 +168,13 @@ namespace CodeBase
                 {
                     if (Path.IsPathRooted(proj.Path))
                     {
+                        Freeze();
+
                         Task.Run(() => {
-                            var files = new List<FilesListItem>();
-                            GetFiles(files, proj.Path);
+                            var files = GetFiles(proj.Path, 
+                                (_files, _dirs, _currentDir) => {
+                                    Dispatcher.Invoke(() => Freeze($"{_currentDir}\nD: {_dirs}\nF: {_files}"));
+                                });
 
                             var projectString = $"Project: {proj.Path} ({files.Count} files)";
 
@@ -163,6 +186,8 @@ namespace CodeBase
                                     file.Text = file.Text.Substring(proj.Path.Length);
                                     SourceFilesList.Items.Add(file);
                                 }
+
+                                Freeze(false);
                             });
                         });
                     }
@@ -180,7 +205,9 @@ namespace CodeBase
                 {
                     if (Path.IsPathRooted(proj.Path))
                     {
-                        Task.Run(() => {
+                        Freeze();
+
+                        var task = Task.Run(() => {
                             var files = new List<FilesListItem>();
                             var git_files = GitIgnoreReader
                                 .Find(proj.Path, SearchOption.AllDirectories)
@@ -197,8 +224,12 @@ namespace CodeBase
                                         GitIgnoreList.Items.Add(item);
                                     }
                                 }
+
+                                Freeze(false);
                             });
                         });
+
+                        Closing += (ss, ee) => task.Dispose();
                     }
                 }
             }
@@ -206,37 +237,52 @@ namespace CodeBase
 
         #endregion
 
-        public void GetFiles(List<FilesListItem> list, string dir, List<GitIgnoreReader> gitIgnores = null) 
+        public delegate void GetFilesUpdate(int files, int dirs, string currentDir);
+
+        public List<FilesListItem> GetFiles(string path, GetFilesUpdate onProgress = null) 
         {
-            var subs = Directory.GetDirectories(dir).Select(s => s.Replace('\\', '/'));
-            var files = Directory.GetFiles(dir).Select(s => s.Replace('\\', '/'));
+            var list = new List<FilesListItem>();
+            var gitIgnores = GitIgnoreReader.Find(path, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
+            var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
 
-            if (gitIgnores == null)
+            int filesCount = 0, dirsCount = 0;
+
+            getFiles(path);
+
+            void getFiles(string dir) 
             {
-                var git_files = GitIgnoreReader.Find(dir, SearchOption.AllDirectories);
-                gitIgnores = new List<GitIgnoreReader>();
+                var subs = Directory.EnumerateDirectories(dir).Select(s => s.Replace('\\', '/'));
+                var files = Directory.EnumerateFiles(dir).Select(s => s.Replace('\\', '/'));
+                
+                dirsCount += subs.Count();
+                filesCount += files.Count();
 
-                foreach (var git_file in git_files)
-                    gitIgnores.Add(GitIgnoreReader.Load(git_file));
-            }
+                onProgress?.Invoke(filesCount, dirsCount, dir);
 
-            var ddd = gitIgnores.Where(f => !f.Path.StartsWith(dir) || Path.GetDirectoryName(f.Path) != dir);
+                var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(Path.GetDirectoryName(f.Path), dir));
 
-            foreach (var file in files) 
-            {
-                bool is_match = true;
-                foreach (var git_file in gitIgnores) 
+                foreach (var file in files)
                 {
-                    if(!git_file.IsMatch(file)) is_match = false;
+                    queue.Enqueue(new KeyValuePair<string, IEnumerable<GitIgnoreReader>>(file, relevantGitFiles));
                 }
 
-                list.Add(new FilesListItem(file, is_match ? FilesListItem.Green : FilesListItem.Red));
+                foreach (var sub in subs)
+                {
+                    getFiles(sub);
+                }
             }
 
-            foreach (var sub in subs)
+            while (queue.Count > 0) 
             {
-                GetFiles(list, sub, gitIgnores);
+                var pair = queue.Dequeue();
+                bool is_match = pair.Value.All(r => r.IsMatch(pair.Key));
+                list.Add(new FilesListItem(pair.Key, is_match ? FilesListItem.Green : FilesListItem.Red));
+
+                if(queue.Count % 50 == 0)
+                    onProgress?.Invoke(queue.Count, 0, "");
             }
+
+            return list;
         }
 
         //

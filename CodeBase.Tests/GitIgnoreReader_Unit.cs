@@ -1,4 +1,4 @@
-﻿using CodeBase;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -11,6 +11,60 @@ namespace CodeBase.Tests
     [TestFixture]
     public class GitIgnoreReader_Unit
     {
+        [Test]
+        public void PathIsChilded()
+        {
+            var path = "C:/Data/Abc/Project";
+
+            var cases = new Dictionary<string, bool>()
+            {
+                { "C:/Data/Abc/Project", true },
+                { "C:/Data/Abc/Project/Foo", true },
+                { "C:/Data/Abc/Project/hello.c", true },
+                { "C:/Data/Abc/Project/Abc/hello.py", true },
+                { "C:/", false },
+                { "C:/Data/Project", false },
+                { "C:/Data/Project/Abc", false },
+            };
+
+            foreach (var pair in cases)
+            {
+                Assert.AreEqual(pair.Value, GitIgnoreReader.IsChildedPath(path, pair.Key), pair.Key);
+            }
+        }
+
+        [Test]
+        public void OneAsterisk()
+        {
+            GitIgnoreReader reader = new GitIgnoreReader();
+
+            reader.Parse(new string[] { 
+                "hello.*", 
+                "hello*.*", 
+            });
+
+            var cases = new Dictionary<string, bool>()
+            {
+                { "hello.java", true },
+                { "hello.cs", true },
+                { "abc/hello_world.c", true },
+                { "abc/foo/hello_hello.hello", true },
+                { "hello_world", false },
+                { "goodbye.c", false },
+                { "bar/goodbye", false },
+            };
+
+            foreach (var pair in cases)
+            {
+                var (pos, neg) = reader.GetMatches(pair.Key);
+
+                Console.WriteLine(pair.Key + ": ");
+                Console.WriteLine(reader.MatchesToString(pos, neg));
+
+                Assert.AreEqual(pair.Value, !reader.IsMatch(pair.Key), pair.Key);
+            }
+        }
+
         /* Из доки:
          * A leading "**" followed by a slash means match in all directories. 
          * For example, "** /foo" matches file or directory "foo" anywhere, 
