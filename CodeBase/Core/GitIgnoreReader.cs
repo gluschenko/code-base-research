@@ -94,7 +94,6 @@ namespace CodeBase
             if (IsParsed)
             {
                 path = PreparePath(path, relative: true);
-
                 return !positives.IsMatch(path) || negatives.IsMatch(path);
             }
             return true;
@@ -245,7 +244,7 @@ namespace CodeBase
             string regex = items.Length > 0 ? 
                 "((" + string.Join(")|(", items) + "))" : "$^";
 
-            return new Regex(regex, RegexOptions.Compiled);
+            return new Regex(regex);
         }
 
 #endregion

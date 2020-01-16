@@ -62,24 +62,25 @@ namespace CodeBase
         [DataMember] public string Path { get; set; }
         [DataMember] public string Title { get; set; }
         [DataMember] public string Color { get; set; }
-        [DataMember] public List<string> Folders { get; set; }
+        [DataMember] public List<string> AllowedFolders { get; set; }
         [DataMember] public List<string> IgnoredFolders { get; set; }
         [DataMember] public bool IsPublic { get; set; }
         [DataMember] public bool IsLocal { get; set; }
         [DataMember] public bool IsNameHidden { get; set; }
         [DataMember] public long LastEdit { get; set; }
         [DataMember] public ProjectInfo Info { get; set; }
-
         //
         public string TitleText { get => GetTitle(); }
         public Brush BrushColor { get => GetBrush(); }
+        //
+        public delegate void GetFilesUpdate(int files, int dirs, string currentDir);
         //
         public Project(string path, string title)
         {
             Path = path;
             Title = title;
             Color = RandomizeColor(); //"#FFFF00";
-            Folders = new List<string>();
+            AllowedFolders = new List<string>();
             IgnoredFolders = new List<string>();
             Info = new ProjectInfo();
             IsPublic = false;
@@ -111,7 +112,7 @@ namespace CodeBase
             return new SolidColorBrush(color);
         }
 
-        public List<string> GetFiles(List<string> extensions, List<string> blackList)
+        /*public List<string> GetFiles(List<string> extensions, List<string> blackList)
         {
             List<string> files = new List<string>();
 
@@ -156,24 +157,18 @@ namespace CodeBase
                             return true;
                         }).ToArray();
 
-                        var _files = Directory.EnumerateFiles(dir).Where(_file => {
+                        var _files = Directory.EnumerateFiles(dir).Where(_file =>
+                        {
                             if (extensions.Contains(PathIO.GetExtension(_file)))
                             {
                                 return blackList.All(p => !_file.EndsWith(p));
-
-                                /*foreach (string b in blackList)
-                                {
-                                    if (_file.EndsWith(b))
-                                        return false;
-                                }
-                                return true;*/
                             }
                             return false;
                         });
 
                         files.AddRange(_files);
                         //
-                        if (subdirs.Length > 0) 
+                        if (subdirs.Length > 0)
                         {
                             getFiles(subdirs);
                         }
@@ -184,6 +179,117 @@ namespace CodeBase
             }
 
             return files;
+        }*/
+
+        public struct FileItem
+        {
+            public string Path { get; private set; }
+            public bool IsMatch { get; private set; }
+
+            public FileItem(string path, bool isMatch)
+            {
+                Path = path;
+                IsMatch = isMatch;
+            }
+        }
+
+        public List<FileItem> GetFiles(List<string> extensions, List<string> blackList, GetFilesUpdate onProgress = null)
+        {
+            string path = Path;
+            var list = new List<FileItem>();
+
+            if (Directory.Exists(path))
+            {
+                List<string> allowedDirs;
+                if (AllowedFolders.Count == 0)
+                {
+                    allowedDirs = new List<string>(Directory.GetDirectories(Path));
+                }
+                else
+                {
+                    allowedDirs = new List<string>();
+
+                    foreach (string folder in AllowedFolders)
+                    {
+                        string dir = PathIO.Combine(Path, folder);
+                        if (Directory.Exists(dir) && !allowedDirs.Contains(dir))
+                        {
+                            allowedDirs.Add(dir);
+                        }
+                    }
+                }
+                //
+                var gitIgnores = GitIgnoreReader.Find(path, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
+                var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
+
+                int filesCount = 0, dirsCount = 0;
+
+                getFiles(path);
+
+                void getFiles(string dir)
+                {
+                    var subs = Directory.EnumerateDirectories(dir)
+                        .Select(s => s.Replace('\\', '/'))
+                        .Where(s => allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, s)))
+                        .Where(p => !IsIgnoredForder(p));
+
+                    var files = Directory.EnumerateFiles(dir)
+                        .Where(s => extensions.Contains(PathIO.GetExtension(s)))
+                        .Where(s => blackList.All(end => !s.EndsWith(end)))
+                        .Select(s => s.Replace('\\', '/'));
+
+                    dirsCount += subs.Count();
+                    filesCount += files.Count();
+
+                    onProgress?.Invoke(filesCount, dirsCount, dir);
+
+                    var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(PathIO.GetDirectoryName(f.Path), dir));
+
+                    foreach (var file in files)
+                    {
+                        queue.Enqueue(new KeyValuePair<string, IEnumerable<GitIgnoreReader>>(file, relevantGitFiles));
+                    }
+
+                    foreach (var sub in subs)
+                    {
+                        bool is_match = relevantGitFiles.All(r => r.IsMatch(sub));
+
+                        if (is_match)
+                        {
+                            getFiles(sub);
+                        }
+                    }
+                }
+
+                while (queue.Count > 0)
+                {
+                    var pair = queue.Dequeue();
+                    bool is_match = pair.Value.All(r => r.IsMatch(pair.Key));
+                    list.Add(new FileItem(pair.Key, is_match));
+
+                    //if(queue.Count % 50 == 0)
+                    onProgress?.Invoke(queue.Count, 0, pair.Key);
+                }
+            }
+
+            return list;
+        }
+
+        public bool IsIgnoredForder(string path)
+        {
+            if (IgnoredFolders != null)
+            {
+                path = path.Replace('/', '\\');
+
+                foreach (string folder in IgnoredFolders)
+                {
+                    if (path == PathIO.Combine(Path, folder))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         //

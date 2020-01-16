@@ -89,12 +89,14 @@
         </TabControl>
 
         <Grid x:Name="FreezeOverlay" Background="#AA000000" Visibility="Hidden">
-            <Label x:Name="FreezeText" Content="Wait..." 
-                   Foreground="#fff" 
-                   FontSize="14"
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"
-                   HorizontalContentAlignment="Center"></Label>
+            <TextBlock x:Name="FreezeText"
+                Text="Wait..."
+                TextWrapping="Wrap"
+                Foreground="#fff" 
+                FontSize="14"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center"
+                TextAlignment="Center"></TextBlock>
         </Grid>
     </Grid>
 </Window>

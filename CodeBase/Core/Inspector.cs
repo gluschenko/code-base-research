@@ -63,7 +63,7 @@ namespace CodeBase
             {
                 ProcessUpdate(InspectorStage.Progress, (progress: ++i, total: projects.Count));
                 //
-                List<string> files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList);
+                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList);
 
                 project.Info.Clear();
                 //
@@ -76,44 +76,46 @@ namespace CodeBase
                 }
 
                 j = 0;
-                foreach (string file in files)
+                foreach (var file in files)
                 {
                     ProcessUpdate(InspectorStage.Progress2, (progress: ++j, total: files.Count));
                     //
-                    if (!AllFiles.Contains(file))
+                    if (!AllFiles.Contains(file.Path))
                     {
-                        AllFiles.Add(file);
+                        AllFiles.Add(file.Path);
                         
                         ProcessUpdate(InspectorStage.FetchingFiles, AllFiles.Count);
                     }
                     else
-                        project.Info.Error($"File '{file}' already has added");
+                        project.Info.Error($"File '{file.Path}' already has added");
                 }
 
                 j = 0;
-                foreach (string file in files)
+                foreach (var file in files)
                 {
+                    if (!file.IsMatch) continue;
+                    //
                     ProcessUpdate(InspectorStage.Progress2, (progress: ++j, total: files.Count));
                     ProcessUpdate(InspectorStage.FetchingLines, projectVolume.Lines);
 
                     //
-                    if (File.Exists(file))
+                    if (File.Exists(file.Path))
                     {
                         // Geting data
                         string data = "";
                         try
                         {
-                            data = File.ReadAllText(file);
+                            data = File.ReadAllText(file.Path);
                             //
-                            long newLastEdit = UnixTime.ToTimestamp(File.GetLastWriteTime(file));
+                            long newLastEdit = UnixTime.ToTimestamp(File.GetLastWriteTime(file.Path));
                             project.LastEdit = Math.Max(project.LastEdit, newLastEdit);
                         }
                         catch(Exception ex)
                         {
-                            project.Info.Error($"File '{file}' thrown {ex.GetType().Name}");
+                            project.Info.Error($"File '{file.Path}' thrown {ex.GetType().Name}");
                         }
                         // Calculating lines
-                        string localPath = file.Replace(project.Path, "");
+                        string localPath = file.Path.StartsWith(project.Path) ? file.Path.Substring(project.Path.Length) : file.Path;
                         string[] lines = data.Split("\n\r".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                         int linesCount = lines.Length;
                         int sloc = 0;
@@ -138,23 +140,12 @@ namespace CodeBase
                         projectVolume += volume;
                         //
 
-                        string ext = Path.GetExtension(file);
+                        string ext = Path.GetExtension(file.Path);
 
                         // Пушим список расширений
                         project.Info.ExtensionsVolume.Push(ext, volume, (A, B) => A + B);
                         // Пушим список файлов
                         project.Info.FilesVolume.Push(localPath, volume);
-
-                        /*var list_ext = project.Info.ExtensionsVolume;
-                        if (list_ext.ContainsKey(ext))
-                            list_ext[ext] += volume;
-                        else
-                            list_ext.Add(ext, volume);*/
-                        /*var list_files = project.Info.FilesVolume;
-                        if (list_files.ContainsKey(localPath))
-                            list_files[localPath] = volume;
-                        else
-                            list_files.Add(localPath, volume);*/
                     }
                     else
                     {

@@ -71,12 +71,12 @@ namespace CodeBase
                 push($"Last edit: {UnixTime.ToDateTime(Project.LastEdit)}");
 
             push("");
-            if (Project.Folders.Count > 0)
+            if (Project.AllowedFolders.Count > 0)
             {
                 push($"Folders: ");
 
                 int i = 0;
-                foreach (string folder in Project.Folders)
+                foreach (string folder in Project.AllowedFolders)
                 {
                     push($"{++i}. {folder}");
                 }
@@ -147,16 +147,14 @@ namespace CodeBase
                 TabControl.Effect = null;
             }
 
-            FreezeText.Content = message;
+            FreezeText.Text = message;
         }
 
         public void Freeze(string message = "Wait...") => Freeze(true, message);
 
         #region HANDLERS
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
 
         private void SourceFilesTab_Selected(object sender, RoutedEventArgs e)
         {
@@ -171,9 +169,9 @@ namespace CodeBase
                         Freeze();
 
                         Task.Run(() => {
-                            var files = GetFiles(proj.Path, 
+                            var files = proj.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, 
                                 (_files, _dirs, _currentDir) => {
-                                    Dispatcher.Invoke(() => Freeze($"{_currentDir}\nD: {_dirs}\nF: {_files}"));
+                                    Dispatcher.Invoke(() => Freeze($"{_currentDir}\nForlders: {_dirs} | Files: {_files}"));
                                 });
 
                             var projectString = $"Project: {proj.Path} ({files.Count} files)";
@@ -183,8 +181,9 @@ namespace CodeBase
 
                                 foreach (var file in files)
                                 {
-                                    file.Text = file.Text.Substring(proj.Path.Length);
-                                    SourceFilesList.Items.Add(file);
+                                    var filePath = file.Path.Substring(proj.Path.Length);
+                                    SourceFilesList.Items.Add(new FilesListItem(filePath,
+                                        file.IsMatch ? FilesListItem.Green : FilesListItem.Red));
                                 }
 
                                 Freeze(false);
@@ -236,54 +235,6 @@ namespace CodeBase
         }
 
         #endregion
-
-        public delegate void GetFilesUpdate(int files, int dirs, string currentDir);
-
-        public List<FilesListItem> GetFiles(string path, GetFilesUpdate onProgress = null) 
-        {
-            var list = new List<FilesListItem>();
-            var gitIgnores = GitIgnoreReader.Find(path, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
-            var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
-
-            int filesCount = 0, dirsCount = 0;
-
-            getFiles(path);
-
-            void getFiles(string dir) 
-            {
-                var subs = Directory.EnumerateDirectories(dir).Select(s => s.Replace('\\', '/'));
-                var files = Directory.EnumerateFiles(dir).Select(s => s.Replace('\\', '/'));
-                
-                dirsCount += subs.Count();
-                filesCount += files.Count();
-
-                onProgress?.Invoke(filesCount, dirsCount, dir);
-
-                var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(Path.GetDirectoryName(f.Path), dir));
-
-                foreach (var file in files)
-                {
-                    queue.Enqueue(new KeyValuePair<string, IEnumerable<GitIgnoreReader>>(file, relevantGitFiles));
-                }
-
-                foreach (var sub in subs)
-                {
-                    getFiles(sub);
-                }
-            }
-
-            while (queue.Count > 0) 
-            {
-                var pair = queue.Dequeue();
-                bool is_match = pair.Value.All(r => r.IsMatch(pair.Key));
-                list.Add(new FilesListItem(pair.Key, is_match ? FilesListItem.Green : FilesListItem.Red));
-
-                if(queue.Count % 50 == 0)
-                    onProgress?.Invoke(queue.Count, 0, "");
-            }
-
-            return list;
-        }
 
         //
 
