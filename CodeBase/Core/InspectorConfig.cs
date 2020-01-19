@@ -9,17 +9,19 @@ namespace CodeBase
         static InspectorConfig() 
         {
             CodeExtensions = List(
-                //Backend
+                // Backend
                 ".php", ".py", ".go", ".htaccess",
                 // Frontend & UI
-                ".html", ".htm", ".css", ".xaml", ".js", ".cshtml",
+                ".html", ".htm", ".css", ".xaml", ".cshtml",
+                // JS
+                ".js", ".jsx", ".ts", ".tsx",
                 // .NET
                 ".cs", ".vb",
                 // Java
                 ".java", ".kt",
                 // Low-level
-                ".h", ".cpp", ".hpp", ".c", ".s",
-                // Chaders
+                ".c", ".h", ".cpp", ".hpp", ".s",
+                // Shaders
                 ".vs", ".fs", ".shader"
             );
 

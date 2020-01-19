@@ -34,7 +34,7 @@ namespace CodeBase
             ProjectName.Text = Project.Title;
             ProjectColor.Text = Project.Color;
             ProjectPath.Text = Project.Path;
-            ProjectFolders.Text = string.Join(", ", Project.AllowedFolders ?? new List<string>());
+            ProjectFolders.Text = string.Join(", ", Project.Folders ?? new List<string>());
             IgnoredProjectFolders.Text = string.Join(", ", Project.IgnoredFolders ?? new List<string>());
             ProjectIsPublic.IsChecked = Project.IsPublic;
             ProjectIsLocal.IsChecked = Project.IsLocal;
@@ -65,7 +65,7 @@ namespace CodeBase
                     Project.Color = ProjectColor.Text.Trim();
                     Project.Path = ProjectPath.Text.Trim();
                     //
-                    Project.AllowedFolders = parseFolders(ProjectFolders.Text);
+                    Project.Folders = parseFolders(ProjectFolders.Text);
                     Project.IgnoredFolders = parseFolders(IgnoredProjectFolders.Text);
                     //
                     Project.IsPublic = ProjectIsPublic.IsChecked.Value;

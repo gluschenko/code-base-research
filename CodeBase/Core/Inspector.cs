@@ -63,6 +63,7 @@ namespace CodeBase
             {
                 ProcessUpdate(InspectorStage.Progress, (progress: ++i, total: projects.Count));
                 //
+                var projectPath = project.Path.Replace('\\', '/');
                 var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList);
 
                 project.Info.Clear();
@@ -115,7 +116,7 @@ namespace CodeBase
                             project.Info.Error($"File '{file.Path}' thrown {ex.GetType().Name}");
                         }
                         // Calculating lines
-                        string localPath = file.Path.StartsWith(project.Path) ? file.Path.Substring(project.Path.Length) : file.Path;
+                        string localPath = file.Path.StartsWith(projectPath) ? file.Path.Substring(projectPath.Length) : file.Path;
                         string[] lines = data.Split("\n\r".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                         int linesCount = lines.Length;
                         int sloc = 0;

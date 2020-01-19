@@ -21,9 +21,6 @@ namespace CodeBase
      * а также делать валидацию синтаксиса регулярных выражений.
      */
 
-    /* 16.01.19: В текущем виде это слишком медлено работает. Нужна оптимизация (хвостовые рекурсии, деревья, хеши) 
-     */
-
     /// <summary>
     /// Reads .gitignore files
     /// </summary>
@@ -171,9 +168,25 @@ namespace CodeBase
 
         public static bool IsChildedPath(string parent, string child) 
         {
-            var potentialBase = new Uri(parent);
+            bool result = false;
+            parent = parent.Replace('\\', '/').TrimEnd('\\', '/');
+            child = child.Replace('\\', '/').TrimEnd('\\', '/');
+
+            if (child.Length > parent.Length) 
+            {
+                result = child.StartsWith(parent + '/');
+            }
+
+            if (child == parent) 
+            {
+                result = true;
+            }
+
+            return result;
+
+            /*var potentialBase = new Uri(parent);
             var potentialChild = new Uri(child);
-            return potentialBase.IsBaseOf(potentialChild);
+            return potentialBase.IsBaseOf(potentialChild);*/
         }
 
         #endregion
@@ -224,6 +237,12 @@ namespace CodeBase
                 pattern = pattern.Substring(0, pattern.Length - 3);
                 pattern += "(/?)(.+|.?)";
             }
+
+            /*if (pattern.EndsWith("/"))
+            {
+                pattern = pattern.TrimEnd('/');
+                pattern += "(/?)";
+            }*/
 
             pattern = pattern
                 .Replace("/**/", "(/?)(.+|.?)/") // ?. -- для случая, когда последовательность пуста и есть только '/'

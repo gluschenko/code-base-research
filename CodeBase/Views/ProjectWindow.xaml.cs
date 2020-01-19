@@ -71,12 +71,12 @@ namespace CodeBase
                 push($"Last edit: {UnixTime.ToDateTime(Project.LastEdit)}");
 
             push("");
-            if (Project.AllowedFolders.Count > 0)
+            if (Project.Folders?.Count > 0)
             {
                 push($"Folders: ");
 
                 int i = 0;
-                foreach (string folder in Project.AllowedFolders)
+                foreach (string folder in Project.Folders)
                 {
                     push($"{++i}. {folder}");
                 }
@@ -89,7 +89,7 @@ namespace CodeBase
             push($"SLOC/lines: {info.Volume} ({info.Volume.Ratio * 100}%)");
             push("");
 
-            if (info.ExtensionsVolume.Count > 0)
+            if (info.ExtensionsVolume?.Count > 0)
             {
                 push($"Extensions ({info.ExtensionsVolume.Count}): ");
 
@@ -104,7 +104,7 @@ namespace CodeBase
                 push("");
             }
 
-            if (info.FilesVolume.Count > 0)
+            if (info.FilesVolume?.Count > 0)
             {
                 FileTreeNode tree = new FileTreeNode("root");
 
@@ -117,7 +117,7 @@ namespace CodeBase
                 push("");
             }
 
-            if (info.Errors.Count > 0)
+            if (info.Errors?.Count > 0)
             {
                 push($"Errors ({info.Errors.Count}): ");
                 int i = 0;

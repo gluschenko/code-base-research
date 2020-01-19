@@ -62,7 +62,7 @@ namespace CodeBase
         [DataMember] public string Path { get; set; }
         [DataMember] public string Title { get; set; }
         [DataMember] public string Color { get; set; }
-        [DataMember] public List<string> AllowedFolders { get; set; }
+        [DataMember] public List<string> Folders { get; set; }
         [DataMember] public List<string> IgnoredFolders { get; set; }
         [DataMember] public bool IsPublic { get; set; }
         [DataMember] public bool IsLocal { get; set; }
@@ -80,7 +80,7 @@ namespace CodeBase
             Path = path;
             Title = title;
             Color = RandomizeColor(); //"#FFFF00";
-            AllowedFolders = new List<string>();
+            Folders = new List<string>();
             IgnoredFolders = new List<string>();
             Info = new ProjectInfo();
             IsPublic = false;
@@ -181,18 +181,6 @@ namespace CodeBase
             return files;
         }*/
 
-        public struct FileItem
-        {
-            public string Path { get; private set; }
-            public bool IsMatch { get; private set; }
-
-            public FileItem(string path, bool isMatch)
-            {
-                Path = path;
-                IsMatch = isMatch;
-            }
-        }
-
         public List<FileItem> GetFiles(List<string> extensions, List<string> blackList, GetFilesUpdate onProgress = null)
         {
             string path = Path;
@@ -200,57 +188,42 @@ namespace CodeBase
 
             if (Directory.Exists(path))
             {
-                List<string> allowedDirs;
-                if (AllowedFolders.Count == 0)
-                {
-                    allowedDirs = new List<string>(Directory.GetDirectories(Path));
-                }
-                else
-                {
-                    allowedDirs = new List<string>();
-
-                    foreach (string folder in AllowedFolders)
-                    {
-                        string dir = PathIO.Combine(Path, folder);
-                        if (Directory.Exists(dir) && !allowedDirs.Contains(dir))
-                        {
-                            allowedDirs.Add(dir);
-                        }
-                    }
-                }
+                var allowedDirs = GetAllowedFolders();
                 //
                 var gitIgnores = GitIgnoreReader.Find(path, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
                 var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
 
-                int filesCount = 0, dirsCount = 0;
+                int dirsCount = 0;
 
                 getFiles(path);
 
                 void getFiles(string dir)
                 {
+                    var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(f.BaseDir, dir));
+
+                    var isAllowedDir = 
+                        allowedDirs.Count > 0 ? allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, dir)) : true;
+
                     var subs = Directory.EnumerateDirectories(dir)
-                        .Select(s => s.Replace('\\', '/'))
-                        .Where(s => allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, s)))
-                        .Where(p => !IsIgnoredForder(p));
+                        .Where(p => !IsIgnoredForder(p))
+                        .Select(s => s.Replace('\\', '/'));
 
                     var files = Directory.EnumerateFiles(dir)
+                        .Where(s => isAllowedDir)
                         .Where(s => extensions.Contains(PathIO.GetExtension(s)))
                         .Where(s => blackList.All(end => !s.EndsWith(end)))
                         .Select(s => s.Replace('\\', '/'));
 
                     dirsCount += subs.Count();
-                    filesCount += files.Count();
 
-                    onProgress?.Invoke(filesCount, dirsCount, dir);
-
-                    var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(PathIO.GetDirectoryName(f.Path), dir));
+                    onProgress?.Invoke(queue.Count, dirsCount, dir);
 
                     foreach (var file in files)
                     {
                         queue.Enqueue(new KeyValuePair<string, IEnumerable<GitIgnoreReader>>(file, relevantGitFiles));
                     }
 
-                    foreach (var sub in subs)
+                    foreach (var sub in subs.Select(s => s + '/'))
                     {
                         bool is_match = relevantGitFiles.All(r => r.IsMatch(sub));
 
@@ -267,7 +240,6 @@ namespace CodeBase
                     bool is_match = pair.Value.All(r => r.IsMatch(pair.Key));
                     list.Add(new FileItem(pair.Key, is_match));
 
-                    //if(queue.Count % 50 == 0)
                     onProgress?.Invoke(queue.Count, 0, pair.Key);
                 }
             }
@@ -277,19 +249,23 @@ namespace CodeBase
 
         public bool IsIgnoredForder(string path)
         {
-            if (IgnoredFolders != null)
-            {
-                path = path.Replace('/', '\\');
+            return IgnoredFolders?.Any(f => GitIgnoreReader.IsChildedPath(PathIO.Combine(Path, f), path)) ?? false;
+        }
 
-                foreach (string folder in IgnoredFolders)
-                {
-                    if (path == PathIO.Combine(Path, folder))
-                    {
-                        return true;
-                    }
-                }
+        public List<string> GetAllowedFolders() 
+        {
+            if (Folders?.Count == 0)
+            {
+                return new List<string>(Directory.GetDirectories(Path));
             }
-            return false;
+            else
+            {
+                var dirs = Folders
+                    .Select(folder => PathIO.Combine(Path, folder))
+                    .Where(dir => Directory.Exists(dir));
+
+                return dirs.ToList();
+            }
         }
 
         //
@@ -340,8 +316,6 @@ namespace CodeBase
 
         public double Ratio { get => GetLineRatio(); }
 
-        // { get => Lines != 0 ? Math.Round((double)SLOC / Lines, 4) : 1; }
-
         public CodeVolume(int sloc, int lines, int files)
         {
             SLOC = sloc;
@@ -351,11 +325,7 @@ namespace CodeBase
 
         public double GetLineRatio() 
         {
-            if (Lines != 0) 
-            {
-                return Math.Round((double)SLOC / Lines, 4);
-            }
-            return 1;
+            return Lines != 0 ? Math.Round((double)SLOC / Lines, 4) : 1;
         }
 
         public override string ToString() => $"{SLOC}/{Lines}";
@@ -365,5 +335,17 @@ namespace CodeBase
 
         public static CodeVolume operator -(CodeVolume A, CodeVolume B) => 
             new CodeVolume(A.SLOC - B.SLOC, A.Lines - B.Lines, A.Files - B.Files);
+    }
+
+    public struct FileItem
+    {
+        public string Path { get; private set; }
+        public bool IsMatch { get; private set; }
+
+        public FileItem(string path, bool isMatch)
+        {
+            Path = path;
+            IsMatch = isMatch;
+        }
     }
 }

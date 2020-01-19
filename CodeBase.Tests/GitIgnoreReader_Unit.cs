@@ -19,6 +19,9 @@ namespace CodeBase.Tests
             var cases = new Dictionary<string, bool>()
             {
                 { "C:/Data/Abc/Project", true },
+                { "C:/Data/Abc/NotProject", false },
+                { "C:/Data/Abc/NotProject/NotChild", false },
+                { @"C:\Data\Abc\Project", true },
                 { "C:/Data/Abc/Project/Foo", true },
                 { "C:/Data/Abc/Project/hello.c", true },
                 { "C:/Data/Abc/Project/Abc/hello.py", true },
@@ -41,6 +44,7 @@ namespace CodeBase.Tests
             reader.Parse(new string[] { 
                 "hello.*", 
                 "hello*.*", 
+                "node_modules/", 
             });
 
             var cases = new Dictionary<string, bool>()
@@ -52,6 +56,11 @@ namespace CodeBase.Tests
                 { "hello_world", false },
                 { "goodbye.c", false },
                 { "bar/goodbye", false },
+
+                { "C:/foo/.git/", true },
+                { "C:/foo/.git/abc", true },
+                { "C:/foo/node_modules/", true },
+                { "C:/foo/node_modules/abc", true },
             };
 
             foreach (var pair in cases)
