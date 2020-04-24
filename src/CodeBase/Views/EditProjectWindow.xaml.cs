@@ -105,9 +105,12 @@ namespace CodeBase
 
         public static void OpenFolderDialog(TextBox textBox)
         {
-            var dialog = new CommonOpenFileDialog();
-            dialog.IsFolderPicker = true;
-            dialog.InitialDirectory = textBox.Text;
+            var dialog = new CommonOpenFileDialog
+            {
+                IsFolderPicker = true,
+                InitialDirectory = textBox.Text
+            };
+
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 var folder = dialog.FileName;
