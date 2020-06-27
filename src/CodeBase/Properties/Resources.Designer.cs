@@ -10,8 +10,9 @@
 
 namespace CodeBase.Properties {
     using System;
-    
-    
+    using System.Drawing;
+
+
     /// <summary>
     ///   Класс ресурса со строгой типизацией для поиска локализованных строк и т.д.
     /// </summary>
@@ -31,7 +32,7 @@ namespace CodeBase.Properties {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-        
+
         /// <summary>
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
@@ -59,12 +60,11 @@ namespace CodeBase.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap CodeBaseLogo {
-            get {
+
+        internal static System.Drawing.Bitmap CodeBaseLogo
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CodeBaseLogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
