@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Diagnostics;
 using NotifyIcon = System.Windows.Forms.NotifyIcon;
+using System.Threading;
 
 /*
 using System.Text;
@@ -37,6 +38,8 @@ namespace CodeBase
         private ServerAccessWindow ServerAccessWindow;
 
         private NotifyIcon NotifyIcon;
+
+        private bool _isUpdateAssugned = false;
 
         public MainWindow()
         {
@@ -176,40 +179,55 @@ namespace CodeBase
 
         public void StartInspector()
         {
-            Inspector.Start(new List<Project>(Projects), (stage, info) => {
-                Dispatcher.Invoke(() => {
-                    switch (stage)
+            if (!_isUpdateAssugned) 
+            {
+                _isUpdateAssugned = true;
+
+                Inspector.OnStart += () => 
+                {
+                    StatusText.Content = "Wait...";
+                };
+
+                Inspector.OnUpdate += (stage, state) =>
+                {
+                    if (stage == InspectorStage.Progress) 
                     {
-                        case InspectorStage.Progress:
-                            ProgressBar.Visibility = Visibility.Visible;
-                            (int progress, int total) = ((int, int))info;
-                            ProgressBar.Maximum = total;
-                            ProgressBar.Value = progress;
-                            break;
-                        case InspectorStage.Progress2:
-                            ProgressBar2.Visibility = Visibility.Visible;
-                            (progress, total) = ((int, int))info;
-                            ProgressBar2.Maximum = total;
-                            ProgressBar2.Value = progress;
-                            break;
-                        case InspectorStage.FetchingFiles:
-                            StatusText.Content = $"Fetching files: {info}";
-                            break;
-                        case InspectorStage.FetchingLines:
-                            StatusText.Content = $"Fetching lines: {info}";
-                            break;
-                        case InspectorStage.Completed:
-                            StatusText.Content = "Complete";
-                            UpdateProjectsList();
-                            Save();
-                            SendData();
-                            //
-                            ProgressBar.Visibility = Visibility.Hidden;
-                            ProgressBar2.Visibility = Visibility.Hidden;
-                            break;
+                        ProgressBar.Visibility = Visibility.Visible;
+                        ProgressBar.Maximum = state.All;
+                        ProgressBar.Value = state.Used;
                     }
-                });
-            });
+
+                    if (stage == InspectorStage.Progress2) 
+                    {
+                        ProgressBar2.Visibility = Visibility.Visible;
+                        ProgressBar2.Maximum = state.All;
+                        ProgressBar2.Value = state.Used;
+                    }
+
+                    if (stage == InspectorStage.FetchingFiles) 
+                    {
+                        StatusText.Content = $"Fetching files: {state.All}";
+                    }
+
+                    if (stage == InspectorStage.FetchingLines) 
+                    {
+                        StatusText.Content = $"Fetching lines: {state.All}";
+                    }
+                };
+
+                Inspector.OnComplete += () =>
+                {
+                    UpdateProjectsList();
+                    Save();
+                    SendData();
+                    //
+                    StatusText.Content = "Complete";
+                    ProgressBar.Visibility = Visibility.Hidden;
+                    ProgressBar2.Visibility = Visibility.Hidden;
+                };
+            }
+
+            Inspector.Start(Projects.ToList(), Dispatcher);
         }
 
         public void SendData()
@@ -233,8 +251,8 @@ namespace CodeBase
 
         private void AutorunCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox ch = (CheckBox)sender;
-            ch.IsChecked = Autorun.SetState(ch.IsChecked.Value, ex => {
+            var checkBox = sender as CheckBox;
+            checkBox.IsChecked = Autorun.SetState(checkBox.IsChecked.Value, ex => {
                 MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             });
         }
@@ -357,7 +375,7 @@ namespace CodeBase
 
                 All.Info.Errors.AddRange(proj.Info.Errors.Select(t => $"{proj.Title} -> {t}"));
                 //
-                void merge(Dictionary<string, CodeVolume> A, Dictionary<string, CodeVolume> B)
+                static void merge(Dictionary<string, CodeVolume> A, Dictionary<string, CodeVolume> B)
                 {
                     foreach (var pair in B)
                     {
@@ -367,7 +385,6 @@ namespace CodeBase
                             A[pair.Key] += pair.Value;
                     }
                 }
-
             }
 
             ProjectWindow win = new ProjectWindow(new Project[] { All, Public, Private })

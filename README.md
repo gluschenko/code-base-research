@@ -1,4 +1,4 @@
-# Code-Base-Research
-My client-server codebase metrics utility (client: WPF, backend: PHP)
+# Code Base Research
+Client-server utility made for collection of code metrics (client: WPF, backend: PHP)
 
-![GUI](Media/Demo.jpg) 
+![GUI](.media/Demo.jpg) 

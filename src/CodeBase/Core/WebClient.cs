@@ -16,7 +16,7 @@ namespace CodeBase
             MessageHelper.Error($"{(int)code}/{code}", "HTTP Error");
         };
 
-        public static async void InitClient()
+        public static void InitClient()
         {
             if (client == null)
             {
@@ -44,21 +44,19 @@ namespace CodeBase
         {
             InitClient();
 
-            using (var message = new HttpRequestMessage(HttpMethod.Post, URL)) 
-            {
-                var pairs = fields.Select(pair => $"{pair.Key}={pair.Value}");
-                var query = string.Join("&", pairs);
-                message.Content = new StringContent(query, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
+            using var message = new HttpRequestMessage(HttpMethod.Post, URL);
+            var pairs = fields.Select(pair => $"{pair.Key}={pair.Value}");
+            var query = string.Join("&", pairs);
+            message.Content = new StringContent(query, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
 
-                try
-                {
-                    var res = await client.SendAsync(message);
-                    response(res);
-                }
-                catch (Exception ex)
-                {
-                    MessageHelper.ThrowException(ex);
-                }
+            try
+            {
+                var res = await client.SendAsync(message);
+                response(res);
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ThrowException(ex);
             }
         }
 
@@ -67,16 +65,14 @@ namespace CodeBase
             if (response == null)
                 throw new ArgumentNullException(nameof(response));
 
-            onFailure = onFailure ?? HTTPError;
+            onFailure ??= HTTPError;
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 Stream stream = response.GetResponseStream();
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    string data = reader.ReadToEnd();
-                    onSuccess?.Invoke(data);
-                }
+                using StreamReader reader = new StreamReader(stream);
+                string data = reader.ReadToEnd();
+                onSuccess?.Invoke(data);
             }
             else
             {
@@ -89,7 +85,7 @@ namespace CodeBase
             if (response == null)
                 throw new ArgumentNullException(nameof(response));
 
-            onFailure = onFailure ?? HTTPError;
+            onFailure ??= HTTPError;
 
             if (response.StatusCode == HttpStatusCode.OK)
             {

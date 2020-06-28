@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBase", "CodeBase\CodeBase.csproj", "{E71B0B2B-C649-4139-9169-2D2BAE27AF02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBase.Tests", "CodeBase.Tests\CodeBase.Tests.csproj", "{AF83194C-3DEB-41A5-93C2-238FEBC4428A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBase.Tests", "CodeBase.Tests\CodeBase.Tests.csproj", "{AF83194C-3DEB-41A5-93C2-238FEBC4428A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{C9B0B235-D1AA-46E8-8CBA-4AE7C371E7A8}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

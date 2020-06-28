@@ -2,74 +2,99 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace CodeBase
 {
+    public delegate void InspectStartHandler();
+    public delegate void InspectUpdateHandler(InspectorStage stage, InspectState state);
+    public delegate void InspectCompleteHandler();
+
+    public struct InspectState 
+    {
+        public int Used { get; set; }
+        public int All { get; set; }
+        public List<Project> Projects { get; set; }
+    }
+
     public enum InspectorStage
     {
         Progress,
         Progress2,
         FetchingFiles,
         FetchingLines,
-        Completed,
     }
 
     public class Inspector
     {
-        public delegate void StageUpdate(InspectorStage stage, object info);
+        public event InspectStartHandler OnStart;
+        public event InspectUpdateHandler OnUpdate;
+        public event InspectCompleteHandler OnComplete;
 
-        private Thread thread;
-        private StageUpdate onUpdate;
+        private Thread _thread;
 
-        public void Start(List<Project> projects, StageUpdate onUpdate)
+        public void Start(List<Project> projects, Dispatcher dispatcher)
         {
-            this.onUpdate = onUpdate;
-            //
-            if (thread != null)
+            Stop();
+
+            _thread = new Thread(run) { IsBackground = true };
+            _thread.Start();
+
+            void run() 
             {
-                thread.Abort();
-                thread = null;
+                try
+                {
+                    dispatcher.Invoke(() => OnStart?.Invoke());
+                    Process(projects, dispatcher);
+                    dispatcher.Invoke(() => OnComplete?.Invoke());
+                }
+                catch (ThreadInterruptedException)
+                {
+                }
             }
-
-            thread = new Thread(() => Process(projects)) { IsBackground = true };
-            thread.Start();
         }
 
-        private void Update(InspectorStage stage, object info)
+        private void Stop() 
         {
-            onUpdate?.Invoke(stage, info);
-        }
-
-        private void AsyncCompleted(IAsyncResult resObj)
-        {
-            string message = (string)resObj.AsyncState;
-            Console.WriteLine(message);
-            Console.WriteLine("Работа асинхронного делегата завершена");
-        }
-
-        private void Process(List<Project> projects)
-        {
-            void ProcessUpdate(InspectorStage stage, object info)
+            if (_thread != null)
             {
-                StageUpdate update = new StageUpdate(Update);
-                IAsyncResult result = update.BeginInvoke(stage, info, new AsyncCallback(AsyncCompleted), "");
+                _thread.Interrupt();
+                _thread = null;
+            }
+        }
+
+        private void Process(List<Project> projects, Dispatcher dispatcher)
+        {
+            void ProcessUpdate(InspectorStage stage, InspectState state)
+            {
+                dispatcher.Invoke(() => OnUpdate?.Invoke(stage, state));
             }
             //
-            List<string> AllFiles = new List<string>();
+            var allFiles = new List<string>();
 
             int i = 0, j = 0;
 
             foreach (var project in projects)
             {
-                ProcessUpdate(InspectorStage.Progress, (progress: ++i, total: projects.Count));
+                ProcessUpdate(InspectorStage.Progress, new InspectState 
+                { 
+                    Used = ++i, 
+                    All = projects.Count 
+                });
                 //
                 var projectPath = project.Path.Replace('\\', '/');
-                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList);
+                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) => 
+                {
+                    ProcessUpdate(InspectorStage.Progress2, new InspectState
+                    {
+                        Used = Math.Min(files, dirs),
+                        All = Math.Max(files, dirs)
+                    });
+                });
 
                 project.Info.Clear();
                 //
-                CodeVolume projectVolume = new CodeVolume();
-                //int filesCount = 0;
+                var projectVolume = new CodeVolume();
 
                 if (files.Count == 0)
                 {
@@ -79,16 +104,32 @@ namespace CodeBase
                 j = 0;
                 foreach (var file in files)
                 {
-                    ProcessUpdate(InspectorStage.Progress2, (progress: ++j, total: files.Count));
-                    //
-                    if (!AllFiles.Contains(file.Path))
+                    if (j % 10 == 0) 
                     {
-                        AllFiles.Add(file.Path);
-                        
-                        ProcessUpdate(InspectorStage.FetchingFiles, AllFiles.Count);
+                        ProcessUpdate(InspectorStage.Progress2, new InspectState
+                        {
+                            Used = j,
+                            All = files.Count
+                        });
+                    }
+                    j++;
+                    //
+                    if (!allFiles.Contains(file.Path))
+                    {
+                        allFiles.Add(file.Path);
+
+                        if (allFiles.Count % 10 == 0) 
+                        {
+                            ProcessUpdate(InspectorStage.FetchingFiles, new InspectState
+                            {
+                                All = allFiles.Count
+                            });
+                        }
                     }
                     else
+                    {
                         project.Info.Error($"File '{file.Path}' already has added");
+                    }
                 }
 
                 j = 0;
@@ -96,10 +137,21 @@ namespace CodeBase
                 {
                     if (!file.IsMatch) continue;
                     //
-                    ProcessUpdate(InspectorStage.Progress2, (progress: ++j, total: files.Count));
-                    ProcessUpdate(InspectorStage.FetchingLines, projectVolume.Lines);
+                    if (j % 10 == 0) 
+                    {
+                        ProcessUpdate(InspectorStage.Progress2, new InspectState
+                        {
+                            Used = j,
+                            All = files.Count
+                        });
 
-                    //
+                        ProcessUpdate(InspectorStage.FetchingLines, new InspectState
+                        {
+                            All = projectVolume.Lines
+                        });
+                    }
+                    j++;
+
                     if (File.Exists(file.Path))
                     {
                         // Geting data
@@ -158,22 +210,7 @@ namespace CodeBase
                 //project.Info.Files = filesCount;
             }
             //
-
-            //
-            Thread.Sleep(300);
-            ProcessUpdate(InspectorStage.Completed, new ProcessEndData(projects));
-
             GC.Collect();
-        }
-
-        public struct ProcessEndData
-        {
-            public List<Project> projects;
-
-            public ProcessEndData(List<Project> projects)
-            {
-                this.projects = projects;
-            }
         }
     }
 }

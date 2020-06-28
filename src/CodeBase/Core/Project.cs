@@ -99,11 +99,6 @@ namespace CodeBase
                 IsPublic ? " ✔" : "", 
                 IsLocal ? " [local]" : "", 
                 IsNameHidden ? " [hidden]" : "");
-                
-            /*Title + 
-             (IsPublic ? " ✔" : "") + 
-             (IsLocal ? " [local]" : "") + 
-             (IsNameHidden ? " [hidden]" : "");*/
         }
 
         public Brush GetBrush() 
@@ -111,75 +106,6 @@ namespace CodeBase
             var color = (Color)ColorConverter.ConvertFromString(Color ?? RandomizeColor());
             return new SolidColorBrush(color);
         }
-
-        /*public List<string> GetFiles(List<string> extensions, List<string> blackList)
-        {
-            List<string> files = new List<string>();
-
-            if (Directory.Exists(Path))
-            {
-                List<string> subDirs;
-                if (Folders.Count == 0)
-                {
-                    subDirs = new List<string>(Directory.GetDirectories(Path));
-                }
-                else
-                {
-                    subDirs = new List<string>();
-
-                    foreach (string folder in Folders)
-                    {
-                        string dir = PathIO.Combine(Path, folder);
-                        if (Directory.Exists(dir) && !subDirs.Contains(dir))
-                        {
-                            subDirs.Add(dir);
-                        }
-                    }
-                }
-                //
-                void getFiles(string[] dirs)
-                {
-                    foreach (string dir in dirs)
-                    {
-                        var subdirs = Directory.EnumerateDirectories(dir).Where(_dir =>
-                        {
-                            if (IgnoredFolders != null)
-                            {
-                                foreach (string folder in IgnoredFolders)
-                                {
-                                    string ignoredDir = PathIO.Combine(Path, folder);
-                                    if (ignoredDir == _dir)
-                                    {
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true;
-                        }).ToArray();
-
-                        var _files = Directory.EnumerateFiles(dir).Where(_file =>
-                        {
-                            if (extensions.Contains(PathIO.GetExtension(_file)))
-                            {
-                                return blackList.All(p => !_file.EndsWith(p));
-                            }
-                            return false;
-                        });
-
-                        files.AddRange(_files);
-                        //
-                        if (subdirs.Length > 0)
-                        {
-                            getFiles(subdirs);
-                        }
-                    }
-                }
-
-                getFiles(subDirs.ToArray());
-            }
-
-            return files;
-        }*/
 
         public List<FileItem> GetFiles(List<string> extensions, List<string> blackList, GetFilesUpdate onProgress = null)
         {
@@ -237,8 +163,8 @@ namespace CodeBase
                 while (queue.Count > 0)
                 {
                     var pair = queue.Dequeue();
-                    bool is_match = pair.Value.All(r => r.IsMatch(pair.Key));
-                    list.Add(new FileItem(pair.Key, is_match));
+                    bool isMatch = pair.Value.All(r => r.IsMatch(pair.Key));
+                    list.Add(new FileItem(pair.Key, isMatch));
 
                     onProgress?.Invoke(queue.Count, 0, pair.Key);
                 }
