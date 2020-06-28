@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Diagnostics;
 using NotifyIcon = System.Windows.Forms.NotifyIcon;
-using System.Threading;
 
 /*
 using System.Text;
@@ -120,10 +117,17 @@ namespace CodeBase
             NotifyIcon = new NotifyIcon();
             var Hicon = Properties.Resources.CodeBaseLogo.GetHicon();
             NotifyIcon.Icon = System.Drawing.Icon.FromHandle(Hicon);
-            NotifyIcon.MouseClick += (sender, e) => {
+            NotifyIcon.MouseDoubleClick += (sender, e) =>
+            {
                 WindowState = WindowState.Normal;
                 Activate(); // brings this window to forward
             };
+            NotifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+            NotifyIcon.ContextMenuStrip.Items.Add(new System.Windows.Forms.ToolStripButton("Close", null, (s, e) => 
+            {
+                NotifyIcon.Visible = false;
+                Application.Current.Shutdown();
+            }));
         }
 
         #endregion
@@ -239,7 +243,7 @@ namespace CodeBase
                     WebClient.ProcessResponse(result, data =>
                     {
                         if (data != "1")
-                            MessageBox.Show(data);
+                            MessageHelper.Error(data);
                     });
                 });
             }
