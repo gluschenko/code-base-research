@@ -12,7 +12,7 @@ namespace CodeBase
                 // Backend
                 ".php", ".py", ".go", ".htaccess",
                 // Frontend & UI
-                ".html", ".htm", ".css", ".xaml", ".cshtml",
+                ".html", ".htm", ".css", ".scss", ".xaml", ".cshtml",
                 // JS
                 ".js", ".jsx", ".ts", ".tsx",
                 // .NET
