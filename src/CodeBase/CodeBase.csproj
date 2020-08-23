@@ -10,6 +10,7 @@
     <Copyright>Alexander Gluschenko</Copyright>
     <Product>Code Base Research</Product>
     <PackageId>Code Base Research</PackageId>
+    <AssemblyName>Code Base Research</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
