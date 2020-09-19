@@ -4,7 +4,7 @@ namespace CodeBase
 {
     public class InspectorConfig
     {
-        public static readonly List<string> CodeExtensions, FilesBlackList;
+        public static readonly HashSet<string> CodeExtensions, FilesBlackList;
 
         static InspectorConfig() 
         {
@@ -18,7 +18,7 @@ namespace CodeBase
                 // .NET
                 ".cs", ".vb",
                 // Java
-                ".java", ".kt",
+                ".java", ".kt", ".dart",
                 // Low-level
                 ".c", ".h", ".cpp", ".hpp", ".s",
                 // Shaders
@@ -28,6 +28,6 @@ namespace CodeBase
             FilesBlackList = List(".i.g.cs", ".g.i.cs", ".i.cs", ".g.cs", ".Designer.cs", "AssemblyInfo.cs");
         }
 
-        static List<T> List<T>(params T[] list) => new List<T>(list); 
+        static HashSet<T> List<T>(params T[] list) => new HashSet<T>(list); 
     }
 }

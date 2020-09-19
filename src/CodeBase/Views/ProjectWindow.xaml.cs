@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
+using CodeBase.Models;
 
 namespace CodeBase
 {
@@ -19,8 +15,7 @@ namespace CodeBase
     {
         public readonly Project[] Projects;
 
-        public ProjectWindow(Project project)
-            : this(new Project[] { project }) {}
+        public ProjectWindow(Project project) : this(new[] { project }) {}
 
         public ProjectWindow(Project[] Projects)
         {
@@ -28,8 +23,8 @@ namespace CodeBase
 
             this.Projects = Projects;
             Title = Title.Replace("{Title}", Projects[0]?.Title ?? "");
-            Width *= 2;
-            Height *= 1.5f;
+            Width *= 2.0;
+            Height *= 1.5;
 
             OutputTextBox.Text = "";
             foreach (var proj in Projects) 
@@ -312,27 +307,4 @@ namespace CodeBase
         }
     }
 
-    public class FilesListItem
-    {
-        public static Brush 
-            Default = GetBrush("#222"),
-            Green = GetBrush("#0F0"),
-            Red = GetBrush("#F00");
-
-        private static Brush GetBrush(string rgb) => 
-            new SolidColorBrush((Color) ColorConverter.ConvertFromString(rgb));
-
-        //
-
-        public string Text { get; set; }
-        public Brush Color { get; set; }
-
-        public FilesListItem(string text, Brush color)
-        {
-            Text = text;
-            Color = color;
-        }
-
-        public FilesListItem() : this("", Green) { }
-    }
 }

@@ -107,7 +107,7 @@ namespace CodeBase
             return new SolidColorBrush(color);
         }
 
-        public List<FileItem> GetFiles(List<string> extensions, List<string> blackList, GetFilesUpdate onProgress = null)
+        public List<FileItem> GetFiles(HashSet<string> extensions, HashSet<string> blackList, GetFilesUpdate onProgress = null)
         {
             string path = Path;
             var list = new List<FileItem>();
