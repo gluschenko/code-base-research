@@ -8,8 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Services\" />
-    <Folder Include="Views\" />
+    <Folder Include="Pages\" />
   </ItemGroup>
 
   <ItemGroup>
