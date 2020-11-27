@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CodeBase.Client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="400">
+        Title="Core Base Research 2.0" 
+        Height="400" 
+        Width="400">
     <Grid>
 
     </Grid>
