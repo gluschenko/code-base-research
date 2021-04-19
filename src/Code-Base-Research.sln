@@ -22,6 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_modern", "_modern", "{CBC8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBase.Domain", "CodeBase.Domain\CodeBase.Domain.csproj", "{31285ED4-E8E7-4C94-A8A0-9ACDF58CBF97}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".deploy", ".deploy", "{6512DFA9-0C70-4084-997B-16C22B696EB8}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
