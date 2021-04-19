@@ -1,0 +1,39 @@
+name: .NET Core Desktop
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ROOT: ./src
+      NUGET_AUTH_TOKEN: ${{secrets.token}} 
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: 📂 Files
+      working-directory: ${{env.ROOT}}
+      run: ls -R
+
+    - name: 🚀 Building CodeBase.Client
+      working-directory: ${{env.ROOT}}/CodeBase.Client
+      run: dotnet publish -c RELEASE -o out
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: builds
+        path: ${{env.ROOT}}/**/out
+        retention-days: 1
