@@ -63,11 +63,11 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.NUGET_READ_TOKEN}} 
 
     - name: 📂 Pack CodeBase.Client
-      working-directory: ${{env.ROOT}}
+      working-directory: ${{env.ROOT}}/CodeBase.Client/out
       run: |
         sudo apt-get update
         sudo apt-get install zip
-        zip -r -9 CodeBase.Client.zip ./CodeBase.Client/out/*
+        zip -r -9 ./CodeBase.Client.zip ./*
 
     - name: 📂 Files
       working-directory: ${{env.ROOT}}
@@ -89,7 +89,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./src/CodeBase.Client.zip
+        asset_path: ./src/CodeBase.Client/out/CodeBase.Client.zip
         asset_name: CodeBase.Client.zip
         asset_content_type: application/zip
 
