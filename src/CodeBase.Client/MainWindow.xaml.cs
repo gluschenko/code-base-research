@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using CodeBase.Domain.Models;
 using CodeBase.Domain.Services;
 
@@ -22,7 +23,7 @@ namespace CodeBase.Client
             }
             catch (Exception ex) 
             {
-                MessageBox.Show(typeof(ex).Name, ex.Message);
+                MessageBox.Show(ex.GetType().Name, ex.Message);
                 Close();
             }
 
@@ -32,8 +33,15 @@ namespace CodeBase.Client
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Width = AppData.Width;
-            Height = AppData.Height;
+            if (AppData.Width != default)
+            {
+                Width = AppData.Width;
+            }
+
+            if(AppData.Height != default)
+            {
+                Height = AppData.Height;
+            }
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -47,7 +55,7 @@ namespace CodeBase.Client
             }
             catch (Exception ex)
             {
-                MessageBox.Show(typeof(ex).Name, ex.Message);
+                MessageBox.Show(ex.GetType().Name, ex.Message);
             }
         }
     }

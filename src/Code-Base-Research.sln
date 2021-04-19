@@ -7,20 +7,20 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBase", "CodeBase\CodeBa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBase.Tests", "CodeBase.Tests\CodeBase.Tests.csproj", "{AF83194C-3DEB-41A5-93C2-238FEBC4428A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{C9B0B235-D1AA-46E8-8CBA-4AE7C371E7A8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{C9B0B235-D1AA-46E8-8CBA-4AE7C371E7A8}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBase.Client", "CodeBase.Client\CodeBase.Client.csproj", "{749F6F89-A17C-4E4D-A9C0-9EE64B77BFF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBase.Shared", "CodeBase.Shared\CodeBase.Shared.csproj", "{7415AECA-923E-4108-9290-B29F4E310D1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBase.Shared", "CodeBase.Shared\CodeBase.Shared.csproj", "{7415AECA-923E-4108-9290-B29F4E310D1B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{4B528BCA-1BF0-4836-A691-F314C9D993AA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_legacy", "_legacy", "{4B528BCA-1BF0-4836-A691-F314C9D993AA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modern", "Modern", "{CBC88DFE-F27E-4EE2-939C-67B6083203D9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_modern", "_modern", "{CBC88DFE-F27E-4EE2-939C-67B6083203D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeBase.Domain", "CodeBase.Domain\CodeBase.Domain.csproj", "{31285ED4-E8E7-4C94-A8A0-9ACDF58CBF97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeBase.Domain", "CodeBase.Domain\CodeBase.Domain.csproj", "{31285ED4-E8E7-4C94-A8A0-9ACDF58CBF97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
