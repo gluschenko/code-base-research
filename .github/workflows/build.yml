@@ -89,7 +89,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./CodeBase.Client/out/CodeBase.Client.zip
+        asset_path: ./CodeBase.Client.zip
         asset_name: CodeBase.Client.zip
         asset_content_type: application/zip
 
