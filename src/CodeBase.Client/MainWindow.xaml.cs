@@ -31,7 +31,7 @@ namespace CodeBase.Client
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
 
-            PageFrame.Navigate(typeof(MainPage));
+            PageFrame.Navigate(Activator.CreateInstance<MainPage>());
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
