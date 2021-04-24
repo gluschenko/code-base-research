@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeBase.Domain\CodeBase.Domain.csproj" />
-    <ProjectReference Include="..\CodeBase.Shared\CodeBase.Shared.csproj" />
   </ItemGroup>
 
 </Project>
