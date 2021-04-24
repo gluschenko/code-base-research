@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace CodeBase.Domain.Services
 {
-    public class ConfigLoader<T>
+    public class DataManager<T>
     {
         private readonly string _fileName;
 
-        public ConfigLoader(string fileName)
+        public DataManager(string fileName)
         {
             _fileName = fileName;
         }

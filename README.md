@@ -1,6 +1,6 @@
 # Code Base Research
 
-![](src/CodeBase/CodeBaseLogo.ico) 
+![](src/CodeBase.Client/Resources/CodeBaseLogo.ico) 
 
 Client-server utility made for collection of code metrics (client: WPF, backend: PHP)
 

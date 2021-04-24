@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Media;
 using PathIO = System.IO.Path;
@@ -26,7 +26,8 @@ namespace CodeBase
 
         public static explicit operator ProjectEntity(Project proj)
         {
-            return new ProjectEntity {
+            return new ProjectEntity 
+            {
                 Title = proj.Title,
                 Color = proj.Color,
                 LastEdit = proj.LastEdit,
@@ -38,7 +39,8 @@ namespace CodeBase
                 Lines = proj.Info.Volume.Lines,
                 Files = proj.Info.Volume.Files,
 
-                Extensions = proj.Info.ExtensionsVolume.Select(p => new EntityVolume {
+                Extensions = proj.Info.ExtensionsVolume.Select(p => new EntityVolume 
+                {
                     Title = p.Key,
                     SLOC = p.Value.SLOC,
                     Lines = p.Value.Lines,
@@ -49,10 +51,10 @@ namespace CodeBase
 
         public struct EntityVolume
         {
-            public string Title;
-            public int SLOC;
-            public int Lines;
-            public int Files;
+            public string Title { get; set; }
+            public int SLOC { get; set; }
+            public int Lines { get; set; }
+            public int Files { get; set; }
         }
     }
 
@@ -195,14 +197,13 @@ namespace CodeBase
         }
 
         //
-        static Random random;
+        static Random _random;
 
         private string RandomizeColor()
         {
-            if(random == null)
-                random = new Random(GetHashCode());
+            _random ??= new Random(GetHashCode());
 
-            int rgb = random.Next(0, 0xFFFFFF);
+            int rgb = _random.Next(0, 0xFFFFFF);
             Color = "#" + Convert.ToString(rgb, 16).PadLeft(6, '0');
             return Color;
         }
@@ -236,9 +237,9 @@ namespace CodeBase
 
     public struct CodeVolume
     {
-        public int SLOC;
-        public int Lines;
-        public int Files;
+        public int SLOC { get; set; }
+        public int Lines { get; set; }
+        public int Files { get; set; }
 
         public double Ratio { get => GetLineRatio(); }
 
@@ -256,11 +257,11 @@ namespace CodeBase
 
         public override string ToString() => $"{SLOC}/{Lines}";
 
-        public static CodeVolume operator +(CodeVolume A, CodeVolume B) => 
-            new CodeVolume(A.SLOC + B.SLOC, A.Lines + B.Lines, A.Files + B.Files);
+        public static CodeVolume operator +(CodeVolume a, CodeVolume b) => 
+            new CodeVolume(a.SLOC + b.SLOC, a.Lines + b.Lines, a.Files + b.Files);
 
-        public static CodeVolume operator -(CodeVolume A, CodeVolume B) => 
-            new CodeVolume(A.SLOC - B.SLOC, A.Lines - B.Lines, A.Files - B.Files);
+        public static CodeVolume operator -(CodeVolume a, CodeVolume b) => 
+            new CodeVolume(a.SLOC - b.SLOC, a.Lines - b.Lines, a.Files - b.Files);
     }
 
     public struct FileItem
