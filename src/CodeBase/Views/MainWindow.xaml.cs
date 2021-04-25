@@ -165,18 +165,20 @@ namespace CodeBase
 
         private void UpdateProjectsList()
         {
-            var list = new ObservableCollection<Project>(_projects.OrderBy(proj => -proj.LastEdit));
+            var list = _projects.OrderBy(proj => -proj.LastEdit).ToArray();
+
             _projects.Clear();
-            foreach (var proj in list) 
+            foreach (var item in list) 
             {
-                _projects.Add(proj);
+                _projects.Add(item);
             }
 
-            if (listBox.ItemsSource == null) 
+            if (listBox.ItemsSource == null)
             {
                 listBox.Items.Clear();
                 listBox.ItemsSource = _projects;
             }
+
             listBox.Items.Refresh();
             listBox.UpdateLayout();
         }

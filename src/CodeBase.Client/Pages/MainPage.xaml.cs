@@ -26,11 +26,12 @@ namespace CodeBase.Client.Pages
         {
             _projects ??= new ObservableCollection<Project>(_context.AppData.Projects);
 
-            _projects.Clear();
+            var list = _projects.OrderBy(proj => -proj.LastEdit).ToArray();
 
-            foreach (var proj in _projects.OrderBy(x => -x.LastEdit))
+            _projects.Clear();
+            foreach (var item in list)
             {
-                _projects.Add(proj);
+                _projects.Add(item);
             }
 
             if (listBox.ItemsSource == null)
@@ -38,6 +39,7 @@ namespace CodeBase.Client.Pages
                 listBox.Items.Clear();
                 listBox.ItemsSource = _projects;
             }
+
             listBox.Items.Refresh();
             listBox.UpdateLayout();
         }

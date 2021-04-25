@@ -16,7 +16,7 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0">
+        <StackPanel Grid.Column="0" Background="#333">
             <Label>1234</Label>
             <Label>1234</Label>
             <Label>1234</Label>
