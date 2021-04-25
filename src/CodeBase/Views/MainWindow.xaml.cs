@@ -7,34 +7,23 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using NotifyIcon = System.Windows.Forms.NotifyIcon;
 
-/*
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-*/
-
 namespace CodeBase
 {
     public partial class MainWindow : Window
     {
-        public DataManager<ApplicationData> DataManager = new DataManager<ApplicationData>("ApplicationData.json");
-        public ApplicationData Data;
+        public DataManager<ApplicationData> DataManager { get; set; }
+        public ApplicationData Data { get; set; }
 
-        private readonly ObservableCollection<Project> Projects;
+        private readonly ObservableCollection<Project> _projects;
 
-        public readonly Heart Heart;
-        private readonly Autorun Autorun;
-        private readonly Inspector Inspector;
+        private Heart _heart;
+        private readonly Autorun _autorun;
+        private readonly Inspector _inspector;
 
-        private AddProjectWindow AddProjectWindow;
-        private ServerAccessWindow ServerAccessWindow;
+        private AddProjectWindow _addProjectWindow;
+        private ServerAccessWindow _serverAccessWindow;
 
-        private NotifyIcon NotifyIcon;
+        private NotifyIcon _notifyIcon;
 
         private bool _isUpdateAssugned = false;
 
@@ -43,13 +32,15 @@ namespace CodeBase
             InitializeComponent();
             CheckRunningOnce();
             //
+            DataManager = new DataManager<ApplicationData>("ApplicationData.json");
+            //
             Load();
             //
-            Heart = new Heart(Data, () => StartInspector());
-            Autorun = new Autorun();
-            Inspector = new Inspector();
+            _heart = new Heart(Data, () => StartInspector());
+            _autorun = new Autorun();
+            _inspector = new Inspector();
             //
-            Projects = new ObservableCollection<Project>(Data.Projects);
+            _projects = new ObservableCollection<Project>(Data.Projects);
             UpdateProjectsList();
             //
             CreateTrayIcon();
@@ -59,14 +50,15 @@ namespace CodeBase
 
         ~MainWindow() 
         {
-            NotifyIcon.Dispose();
+            _notifyIcon.Dispose();
+            _heart = null;
         }
 
         #region Other Methods
 
         void BindWindowEvents()
         {
-            AutorunCheckBox.IsChecked = Autorun.GetState();
+            AutorunCheckBox.IsChecked = _autorun.GetState();
 
             // Поведение окна
             KeyDown += (sender, e) => { if (e.Key == Key.Tab) SendData(); };
@@ -74,20 +66,20 @@ namespace CodeBase
             Closing += (sender, e) => {
                 Hide();
                 ShowInTaskbar = false;
-                NotifyIcon.Visible = true;
+                _notifyIcon.Visible = true;
                 e.Cancel = true;
             };
 
             StateChanged += (sender, e) => {
                 if (WindowState == WindowState.Minimized)
                 {
-                    NotifyIcon.Visible = true;
+                    _notifyIcon.Visible = true;
                     ShowInTaskbar = false;
                 }
                 else
                 if (WindowState == WindowState.Normal)
                 {
-                    NotifyIcon.Visible = false;
+                    _notifyIcon.Visible = false;
                     ShowInTaskbar = true;
                 }
             };
@@ -114,18 +106,18 @@ namespace CodeBase
         void CreateTrayIcon() 
         {
             // Поведение иконки в tray
-            NotifyIcon = new NotifyIcon();
-            var Hicon = Properties.Resources.CodeBaseLogo.GetHicon();
-            NotifyIcon.Icon = System.Drawing.Icon.FromHandle(Hicon);
-            NotifyIcon.MouseDoubleClick += (sender, e) =>
+            _notifyIcon = new NotifyIcon();
+            var icon = Properties.Resources.CodeBaseLogo.GetHicon();
+            _notifyIcon.Icon = System.Drawing.Icon.FromHandle(icon);
+            _notifyIcon.MouseDoubleClick += (sender, e) =>
             {
                 WindowState = WindowState.Normal;
                 Activate(); // brings this window to forward
             };
-            NotifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            NotifyIcon.ContextMenuStrip.Items.Add(new System.Windows.Forms.ToolStripButton("Close", null, (s, e) => 
+            _notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+            _notifyIcon.ContextMenuStrip.Items.Add(new System.Windows.Forms.ToolStripButton("Close", null, (s, e) => 
             {
-                NotifyIcon.Visible = false;
+                _notifyIcon.Visible = false;
                 Application.Current.Shutdown();
             }));
         }
@@ -154,7 +146,7 @@ namespace CodeBase
         public void Save()
         {
             Data.ReceiverURL = WebMethods.ReceiverURL;
-            Data.Projects = Projects.ToArray();
+            Data.Projects = _projects.ToArray();
 
             Data.WindowWidth = Width;
             Data.WindowHeight = Height;
@@ -165,17 +157,17 @@ namespace CodeBase
 
         private void UpdateProjectsList()
         {
-            var list = new ObservableCollection<Project>(Projects.OrderBy(proj => -proj.LastEdit));
-            Projects.Clear();
+            var list = new ObservableCollection<Project>(_projects.OrderBy(proj => -proj.LastEdit));
+            _projects.Clear();
             foreach (var proj in list) 
             {
-                Projects.Add(proj);
+                _projects.Add(proj);
             }
 
             if (listBox.ItemsSource == null) 
             {
                 listBox.Items.Clear();
-                listBox.ItemsSource = Projects;
+                listBox.ItemsSource = _projects;
             }
             listBox.Items.Refresh();
             listBox.UpdateLayout();
@@ -187,12 +179,12 @@ namespace CodeBase
             {
                 _isUpdateAssugned = true;
 
-                Inspector.OnStart += () => 
+                _inspector.OnStart += () => 
                 {
                     StatusText.Content = "Wait...";
                 };
 
-                Inspector.OnUpdate += (stage, state) =>
+                _inspector.OnUpdate += (stage, state) =>
                 {
                     if (stage == InspectorStage.Progress) 
                     {
@@ -219,7 +211,7 @@ namespace CodeBase
                     }
                 };
 
-                Inspector.OnComplete += () =>
+                _inspector.OnComplete += () =>
                 {
                     UpdateProjectsList();
                     Save();
@@ -231,14 +223,14 @@ namespace CodeBase
                 };
             }
 
-            Inspector.Start(Projects.ToList(), Dispatcher);
+            _inspector.Start(_projects.ToList(), Dispatcher);
         }
 
         public void SendData()
         {
             if (Data.SendData)
             {
-                WebMethods.UpdateProjects(Data, Projects.Select(proj => (ProjectEntity)proj).ToArray(), result =>
+                WebMethods.UpdateProjects(Data, _projects.Select(proj => (ProjectEntity)proj).ToArray(), result =>
                 {
                     WebClient.ProcessResponse(result, data =>
                     {
@@ -256,23 +248,23 @@ namespace CodeBase
         private void AutorunCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
-            checkBox.IsChecked = Autorun.SetState(checkBox.IsChecked.Value, ex => {
+            checkBox.IsChecked = _autorun.SetState(checkBox.IsChecked.Value, ex => {
                 MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             });
         }
 
         private void AddProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            if (AddProjectWindow != null)
+            if (_addProjectWindow != null)
             {
-                AddProjectWindow.Close();
-                AddProjectWindow = null;
+                _addProjectWindow.Close();
+                _addProjectWindow = null;
             }
 
-            AddProjectWindow = new AddProjectWindow((project) =>
+            _addProjectWindow = new AddProjectWindow((project) =>
             {
-                Projects.Insert(0, project);
-                AddProjectWindow.Close();
+                _projects.Insert(0, project);
+                _addProjectWindow.Close();
                 //
                 UpdateProjectsList();
                 //
@@ -282,30 +274,30 @@ namespace CodeBase
                 Owner = this
             };
 
-            AddProjectWindow.Show();
+            _addProjectWindow.Show();
         }
 
         private void ServerAccessButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ServerAccessWindow != null)
+            if (_serverAccessWindow != null)
             {
-                ServerAccessWindow.Close();
-                ServerAccessWindow = null;
+                _serverAccessWindow.Close();
+                _serverAccessWindow = null;
             }
 
-            ServerAccessWindow = new ServerAccessWindow(Data, () => Save()) { Owner = this };
-            ServerAccessWindow.Show();
+            _serverAccessWindow = new ServerAccessWindow(Data, () => Save()) { Owner = this };
+            _serverAccessWindow.Show();
         }
 
         private void ProjectOpenButton_Click(object sender, RoutedEventArgs e)
         {
-            string title = (string)((Button)sender).Tag;
+            var title = (string)((Button)sender).Tag;
 
-            foreach (var proj in Projects)
+            foreach (var proj in _projects)
             {
                 if (proj.Title == title)
                 {
-                    ProjectWindow win = new ProjectWindow(proj) { Owner = this };
+                    var win = new ProjectWindow(proj) { Owner = this };
                     win.Show();
                 }
             }
@@ -313,19 +305,19 @@ namespace CodeBase
 
         private void ProjectDeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            string title = (string)((Button)sender).Tag;
+            var title = (string)((Button)sender).Tag;
 
-            foreach (var proj in Projects)
+            foreach (var proj in _projects)
             {
                 if (proj.Title == title)
                 {
-                    DeleteProjectDialog dialog = new DeleteProjectDialog(proj, () => {
-                        Projects.Remove(proj);
-                        //
+                    var dialog = new DeleteProjectDialog(proj, () => 
+                    {
+                        _projects.Remove(proj);
                         UpdateProjectsList();
-                        //
                         Save();
                     });
+
                     dialog.Show();
                 }
             }
@@ -333,17 +325,18 @@ namespace CodeBase
 
         private void ProjectEditButton_Click(object sender, RoutedEventArgs e)
         {
-            string title = (string)((Button)sender).Tag;
+            var title = (string)((Button)sender).Tag;
 
-            foreach (var proj in Projects)
+            foreach (var proj in _projects)
             {
                 if (proj.Title == title)
                 {
-                    EditProjectWindow win = new EditProjectWindow(proj, () => {
+                    var win = new EditProjectWindow(proj, () => 
+                    {
                         UpdateProjectsList();
-                        //
                         Save();
                     });
+
                     win.Show();
                 }
             }
@@ -357,45 +350,50 @@ namespace CodeBase
         private void SummaryButton_Click(object sender, RoutedEventArgs e)
         {
             Project 
-                All     = new Project("", "All projects")     { Info = new ProjectInfo() },
-                Public  = new Project("", "Public projects")  { Info = new ProjectInfo() },
-                Private = new Project("", "Private projects") { Info = new ProjectInfo() };
+                all      = new Project("", "All projects")     { Info = new ProjectInfo() },
+                @public  = new Project("", "Public projects")  { Info = new ProjectInfo() },
+                @private = new Project("", "Private projects") { Info = new ProjectInfo() };
 
-            foreach (var proj in Projects)
+            foreach (var proj in _projects)
             {
-                All.Info.Volume += proj.Info.Volume;
-                merge(All.Info.ExtensionsVolume, proj.Info.ExtensionsVolume);
+                all.Info.Volume += proj.Info.Volume;
+                Merge(all.Info.ExtensionsVolume, proj.Info.ExtensionsVolume);
 
                 if (proj.IsPublic)
                 {
-                    Public.Info.Volume += proj.Info.Volume;
-                    merge(Public.Info.ExtensionsVolume, proj.Info.ExtensionsVolume);
+                    @public.Info.Volume += proj.Info.Volume;
+                    Merge(@public.Info.ExtensionsVolume, proj.Info.ExtensionsVolume);
                 }
                 else
                 {
-                    Private.Info.Volume += proj.Info.Volume;
-                    merge(Private.Info.ExtensionsVolume, proj.Info.ExtensionsVolume);
+                    @private.Info.Volume += proj.Info.Volume;
+                    Merge(@private.Info.ExtensionsVolume, proj.Info.ExtensionsVolume);
                 }
 
-                All.Info.Errors.AddRange(proj.Info.Errors.Select(t => $"{proj.Title} -> {t}"));
+                all.Info.Errors.AddRange(proj.Info.Errors.Select(t => $"{proj.Title} -> {t}"));
                 //
-                static void merge(Dictionary<string, CodeVolume> A, Dictionary<string, CodeVolume> B)
+                static void Merge(Dictionary<string, CodeVolume> a, Dictionary<string, CodeVolume> b)
                 {
-                    foreach (var pair in B)
+                    foreach (var pair in b)
                     {
-                        if (!A.ContainsKey(pair.Key))
-                            A.Add(pair.Key, pair.Value);
+                        if (!a.ContainsKey(pair.Key))
+                        {
+                            a[pair.Key] = pair.Value;
+                        }
                         else
-                            A[pair.Key] += pair.Value;
+                        {
+                            a[pair.Key] += pair.Value;
+                        }
                     }
                 }
             }
 
-            ProjectWindow win = new ProjectWindow(new Project[] { All, Public, Private })
+            var win = new ProjectWindow(new Project[] { all, @public, @private })
             {
                 Title = "Summary",
                 Owner = this
             };
+
             win.Show();
         }
 

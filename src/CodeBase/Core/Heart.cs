@@ -5,32 +5,31 @@ namespace CodeBase
 {
     public class Heart
     {
-        private ApplicationData Data;
-        private Action onTick;
-        //
-        private DispatcherTimer timer;
-        private long lastTime;
+        private readonly ApplicationData _data;
+        private readonly Action _onTick;
+        private readonly DispatcherTimer _timer;
+        private long _lastTime;
 
-        public Heart(ApplicationData Data, Action onTick)
+        public Heart(ApplicationData data, Action onTick)
         {
-            this.Data = Data;
-            this.onTick = onTick;
+            _data = data;
+            _onTick = onTick;
 
-            lastTime = UnixTime.Now();
+            _lastTime = UnixTime.Now();
 
-            timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            timer.Tick += Tick;
-            timer.Start();
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _timer.Tick += Tick;
+            _timer.Start();
         }
 
         private void Tick(object sender, EventArgs args)
         {
-            long now = UnixTime.Now();
+            var now = UnixTime.Now();
 
-            if (now - lastTime > Data.UpdateInterval * 60)
+            if (now - _lastTime > _data.UpdateInterval * 60)
             {
-                onTick?.Invoke();
-                lastTime = now;
+                _onTick?.Invoke();
+                _lastTime = now;
             }
         }
     }
