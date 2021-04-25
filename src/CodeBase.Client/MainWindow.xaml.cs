@@ -8,19 +8,19 @@ namespace CodeBase.Client
 {
     public partial class MainWindow : Window
     {
-        public DataManager<AppData> DataManager { get; set; }
-        public AppData AppData { get; set; }
-        public Context Context { get; set; }
+        private readonly DataManager<AppData> _dataManager;
+        private readonly AppData _appData;
+        private readonly Context _context;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DataManager = new DataManager<AppData>("prefs.json");
+            _dataManager = new DataManager<AppData>("prefs.json");
 
             try
             {
-                AppData = DataManager.Load();
+                _appData = _dataManager.Load();
             }
             catch (Exception ex) 
             {
@@ -28,28 +28,33 @@ namespace CodeBase.Client
                 Close();
             }
 
+            _context = new Context 
+            {
+                AppData = _appData,
+            };
+
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
 
-            PageFrame.Navigate(Activator.CreateInstance<MainPage>());
+            PageFrame.Navigate(new MainPage(_context));
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Width = AppData.WindowWidth ?? Width;
-            Height = AppData.WindowHeight ?? Height;
-            WindowState = AppData.WindowState ?? WindowState;
+            Width = _appData.WindowWidth ?? Width;
+            Height = _appData.WindowHeight ?? Height;
+            WindowState = _appData.WindowState ?? WindowState;
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            AppData.WindowWidth = Width;
-            AppData.WindowHeight = Height;
-            AppData.WindowState = WindowState;
+            _appData.WindowWidth = Width;
+            _appData.WindowHeight = Height;
+            _appData.WindowState = WindowState;
 
             try
             {
-                DataManager.Save(AppData);
+                _dataManager.Save(_appData);
             }
             catch (Exception ex)
             {

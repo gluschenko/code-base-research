@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace CodeBase.Domain.Models
 {
@@ -12,7 +14,7 @@ namespace CodeBase.Domain.Models
         public int UpdateInterval { get; set; } = 60;
         public string ReceiverURL { get; set; } = "";
         public string UserID { get; set; } = "";
-        public string Token { get; set; } = "";
-        //public IEnumerable<> Projects = new Project[0];
+        public string UserToken { get; set; } = "";
+        public IEnumerable<Project> Projects { get; set; } = Array.Empty<Project>();
     }
 }

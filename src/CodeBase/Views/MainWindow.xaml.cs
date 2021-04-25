@@ -11,8 +11,8 @@ namespace CodeBase
 {
     public partial class MainWindow : Window
     {
-        public DataManager<ApplicationData> DataManager { get; set; }
-        public ApplicationData Data { get; set; }
+        private DataManager<ApplicationData> _dataManager;
+        private ApplicationData _appData;
 
         private readonly ObservableCollection<Project> _projects;
 
@@ -32,15 +32,15 @@ namespace CodeBase
             InitializeComponent();
             CheckRunningOnce();
             //
-            DataManager = new DataManager<ApplicationData>("ApplicationData.json");
+            _dataManager = new DataManager<ApplicationData>("ApplicationData.json");
             //
             Load();
             //
-            _heart = new Heart(Data, () => StartInspector());
+            _heart = new Heart(_appData, () => StartInspector());
             _autorun = new Autorun();
             _inspector = new Inspector();
             //
-            _projects = new ObservableCollection<Project>(Data.Projects);
+            _projects = new ObservableCollection<Project>(_appData.Projects);
             UpdateProjectsList();
             //
             CreateTrayIcon();
@@ -61,16 +61,24 @@ namespace CodeBase
             AutorunCheckBox.IsChecked = _autorun.GetState();
 
             // Поведение окна
-            KeyDown += (sender, e) => { if (e.Key == Key.Tab) SendData(); };
+            KeyDown += (sender, e) => 
+            { 
+                if (e.Key == Key.Tab)
+                {
+                    SendData();
+                }
+            };
 
-            Closing += (sender, e) => {
+            Closing += (sender, e) => 
+            {
                 Hide();
                 ShowInTaskbar = false;
                 _notifyIcon.Visible = true;
                 e.Cancel = true;
             };
 
-            StateChanged += (sender, e) => {
+            StateChanged += (sender, e) => 
+            {
                 if (WindowState == WindowState.Minimized)
                 {
                     _notifyIcon.Visible = true;
@@ -126,33 +134,33 @@ namespace CodeBase
 
         #region Load & Save methods
 
-        public void Load()
+        private void Load()
         {
-            Data = DataManager.Load(ex => {
+            _appData = _dataManager.Load(ex => {
                 MessageHelper.ThrowException(ex);
                 Close();
             });
             //
-            WebMethods.ReceiverURL = Data.ReceiverURL ?? "";
+            WebMethods.ReceiverURL = _appData.ReceiverURL ?? "";
             
-            if (Data.WindowWidth > 0)
-                Width = Data.WindowWidth;
-            if (Data.WindowHeight > 0)
-                Height = Data.WindowHeight;
+            if (_appData.WindowWidth > 0)
+                Width = _appData.WindowWidth;
+            if (_appData.WindowHeight > 0)
+                Height = _appData.WindowHeight;
 
-            WindowState = Data.WindowState;
+            WindowState = _appData.WindowState;
         }
 
-        public void Save()
+        private void Save()
         {
-            Data.ReceiverURL = WebMethods.ReceiverURL;
-            Data.Projects = _projects.ToArray();
+            _appData.ReceiverURL = WebMethods.ReceiverURL;
+            _appData.Projects = _projects.ToArray();
 
-            Data.WindowWidth = Width;
-            Data.WindowHeight = Height;
-            Data.WindowState = WindowState;
+            _appData.WindowWidth = Width;
+            _appData.WindowHeight = Height;
+            _appData.WindowState = WindowState;
             //
-            DataManager.Save(Data, MessageHelper.ThrowException);
+            _dataManager.Save(_appData, MessageHelper.ThrowException);
         }
 
         private void UpdateProjectsList()
@@ -228,9 +236,9 @@ namespace CodeBase
 
         public void SendData()
         {
-            if (Data.SendData)
+            if (_appData.SendData)
             {
-                WebMethods.UpdateProjects(Data, _projects.Select(proj => (ProjectEntity)proj).ToArray(), result =>
+                WebMethods.UpdateProjects(_appData, _projects.Select(proj => (ProjectEntity)proj).ToArray(), result =>
                 {
                     WebClient.ProcessResponse(result, data =>
                     {
@@ -265,9 +273,7 @@ namespace CodeBase
             {
                 _projects.Insert(0, project);
                 _addProjectWindow.Close();
-                //
                 UpdateProjectsList();
-                //
                 Save();
             })
             {
@@ -285,7 +291,7 @@ namespace CodeBase
                 _serverAccessWindow = null;
             }
 
-            _serverAccessWindow = new ServerAccessWindow(Data, () => Save()) { Owner = this };
+            _serverAccessWindow = new ServerAccessWindow(_appData, () => Save()) { Owner = this };
             _serverAccessWindow.Show();
         }
 
