@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -15,11 +16,13 @@ namespace CodeBase.Client
         private readonly DataManager<AppData> _dataManager;
         private readonly AppData _appData;
         private readonly Context _context;
+        private readonly HashSet<Page> _activePages;
 
         public MainWindow()
         {
             InitializeComponent();
 
+            _activePages = new HashSet<Page>();
             _dataManager = new DataManager<AppData>("prefs.json");
 
             try
@@ -40,9 +43,8 @@ namespace CodeBase.Client
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
 
-            PageFrame.Navigate(new MainPage(_context));
-
             FillSidebarMenu();
+            Navigate(typeof(MainPage));
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -73,9 +75,10 @@ namespace CodeBase.Client
             var pages = GetType().Assembly.GetTypes()
                 .Where(x => x.IsSubclassOf(typeof(Page)))
                 .Select(x => new 
-                { 
-                    PageType = x, 
-                    Descriptor = (PageDescriptorAttribute)x.GetCustomAttributes().FirstOrDefault(x => x is PageDescriptorAttribute),
+                {
+                    Type = x, 
+                    Descriptor = x.GetCustomAttributes()
+                        .FirstOrDefault(x => x is PageDescriptorAttribute) as PageDescriptorAttribute,
                 })
                 .OrderBy(x => x.Descriptor?.Order ?? 0)
                 .ToArray();
@@ -84,7 +87,48 @@ namespace CodeBase.Client
             SidebarMenu.ItemsSource = pages.Select(x => new PageLink 
             {
                 Title = x.Descriptor.Title,
+                PageTypeName = x.Type.Name,
             });
+        }
+
+        private void SidebarItem_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var pageTypeName = (sender as FrameworkElement).Tag?.ToString() ?? "";
+
+            var pageType = GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == pageTypeName);
+
+            if (pageType is null)
+            {
+                return;
+            }
+
+            Navigate(pageType);
+        }
+
+        private void Navigate(Type pageType)
+        {
+            var pageDescriptor = pageType.GetCustomAttributes()
+                .FirstOrDefault(x => x is PageDescriptorAttribute) as PageDescriptorAttribute;
+
+            if (pageDescriptor is null)
+            {
+                return;
+            }
+
+            var pageItem = _activePages.FirstOrDefault(x => x.GetType() == pageType);
+
+            if (pageDescriptor.Lifetime == PageLifetime.Transient || pageItem == null)
+            {
+                if (pageItem is not null)
+                {
+                    _activePages.Remove(pageItem);
+                }
+
+                pageItem = (Page)Activator.CreateInstance(pageType, args: _context);
+                _activePages.Add(pageItem);
+            }
+
+            PageFrame.Navigate(pageItem);
         }
     }
 }

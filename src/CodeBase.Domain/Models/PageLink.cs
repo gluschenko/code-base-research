@@ -3,5 +3,6 @@
     public class PageLink
     {
         public string Title { get; set; }
+        public string PageTypeName { get; set; }
     }
 }
