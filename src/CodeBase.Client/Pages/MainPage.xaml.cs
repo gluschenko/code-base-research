@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using CodeBase.Domain;
 using CodeBase.Domain.Models;
 using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
+    [PageDescriptor("Projects", 1)]
     public partial class MainPage : Page
     {
         private ObservableCollection<Project> _projects;
@@ -15,10 +16,9 @@ namespace CodeBase.Client.Pages
 
         public MainPage(Context context)
         {
-            InitializeComponent();
-
             _context = context;
 
+            InitializeComponent();
             UpdateProjectsList();
         }
 
@@ -34,14 +34,14 @@ namespace CodeBase.Client.Pages
                 _projects.Add(item);
             }
 
-            if (listBox.ItemsSource == null)
+            if (ProjectsListBox.ItemsSource == null)
             {
-                listBox.Items.Clear();
-                listBox.ItemsSource = _projects;
+                ProjectsListBox.Items.Clear();
+                ProjectsListBox.ItemsSource = _projects;
             }
 
-            listBox.Items.Refresh();
-            listBox.UpdateLayout();
+            ProjectsListBox.Items.Refresh();
+            ProjectsListBox.UpdateLayout();
         }
 
         #region Window Events

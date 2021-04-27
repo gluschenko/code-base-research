@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using CodeBase.Client.Pages;
+using CodeBase.Domain;
 using CodeBase.Domain.Models;
 using CodeBase.Domain.Services;
 
@@ -37,6 +41,8 @@ namespace CodeBase.Client
             Closing += MainWindow_Closing;
 
             PageFrame.Navigate(new MainPage(_context));
+
+            FillSidebarMenu();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -60,6 +66,25 @@ namespace CodeBase.Client
             {
                 MessageHelper.Error(ex.Message);
             }
+        }
+
+        private void FillSidebarMenu()
+        {
+            var pages = GetType().Assembly.GetTypes()
+                .Where(x => x.IsSubclassOf(typeof(Page)))
+                .Select(x => new 
+                { 
+                    PageType = x, 
+                    Descriptor = (PageDescriptorAttribute)x.GetCustomAttributes().FirstOrDefault(x => x is PageDescriptorAttribute),
+                })
+                .OrderBy(x => x.Descriptor?.Order ?? 0)
+                .ToArray();
+
+            SidebarMenu.Items.Clear();
+            SidebarMenu.ItemsSource = pages.Select(x => new PageLink 
+            {
+                Title = x.Descriptor.Title,
+            });
         }
     }
 }

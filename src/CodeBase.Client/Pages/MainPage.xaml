@@ -18,16 +18,16 @@
         </Grid>
 
         <ScrollViewer Margin="0,51,0,51" RenderTransformOrigin="0.5,0.5">
-            <ItemsControl x:Name="listBox" HorizontalContentAlignment="Stretch" Margin="5" Background="{x:Null}">
+            <ItemsControl x:Name="ProjectsListBox" HorizontalContentAlignment="Stretch" Margin="5" Background="{x:Null}">
 
-                <models:Project x:Name="_1" Title="Lorem ipsum" Location="www"/>
-                <models:Project x:Name="_2" Title="Test" Location="www"/>
-                <models:Project x:Name="_3" Title="Test test test" Location="www"/>
-                <models:Project x:Name="_4" Title="Test test test" Location="www"/>
-                <models:Project x:Name="_5" Title="Test test test" Location="www"/>
-                <models:Project x:Name="_6" Title="Test test test" Location="www"/>
-                <models:Project x:Name="_7" Title="Test test test" Location="www"/>
-                <models:Project x:Name="_8" Title="Test test test" Location="www"/>
+                <models:Project Title="Lorem ipsum" Location="www"/>
+                <models:Project Title="Test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

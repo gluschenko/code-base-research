@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CodeBase.Client"
+        xmlns:models="clr-namespace:CodeBase.Domain.Models;assembly=CodeBase.Domain" 
         mc:Ignorable="d"
         Title="Core Base Research 2.0" 
         Height="400" 
@@ -16,12 +17,32 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Background="#333">
-            <Label>1234</Label>
-            <Label>1234</Label>
-            <Label>1234</Label>
-            <Label>1234</Label>
-        </StackPanel>
+        <Grid Grid.Column="0" Background="#333">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="SidebarMenu" HorizontalContentAlignment="Stretch">
+
+                    <models:PageLink Title="Lorem ipsum #1" />
+                    <models:PageLink Title="Lorem ipsum #2" />
+                    <models:PageLink Title="Lorem ipsum #3" />
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border x:Name="border" BorderThickness="3,0,0,0" BorderBrush="{Binding Path=BrushColor}">
+                                <Grid>
+                                    <Label Content="{Binding Path=Title}" FontSize="16" Margin="0,4" Foreground="#aaa" />
+                                </Grid>
+                            </Border>
+                            <DataTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#fff" />
+                                </Trigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+            </ScrollViewer>
+        </Grid>
 
         <Grid Grid.Column="1">
             <Frame x:Name="PageFrame"></Frame>
