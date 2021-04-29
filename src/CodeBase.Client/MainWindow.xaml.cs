@@ -79,7 +79,8 @@ namespace CodeBase.Client
                     Type = x, 
                     Descriptor = x.GetCustomAttributes().OfType<PageDescriptorAttribute>().FirstOrDefault(),
                 })
-                .OrderBy(x => x.Descriptor?.Order ?? 0)
+                .Where(x => x.Descriptor is not null)
+                .OrderBy(x => x.Descriptor.Order)
                 .ToArray();
 
             SidebarMenu.Items.Clear();
