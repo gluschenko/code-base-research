@@ -9,7 +9,7 @@ using CodeBase.Domain;
 using CodeBase.Domain.Models;
 using CodeBase.Domain.Services;
 
-namespace CodeBase.Client
+namespace CodeBase.Client.Views
 {
     public partial class MainWindow : Window
     {
