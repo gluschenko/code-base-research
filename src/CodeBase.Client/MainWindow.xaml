@@ -8,9 +8,9 @@
         mc:Ignorable="d"
         Title="Core Base Research 2.0" 
         Height="400" 
-        Width="400"
+        Width="600"
         MinHeight="400" 
-        MinWidth="400">
+        MinWidth="600">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>

@@ -77,8 +77,7 @@ namespace CodeBase.Client
                 .Select(x => new 
                 {
                     Type = x, 
-                    Descriptor = x.GetCustomAttributes()
-                        .FirstOrDefault(x => x is PageDescriptorAttribute) as PageDescriptorAttribute,
+                    Descriptor = x.GetCustomAttributes().OfType<PageDescriptorAttribute>().FirstOrDefault(),
                 })
                 .OrderBy(x => x.Descriptor?.Order ?? 0)
                 .ToArray();
@@ -108,7 +107,7 @@ namespace CodeBase.Client
         private void Navigate(Type pageType)
         {
             var pageDescriptor = pageType.GetCustomAttributes()
-                .FirstOrDefault(x => x is PageDescriptorAttribute) as PageDescriptorAttribute;
+                .OfType<PageDescriptorAttribute>().FirstOrDefault();
 
             if (pageDescriptor is null)
             {
