@@ -196,13 +196,13 @@ namespace CodeBase.Domain.Models
 
         public override string ToString() => $"{SLOC}/{Lines}";
 
-        public double Ratio 
+        public double Ratio
             => Lines != 0 ? Math.Round((double)SLOC / Lines, 4) : 1;
 
-        public static CodeVolume operator +(CodeVolume a, CodeVolume b) 
+        public static CodeVolume operator +(CodeVolume a, CodeVolume b)
             => new(a.SLOC + b.SLOC, a.Lines + b.Lines, a.Files + b.Files);
 
-        public static CodeVolume operator -(CodeVolume a, CodeVolume b) 
+        public static CodeVolume operator -(CodeVolume a, CodeVolume b)
             => new(a.SLOC - b.SLOC, a.Lines - b.Lines, a.Files - b.Files);
     }
 

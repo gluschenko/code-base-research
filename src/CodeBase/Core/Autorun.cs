@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Win32;
 using System.Security.Permissions;
+using Microsoft.Win32;
 
 namespace CodeBase
 {
@@ -9,14 +9,18 @@ namespace CodeBase
     {
         const string RegSubKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run\";
 
-        private string AppName {
-            get {
+        private string AppName
+        {
+            get
+            {
                 return Path.GetFileNameWithoutExtension(AppPath).ToUpper();
             }
         }
 
-        private string AppPath {
-            get {
+        private string AppPath
+        {
+            get
+            {
                 return System.Reflection.Assembly.GetExecutingAssembly().Location;
             }
         }
@@ -24,7 +28,7 @@ namespace CodeBase
         public RegistryKey GetSubKey()
         {
             RegistryPermission Permission = new RegistryPermission(RegistryPermissionAccess.AllAccess, RegSubKey);
-            
+
             return Registry.CurrentUser.OpenSubKey(RegSubKey, true);
         }
 
@@ -57,7 +61,8 @@ namespace CodeBase
                     subkey.Close();
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 onError?.Invoke(ex);
             }
 

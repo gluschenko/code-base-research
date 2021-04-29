@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CodeBase
 {
@@ -30,7 +20,7 @@ namespace CodeBase
             ReceiverURL.Text = Data.ReceiverURL != "" ? Data.ReceiverURL : App.DefaultReceiverURL;
             UserID.Text = Data.UserID;
 
-            Closed += (s,e) => onDone?.Invoke();
+            Closed += (s, e) => onDone?.Invoke();
 
             //
 
@@ -38,13 +28,16 @@ namespace CodeBase
             SendDataCheckBox.IsChecked = Data.SendData;
             UpdateIntervalTextBox.Text = Data.UpdateInterval.ToString();
 
-            AutoUpdateCheckBox.Click += (sender, e) => {
+            AutoUpdateCheckBox.Click += (sender, e) =>
+            {
                 Data.AutoUpdate = AutoUpdateCheckBox.IsChecked.Value;
             };
-            SendDataCheckBox.Click += (sender, e) => {
+            SendDataCheckBox.Click += (sender, e) =>
+            {
                 Data.SendData = SendDataCheckBox.IsChecked.Value;
             };
-            UpdateIntervalTextBox.TextChanged += (sender, e) => {
+            UpdateIntervalTextBox.TextChanged += (sender, e) =>
+            {
                 if (int.TryParse(UpdateIntervalTextBox.Text, out int m))
                 {
                     Data.UpdateInterval = m;
@@ -54,7 +47,8 @@ namespace CodeBase
 
             //
 
-            Secure.CheckLogin(logged => {
+            Secure.CheckLogin(logged =>
+            {
                 if (!logged) Data.Token = "";
                 WakeUp();
             });
@@ -128,7 +122,8 @@ namespace CodeBase
 
         public void CheckLogin(Action<bool> onDone)
         {
-            WebMethods.CheckLogin(Data, result => {
+            WebMethods.CheckLogin(Data, result =>
+            {
                 WebClient.ProcessResponse(result, data =>
                 {
                     bool logged = data == "1";

@@ -10,7 +10,7 @@ namespace CodeBase
     public delegate void InspectUpdateHandler(InspectorStage stage, InspectState state);
     public delegate void InspectCompleteHandler();
 
-    public struct InspectState 
+    public struct InspectState
     {
         public int Used { get; set; }
         public int All { get; set; }
@@ -40,7 +40,7 @@ namespace CodeBase
             _thread = new Thread(run) { IsBackground = true };
             _thread.Start();
 
-            void run() 
+            void run()
             {
                 try
                 {
@@ -54,7 +54,7 @@ namespace CodeBase
             }
         }
 
-        private void Stop() 
+        private void Stop()
         {
             if (_thread != null)
             {
@@ -76,14 +76,14 @@ namespace CodeBase
 
             foreach (var project in projects)
             {
-                ProcessUpdate(InspectorStage.Progress, new InspectState 
-                { 
-                    Used = ++i, 
-                    All = projects.Count 
+                ProcessUpdate(InspectorStage.Progress, new InspectState
+                {
+                    Used = ++i,
+                    All = projects.Count
                 });
                 //
                 var projectPath = project.Path.Replace('\\', '/');
-                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) => 
+                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) =>
                 {
                     ProcessUpdate(InspectorStage.Progress2, new InspectState
                     {
@@ -104,7 +104,7 @@ namespace CodeBase
                 j = 0;
                 foreach (var file in files)
                 {
-                    if (j % 10 == 0) 
+                    if (j % 10 == 0)
                     {
                         ProcessUpdate(InspectorStage.Progress2, new InspectState
                         {
@@ -118,7 +118,7 @@ namespace CodeBase
                     {
                         allFiles.Add(file.Path);
 
-                        if (allFiles.Count % 10 == 0) 
+                        if (allFiles.Count % 10 == 0)
                         {
                             ProcessUpdate(InspectorStage.FetchingFiles, new InspectState
                             {
@@ -137,7 +137,7 @@ namespace CodeBase
                 {
                     if (!file.IsMatch) continue;
                     //
-                    if (j % 10 == 0) 
+                    if (j % 10 == 0)
                     {
                         ProcessUpdate(InspectorStage.Progress2, new InspectState
                         {
@@ -163,7 +163,7 @@ namespace CodeBase
                             long newLastEdit = UnixTime.ToTimestamp(File.GetLastWriteTime(file.Path));
                             project.LastEdit = Math.Max(project.LastEdit, newLastEdit);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             project.Info.Error($"File '{file.Path}' thrown {ex.GetType().Name}");
                         }

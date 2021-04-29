@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 
 namespace CodeBase
 {
@@ -11,7 +11,7 @@ namespace CodeBase
     {
         private static HttpClient client;
 
-        public static readonly Action<HttpStatusCode> HTTPError = (code) => 
+        public static readonly Action<HttpStatusCode> HTTPError = (code) =>
         {
             MessageHelper.Error($"{(int)code}/{code}", "HTTP Error");
         };

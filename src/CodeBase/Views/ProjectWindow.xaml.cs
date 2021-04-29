@@ -15,7 +15,7 @@ namespace CodeBase
     {
         public readonly Project[] Projects;
 
-        public ProjectWindow(Project project) : this(new[] { project }) {}
+        public ProjectWindow(Project project) : this(new[] { project }) { }
 
         public ProjectWindow(Project[] Projects)
         {
@@ -27,12 +27,14 @@ namespace CodeBase
             Height *= 1.5;
 
             OutputTextBox.Text = "";
-            foreach (var proj in Projects) 
+            foreach (var proj in Projects)
             {
-                try {
+                try
+                {
                     OutputTextBox.Text += GetText(proj);
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     OutputTextBox.Text += ex.ToString();
                 }
             }
@@ -52,17 +54,17 @@ namespace CodeBase
 
             var text = new StringBuilder();
 
-            void push(string line) 
+            void push(string line)
             {
                 text.Append(line);
                 text.Append(Environment.NewLine);
             }
             //
-            if(Project.Title != "")
+            if (Project.Title != "")
                 push(Project.Title);
-            if(Project.Path != "")
+            if (Project.Path != "")
                 push($"Path: {Project.Path}");
-            if(Project.LastEdit != 0)
+            if (Project.LastEdit != 0)
                 push($"Last edit: {UnixTime.ToDateTime(Project.LastEdit)}");
 
             push("");
@@ -129,14 +131,14 @@ namespace CodeBase
             return text.ToString();
         }
 
-        public void Freeze(bool state, string message = "Wait...") 
+        public void Freeze(bool state, string message = "Wait...")
         {
-            if (state) 
+            if (state)
             {
                 FreezeOverlay.Visibility = Visibility.Visible;
                 TabControl.Effect = new BlurEffect() { Radius = 10, KernelType = KernelType.Gaussian };
             }
-            else 
+            else
             {
                 FreezeOverlay.Visibility = Visibility.Hidden;
                 TabControl.Effect = null;
@@ -155,7 +157,7 @@ namespace CodeBase
         {
             if (Projects == null) return;
 
-            if (SourceFilesList.Items.Count == 0) 
+            if (SourceFilesList.Items.Count == 0)
             {
                 foreach (var proj in Projects)
                 {
@@ -163,15 +165,18 @@ namespace CodeBase
                     {
                         Freeze();
 
-                        Task.Run(() => {
-                            var files = proj.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, 
-                                (_files, _dirs, _currentDir) => {
+                        Task.Run(() =>
+                        {
+                            var files = proj.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList,
+                                (_files, _dirs, _currentDir) =>
+                                {
                                     Dispatcher.Invoke(() => Freeze($"{_currentDir}\nForlders: {_dirs} | Files: {_files}"));
                                 });
 
                             var projectString = $"Project: {proj.Path} ({files.Count} files)";
 
-                            Dispatcher.Invoke(() => {
+                            Dispatcher.Invoke(() =>
+                            {
                                 SourceFilesList.Items.Add(new FilesListItem(projectString, FilesListItem.Default));
 
                                 foreach (var file in files)
@@ -201,19 +206,22 @@ namespace CodeBase
                     {
                         Freeze();
 
-                        var task = Task.Run(() => {
+                        var task = Task.Run(() =>
+                        {
                             var files = new List<FilesListItem>();
                             var git_files = GitIgnoreReader
                                 .Find(proj.Path, SearchOption.AllDirectories)
                                 .Select(p => GitIgnoreReader.Load(p));
 
-                            Dispatcher.Invoke(() => {
-                                foreach (var git_file in git_files) {
+                            Dispatcher.Invoke(() =>
+                            {
+                                foreach (var git_file in git_files)
+                                {
                                     GitIgnoreList.Items.Add(new FilesListItem(git_file.Path, FilesListItem.Default));
 
                                     foreach (var rule in git_file.Rules)
                                     {
-                                        var item = new FilesListItem($"{rule.Source} -> {rule.Pattern}" + (rule.IsNegative ? " [NEGATIVE]" : ""), 
+                                        var item = new FilesListItem($"{rule.Source} -> {rule.Pattern}" + (rule.IsNegative ? " [NEGATIVE]" : ""),
                                             rule.IsValid ? FilesListItem.Green : FilesListItem.Red);
                                         GitIgnoreList.Items.Add(item);
                                     }

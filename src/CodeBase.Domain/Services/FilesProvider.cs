@@ -11,19 +11,19 @@ namespace CodeBase.Domain.Services
 
         }
 
-        public IEnumerable<string> GetFilesList(string basePath, string[] filters) 
+        public IEnumerable<string> GetFilesList(string basePath, string[] filters)
         {
             GetFilesListFromGit(basePath);
 
             return new List<string>();
         }
 
-        public IEnumerable<FileData> GetFilesData() 
+        public IEnumerable<FileData> GetFilesData()
         {
             return null;
         }
 
-        private void GetFilesListFromGit(string basePath) 
+        private void GetFilesListFromGit(string basePath)
         {
             using var powershell = PowerShell.Create();
             var results = powershell

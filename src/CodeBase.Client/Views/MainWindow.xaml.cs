@@ -29,13 +29,13 @@ namespace CodeBase.Client.Views
             {
                 _appData = _dataManager.Load();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MessageHelper.Error(ex.Message);
                 Close();
             }
 
-            _context = new Context 
+            _context = new Context
             {
                 AppData = _appData,
             };
@@ -74,9 +74,9 @@ namespace CodeBase.Client.Views
         {
             var pages = GetType().Assembly.GetTypes()
                 .Where(x => x.IsSubclassOf(typeof(Page)))
-                .Select(x => new 
+                .Select(x => new
                 {
-                    Type = x, 
+                    Type = x,
                     Descriptor = x.GetCustomAttributes().OfType<PageDescriptorAttribute>().FirstOrDefault(),
                 })
                 .Where(x => x.Descriptor is not null)
@@ -84,7 +84,7 @@ namespace CodeBase.Client.Views
                 .ToArray();
 
             SidebarMenu.Items.Clear();
-            SidebarMenu.ItemsSource = pages.Select(x => new PageLink 
+            SidebarMenu.ItemsSource = pages.Select(x => new PageLink
             {
                 Title = x.Descriptor.Title,
                 PageTypeName = x.Type.Name,

@@ -34,14 +34,14 @@ namespace CodeBase
             dict.TryGetValue(key, out TValue value);
             return value;
         }
-		
-		public static TValue Pop<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue alt)
-		{
-			if (dict.TryGetValue(key, out TValue value)) 
-			{
-				return value;
-			}
-			return alt;
-		}
+
+        public static TValue Pop<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue alt)
+        {
+            if (dict.TryGetValue(key, out TValue value))
+            {
+                return value;
+            }
+            return alt;
+        }
     }
 }

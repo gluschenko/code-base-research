@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PathIO = System.IO.Path;
 
@@ -106,21 +105,23 @@ namespace CodeBase
             return (null, null);
         }
 
-        public string MatchesToString(MatchCollection pos, MatchCollection neg) 
+        public string MatchesToString(MatchCollection pos, MatchCollection neg)
         {
-            string bake(MatchCollection matches) {
-                var mt = matches.Cast<Match>().Select(m => {
+            string bake(MatchCollection matches)
+            {
+                var mt = matches.Cast<Match>().Select(m =>
+                {
                     var _res = new List<string>();
                     for (int i = 0; i < m.Groups.Count; i++)
                     {
                         var group = m.Groups[i];
                         var captures = new List<string>();
-                        for (int j = 0; j < group.Captures.Count; j++) 
+                        for (int j = 0; j < group.Captures.Count; j++)
                         {
                             captures.Add(group.Captures[j].Value);
                         }
 
-                        if(captures.Count > 0)
+                        if (captures.Count > 0)
                             _res.Add($"{string.Join(", ", captures)} ({i})");
                     }
                     return string.Join(" | ", _res);
@@ -137,11 +138,11 @@ namespace CodeBase
             return string.Join("\n", res);
         }
 
-        public string PreparePath(string path, bool relative) 
+        public string PreparePath(string path, bool relative)
         {
             path = path.Replace(@"\", "/");
 
-            if (relative) 
+            if (relative)
             {
                 if (!string.IsNullOrEmpty(BaseDir) && path.StartsWith(BaseDir))
                 {
@@ -166,18 +167,18 @@ namespace CodeBase
             return File.Exists(path);
         }
 
-        public static bool IsChildedPath(string parent, string child) 
+        public static bool IsChildedPath(string parent, string child)
         {
             bool result = false;
             parent = parent.Replace('\\', '/').TrimEnd('\\', '/');
             child = child.Replace('\\', '/').TrimEnd('\\', '/');
 
-            if (child.Length > parent.Length) 
+            if (child.Length > parent.Length)
             {
                 result = child.StartsWith(parent + '/');
             }
 
-            if (child == parent) 
+            if (child == parent)
             {
                 result = true;
             }
@@ -193,14 +194,15 @@ namespace CodeBase
 
         #region PRIVATE
 
-        private void CreateRegex() 
+        private void CreateRegex()
         {
-            List<GitIgnoreRule> 
+            List<GitIgnoreRule>
                 positiveRules = new List<GitIgnoreRule>(),
                 negativeRules = new List<GitIgnoreRule>();
 
-            rules_.ForEach(e => {
-                if (e.IsValid) 
+            rules_.ForEach(e =>
+            {
+                if (e.IsValid)
                 {
                     if (e.IsNegative)
                     {
@@ -232,7 +234,7 @@ namespace CodeBase
                 pattern = "(.+|.?)(/?)" + pattern;
             }
 
-            if (pattern.EndsWith("/**")) 
+            if (pattern.EndsWith("/**"))
             {
                 pattern = pattern.Substring(0, pattern.Length - 3);
                 pattern += "(/?)(.+|.?)";
@@ -246,7 +248,7 @@ namespace CodeBase
 
             pattern = pattern
                 .Replace("/**/", "(/?)(.+|.?)/") // ?. -- для случая, когда последовательность пуста и есть только '/'
-                //
+                                                 //
                 .Replace("/", @"\/")
                 .Replace("**", "(.+)")      // любая последрвательность любых символов
                 .Replace("*", @"([^\/]+)"); // аналогично за исключением '/'
@@ -258,15 +260,15 @@ namespace CodeBase
             return pattern;
         }
 
-        internal static Regex BuildRegex(string[] items) 
+        internal static Regex BuildRegex(string[] items)
         {
-            string regex = items.Length > 0 ? 
+            string regex = items.Length > 0 ?
                 "((" + string.Join(")|(", items) + "))" : "$^";
 
             return new Regex(regex);
         }
 
-#endregion
+        #endregion
     }
 
     public struct GitIgnoreRule
@@ -287,8 +289,8 @@ namespace CodeBase
             Validate();
         }
 
-#region PRIVATE
-        private void Bake() 
+        #region PRIVATE
+        private void Bake()
         {
             if (!string.IsNullOrWhiteSpace(Source))
             {
@@ -306,7 +308,7 @@ namespace CodeBase
             }
         }
 
-        private void Validate() 
+        private void Validate()
         {
             if (!string.IsNullOrWhiteSpace(Pattern))
             {
@@ -321,11 +323,11 @@ namespace CodeBase
                     IsValid = false;
                 }
             }
-            else 
+            else
             {
                 IsValid = false;
             }
         }
-#endregion
+        #endregion
     }
 }

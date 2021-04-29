@@ -6,7 +6,7 @@ namespace CodeBase
     {
         public static readonly HashSet<string> CodeExtensions, FilesBlackList;
 
-        static InspectorConfig() 
+        static InspectorConfig()
         {
             CodeExtensions = List(
                 // Backend
@@ -28,6 +28,6 @@ namespace CodeBase
             FilesBlackList = List(".i.g.cs", ".g.i.cs", ".i.cs", ".g.cs", ".Designer.cs", "AssemblyInfo.cs");
         }
 
-        static HashSet<T> List<T>(params T[] list) => new HashSet<T>(list); 
+        static HashSet<T> List<T>(params T[] list) => new HashSet<T>(list);
     }
 }

@@ -8,7 +8,7 @@ namespace CodeBase.Domain.Models
         public static Brush Green => GetBrush("#0F0");
         public static Brush Red => GetBrush("#F00");
 
-        private static Brush GetBrush(string rgb) 
+        private static Brush GetBrush(string rgb)
             => new SolidColorBrush((Color)ColorConverter.ConvertFromString(rgb));
 
         //

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
 
 namespace CodeBase
 {
@@ -23,7 +21,7 @@ namespace CodeBase
                     string data = File.ReadAllText(Path);
                     return JsonUtility.FromJson<T>(data);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     onError?.Invoke(ex);
                 }

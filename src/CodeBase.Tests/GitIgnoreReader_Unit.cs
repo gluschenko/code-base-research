@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace CodeBase.Tests
@@ -41,10 +41,10 @@ namespace CodeBase.Tests
         {
             GitIgnoreReader reader = new GitIgnoreReader();
 
-            reader.Parse(new string[] { 
-                "hello.*", 
-                "hello*.*", 
-                "node_modules/", 
+            reader.Parse(new string[] {
+                "hello.*",
+                "hello*.*",
+                "node_modules/",
             });
 
             var cases = new Dictionary<string, bool>()

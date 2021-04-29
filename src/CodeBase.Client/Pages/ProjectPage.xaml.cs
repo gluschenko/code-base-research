@@ -10,8 +10,8 @@ namespace CodeBase.Client.Pages
             InitializeComponent();
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) 
-        { 
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
         }
 
         private void SourceFilesTab_Selected(object sender, RoutedEventArgs e)

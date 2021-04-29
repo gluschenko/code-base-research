@@ -48,7 +48,7 @@ namespace CodeBase
             Activate();
         }
 
-        ~MainWindow() 
+        ~MainWindow()
         {
             _notifyIcon.Dispose();
             _heart = null;
@@ -61,15 +61,15 @@ namespace CodeBase
             AutorunCheckBox.IsChecked = _autorun.GetState();
 
             // Поведение окна
-            KeyDown += (sender, e) => 
-            { 
+            KeyDown += (sender, e) =>
+            {
                 if (e.Key == Key.Tab)
                 {
                     SendData();
                 }
             };
 
-            Closing += (sender, e) => 
+            Closing += (sender, e) =>
             {
                 Hide();
                 ShowInTaskbar = false;
@@ -77,7 +77,7 @@ namespace CodeBase
                 e.Cancel = true;
             };
 
-            StateChanged += (sender, e) => 
+            StateChanged += (sender, e) =>
             {
                 if (WindowState == WindowState.Minimized)
                 {
@@ -93,7 +93,7 @@ namespace CodeBase
             };
         }
 
-        void CheckRunningOnce() 
+        void CheckRunningOnce()
         {
             var processes = Process.GetProcesses();
             var currentProcess = Process.GetCurrentProcess();
@@ -111,7 +111,7 @@ namespace CodeBase
             }
         }
 
-        void CreateTrayIcon() 
+        void CreateTrayIcon()
         {
             // Поведение иконки в tray
             _notifyIcon = new NotifyIcon();
@@ -123,7 +123,7 @@ namespace CodeBase
                 Activate(); // brings this window to forward
             };
             _notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            _notifyIcon.ContextMenuStrip.Items.Add(new System.Windows.Forms.ToolStripButton("Close", null, (s, e) => 
+            _notifyIcon.ContextMenuStrip.Items.Add(new System.Windows.Forms.ToolStripButton("Close", null, (s, e) =>
             {
                 _notifyIcon.Visible = false;
                 Application.Current.Shutdown();
@@ -136,13 +136,14 @@ namespace CodeBase
 
         private void Load()
         {
-            _appData = _dataManager.Load(ex => {
+            _appData = _dataManager.Load(ex =>
+            {
                 MessageHelper.ThrowException(ex);
                 Close();
             });
             //
             WebMethods.ReceiverURL = _appData.ReceiverURL ?? "";
-            
+
             if (_appData.WindowWidth > 0)
                 Width = _appData.WindowWidth;
             if (_appData.WindowHeight > 0)
@@ -168,7 +169,7 @@ namespace CodeBase
             var list = _projects.OrderBy(proj => -proj.LastEdit).ToArray();
 
             _projects.Clear();
-            foreach (var item in list) 
+            foreach (var item in list)
             {
                 _projects.Add(item);
             }
@@ -185,37 +186,37 @@ namespace CodeBase
 
         public void StartInspector()
         {
-            if (!_isUpdateAssugned) 
+            if (!_isUpdateAssugned)
             {
                 _isUpdateAssugned = true;
 
-                _inspector.OnStart += () => 
+                _inspector.OnStart += () =>
                 {
                     StatusText.Content = "Wait...";
                 };
 
                 _inspector.OnUpdate += (stage, state) =>
                 {
-                    if (stage == InspectorStage.Progress) 
+                    if (stage == InspectorStage.Progress)
                     {
                         ProgressBar.Visibility = Visibility.Visible;
                         ProgressBar.Maximum = state.All;
                         ProgressBar.Value = state.Used;
                     }
 
-                    if (stage == InspectorStage.Progress2) 
+                    if (stage == InspectorStage.Progress2)
                     {
                         ProgressBar2.Visibility = Visibility.Visible;
                         ProgressBar2.Maximum = state.All;
                         ProgressBar2.Value = state.Used;
                     }
 
-                    if (stage == InspectorStage.FetchingFiles) 
+                    if (stage == InspectorStage.FetchingFiles)
                     {
                         StatusText.Content = $"Fetching files: {state.All}";
                     }
 
-                    if (stage == InspectorStage.FetchingLines) 
+                    if (stage == InspectorStage.FetchingLines)
                     {
                         StatusText.Content = $"Fetching lines: {state.All}";
                     }
@@ -258,7 +259,8 @@ namespace CodeBase
         private void AutorunCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
-            checkBox.IsChecked = _autorun.SetState(checkBox.IsChecked.Value, ex => {
+            checkBox.IsChecked = _autorun.SetState(checkBox.IsChecked.Value, ex =>
+            {
                 MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             });
         }
@@ -319,7 +321,7 @@ namespace CodeBase
             {
                 if (proj.Title == title)
                 {
-                    var dialog = new DeleteProjectDialog(proj, () => 
+                    var dialog = new DeleteProjectDialog(proj, () =>
                     {
                         _projects.Remove(proj);
                         UpdateProjectsList();
@@ -339,7 +341,7 @@ namespace CodeBase
             {
                 if (proj.Title == title)
                 {
-                    var win = new EditProjectWindow(proj, () => 
+                    var win = new EditProjectWindow(proj, () =>
                     {
                         UpdateProjectsList();
                         Save();
@@ -357,9 +359,9 @@ namespace CodeBase
 
         private void SummaryButton_Click(object sender, RoutedEventArgs e)
         {
-            Project 
-                all      = new Project("", "All projects")     { Info = new ProjectInfo() },
-                @public  = new Project("", "Public projects")  { Info = new ProjectInfo() },
+            Project
+                all = new Project("", "All projects") { Info = new ProjectInfo() },
+                @public = new Project("", "Public projects") { Info = new ProjectInfo() },
                 @private = new Project("", "Private projects") { Info = new ProjectInfo() };
 
             foreach (var proj in _projects)

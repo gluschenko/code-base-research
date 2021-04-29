@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using CodeBase;
 
 namespace CodeBase
 {
@@ -22,7 +19,8 @@ namespace CodeBase
             {
                 WebClient.PostRequest(ReceiverURL, fields, response);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             }
 

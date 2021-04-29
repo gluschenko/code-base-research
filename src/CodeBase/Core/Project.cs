@@ -26,7 +26,7 @@ namespace CodeBase
 
         public static explicit operator ProjectEntity(Project proj)
         {
-            return new ProjectEntity 
+            return new ProjectEntity
             {
                 Title = proj.Title,
                 Color = proj.Color,
@@ -39,7 +39,7 @@ namespace CodeBase
                 Lines = proj.Info.Volume.Lines,
                 Files = proj.Info.Volume.Files,
 
-                Extensions = proj.Info.ExtensionsVolume.Select(p => new EntityVolume 
+                Extensions = proj.Info.ExtensionsVolume.Select(p => new EntityVolume
                 {
                     Title = p.Key,
                     SLOC = p.Value.SLOC,
@@ -94,16 +94,16 @@ namespace CodeBase
 
         //
 
-        public string GetTitle() 
+        public string GetTitle()
         {
-            return string.Join(string.Empty, 
-                Title, 
-                IsPublic ? " ✔" : "", 
-                IsLocal ? " [local]" : "", 
+            return string.Join(string.Empty,
+                Title,
+                IsPublic ? " ✔" : "",
+                IsLocal ? " [local]" : "",
                 IsNameHidden ? " [hidden]" : "");
         }
 
-        public Brush GetBrush() 
+        public Brush GetBrush()
         {
             var color = (Color)ColorConverter.ConvertFromString(Color ?? RandomizeColor());
             return new SolidColorBrush(color);
@@ -129,7 +129,7 @@ namespace CodeBase
                 {
                     var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(f.BaseDir, dir));
 
-                    var isAllowedDir = 
+                    var isAllowedDir =
                         allowedDirs.Count > 0 ? allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, dir)) : true;
 
                     var subs = Directory.EnumerateDirectories(dir)
@@ -180,7 +180,7 @@ namespace CodeBase
             return IgnoredFolders?.Any(f => GitIgnoreReader.IsChildedPath(PathIO.Combine(Path, f), path)) ?? false;
         }
 
-        public List<string> GetAllowedFolders() 
+        public List<string> GetAllowedFolders()
         {
             if (Folders?.Count == 0)
             {
@@ -218,7 +218,7 @@ namespace CodeBase
         //
         public List<string> Errors { get; set; } = new List<string>();
         //
-        public string SourceLinesText 
+        public string SourceLinesText
             => Volume + (Errors.Count > 0 ? $" ({Errors.Count} errors)" : "");
         //
         public void Error(string text)
@@ -226,7 +226,7 @@ namespace CodeBase
             Errors.Add(text);
         }
 
-        public void Clear() 
+        public void Clear()
         {
             ExtensionsVolume?.Clear();
             FilesVolume?.Clear();
@@ -249,17 +249,17 @@ namespace CodeBase
             Files = files;
         }
 
-        public double GetLineRatio() 
+        public double GetLineRatio()
         {
             return Lines != 0 ? Math.Round((double)SLOC / Lines, 4) : 1;
         }
 
         public override string ToString() => $"{SLOC}/{Lines}";
 
-        public static CodeVolume operator +(CodeVolume a, CodeVolume b) => 
+        public static CodeVolume operator +(CodeVolume a, CodeVolume b) =>
             new CodeVolume(a.SLOC + b.SLOC, a.Lines + b.Lines, a.Files + b.Files);
 
-        public static CodeVolume operator -(CodeVolume a, CodeVolume b) => 
+        public static CodeVolume operator -(CodeVolume a, CodeVolume b) =>
             new CodeVolume(a.SLOC - b.SLOC, a.Lines - b.Lines, a.Files - b.Files);
     }
 
