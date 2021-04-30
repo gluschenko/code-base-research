@@ -5,15 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CodeBase.Client.Views"
         mc:Ignorable="d"
-        Title="AddProjectWindow" Height="200" Width="400">
+        Title="New Project" Height="200" Width="400">
     <Grid>
         <StackPanel Margin="10">
-            <Label Content="Project Name" VerticalAlignment="Top"/>
-            <TextBox x:Name="ProjectName" VerticalAlignment="Top" />
-            <Label Content="Path" VerticalAlignment="Top"/>
-            <TextBox x:Name="ProjectPath" VerticalAlignment="Top" MouseDoubleClick="PathTextBox_MouseDoubleClick" />
-
-            <Button Content="Add" VerticalAlignment="Bottom" Margin="70,10,70,10" Click="AddButton_Click" />
+            <Label Content="Project Name" />
+            <TextBox x:Name="ProjectName" />
+            <Label Content="Location" />
+            <TextBox x:Name="ProjectLocation" MouseDoubleClick="PathTextBox_MouseDoubleClick" />
+            <Button Content="Add" Margin="70,10,70,10" Click="AddButton_Click" />
         </StackPanel>
     </Grid>
 </Window>
