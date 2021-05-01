@@ -1,0 +1,16 @@
+﻿<Window x:Class="CodeBase.Client.Views.DeleteProjectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CodeBase.Client.Views"
+        mc:Ignorable="d"
+        Title="Delete Project: {Title}" Height="150" Width="300">
+    <Grid>
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="Are you sure?" HorizontalAlignment="Center" />
+            <Button Content="YES" Width="50" Height="30" Margin="-53,30,0,0" Click="YesButtonClick"/>
+            <Button Content="NO" Width="50" Height="30" Margin="53,30,0,0" Click="NoButtonClick"/>
+        </Grid>
+    </Grid>
+</Window>
