@@ -20,8 +20,6 @@ namespace CodeBase.Client.Views
 
         public MainWindow()
         {
-            InitializeComponent();
-
             _activePages = new HashSet<Page>();
             _dataManager = new DataManager<AppData>("prefs.json");
 
@@ -35,16 +33,26 @@ namespace CodeBase.Client.Views
                 Close();
             }
 
-            _context = new Context
-            {
-                AppData = _appData,
-            };
+            _context = CreateContext();
 
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
 
+            InitializeComponent();
+
             FillSidebarMenu();
-            Navigate(typeof(MainPage));
+            Navigate(typeof(ProjectsPage));
+        }
+
+        private Context CreateContext()
+        {
+            return new Context
+            {
+                AppData = _appData,
+                DataManager = _dataManager,
+                MainWindow = this,
+                Navigate = Navigate,
+            };
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -80,6 +88,7 @@ namespace CodeBase.Client.Views
                     Descriptor = x.GetCustomAttributes().OfType<PageDescriptorAttribute>().FirstOrDefault(),
                 })
                 .Where(x => x.Descriptor is not null)
+                .Where(x => x.Descriptor.Title is not null)
                 .OrderBy(x => x.Descriptor.Order)
                 .ToArray();
 

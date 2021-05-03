@@ -1,13 +1,20 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CodeBase.Domain;
+using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
-    public partial class EditProjectPage : Page
+    [PageDescriptor(PageLifetime.Transient)]
+    public partial class ProjectEditPage : Page
     {
-        public EditProjectPage()
+        private readonly Context _context;
+
+        public ProjectEditPage(Context context)
         {
+            _context = context;
+
             InitializeComponent();
         }
 

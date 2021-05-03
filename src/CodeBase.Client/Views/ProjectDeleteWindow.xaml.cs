@@ -1,11 +1,17 @@
 ﻿using System.Windows;
+using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Views
 {
-    public partial class DeleteProjectWindow : Window
+    public partial class ProjectDeleteWindow : Window
     {
-        public DeleteProjectWindow()
+        private readonly Context _context;
+
+        public ProjectDeleteWindow(Context context)
         {
+            _context = context;
+            Owner = _context.MainWindow;
+
             InitializeComponent();
         }
 

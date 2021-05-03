@@ -1,4 +1,4 @@
-﻿<Page x:Class="CodeBase.Client.Pages.MainPage"
+﻿<Page x:Class="CodeBase.Client.Pages.ProjectsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -39,20 +39,20 @@
                             <Grid>
                                 <Label FontSize="16" Content="{Binding Path=TitleText}" />
                                 <Label FontSize="16" Content="{Binding Path=Info.SourceLinesText}" 
-                                   HorizontalAlignment="Right" Margin="0,0,105,0" />
+                                    HorizontalAlignment="Right" Margin="0,0,105,0" />
                                 <Button Width="32" Content="🡲" 
                                     HorizontalAlignment="Right" Margin="0,0,70,0" 
-                                    Tag="{Binding Path=Title}" 
+                                    Tag="{Binding Path=ID}" 
                                     Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectOpenButton_Click" />
                                 <Button Width="32" Content="✎" 
                                     HorizontalAlignment="Right" Margin="0,0,35,0" 
-                                    Tag="{Binding Path=Title}" 
+                                    Tag="{Binding Path=ID}" 
                                     Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectEditButton_Click" />
                                 <Button Width="32" Content="✖" Margin="0" 
                                     HorizontalAlignment="Right"
-                                    Tag="{Binding Path=Title}" 
+                                    Tag="{Binding Path=ID}" 
                                     Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectDeleteButton_Click"/>
                             </Grid>

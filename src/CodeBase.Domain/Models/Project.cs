@@ -8,6 +8,7 @@ namespace CodeBase.Domain.Models
 {
     public class Project
     {
+        public Guid ID { get; set; }
         public string Location { get; set; }
         public string Title { get; set; }
         public string Color { get; set; }
@@ -18,16 +19,14 @@ namespace CodeBase.Domain.Models
         public bool IsNameHidden { get; set; }
         public long LastEdit { get; set; }
         public ProjectInfo Info { get; set; }
-        //
+        
         public string TitleText => GetTitle();
         public Brush BrushColor => GetBrush();
-        //
+        
         public delegate void GetFilesUpdate(int files, int dirs, string currentDir);
-        //
-        public Project(string path, string title)
+
+        public Project()
         {
-            Location = path;
-            Title = title;
             Color = RandomizeColor();
             Folders = new List<string>();
             IgnoredFolders = new List<string>();
@@ -37,9 +36,15 @@ namespace CodeBase.Domain.Models
             IsLocal = true;
         }
 
-        public Project() : this("", "") { }
-
-        //
+        public static Project Create(string path, string title)
+        {
+            return new Project
+            {
+                ID = Guid.NewGuid(),
+                Location = path,
+                Title = title,
+            };
+        }
 
         public string GetTitle()
         {

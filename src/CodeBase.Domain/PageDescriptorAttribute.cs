@@ -9,10 +9,14 @@ namespace CodeBase.Domain
         public int Order { get; set; }
         public PageLifetime Lifetime { get; set; }
 
-        public PageDescriptorAttribute(string title, PageLifetime lifetime = PageLifetime.Scoped)
+        public PageDescriptorAttribute(PageLifetime lifetime = PageLifetime.Scoped)
+        {
+            Lifetime = lifetime;
+        }
+
+        public PageDescriptorAttribute(string title, PageLifetime lifetime = PageLifetime.Scoped) : this(lifetime)
         {
             Title = title;
-            Lifetime = lifetime;
         }
 
         public PageDescriptorAttribute(string title, int order, PageLifetime lifetime = PageLifetime.Scoped) : this(title, lifetime)
