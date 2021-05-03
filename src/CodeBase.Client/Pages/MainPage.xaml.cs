@@ -54,10 +54,6 @@ namespace CodeBase.Client.Pages
         {
         }
 
-        private void ServerAccessButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void ProjectOpenButton_Click(object sender, RoutedEventArgs e)
         {
         }
@@ -71,10 +67,6 @@ namespace CodeBase.Client.Pages
         }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void SummaryButton_Click(object sender, RoutedEventArgs e)
         {
         }
 

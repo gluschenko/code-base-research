@@ -1,12 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using CodeBase.Domain;
+using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
+    [PageDescriptor("User", 3)]
     public partial class UserPage : Page
     {
-        public UserPage()
+        private readonly Context _context;
+
+        public UserPage(Context context)
         {
+            _context = context;
+
             InitializeComponent();
         }
 

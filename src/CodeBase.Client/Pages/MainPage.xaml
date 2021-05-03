@@ -13,8 +13,12 @@
     <Grid Background="White">
         <Grid Height="50" VerticalAlignment="Top" Background="#FFEEEEEE">
             <CheckBox x:Name="AutorunCheckBox" Content="Run with Windows" HorizontalAlignment="Left" Margin="10,19,0,0" VerticalAlignment="Top" Click="AutorunCheckBox_Click"/>
-            <Button x:Name="ServerAccessButton" Style="{StaticResource LiteButtonStyle}" Content="Server access" Margin="0,9,115,9" Width="119" HorizontalAlignment="Right" Click="ServerAccessButton_Click"/>
-            <Button x:Name="AddProjectButton" Content="Add Project" Margin="0,9,10,9" Width="100" HorizontalAlignment="Right" Click="AddProjectButton_Click"/>
+            <Button x:Name="AddProjectButton" 
+                    Style="{StaticResource LiteButtonStyle}" 
+                    Content="Add Project" 
+                    Margin="0,9,10,9" Width="100"
+                    HorizontalAlignment="Right" 
+                    Click="AddProjectButton_Click"/>
         </Grid>
 
         <ScrollViewer Margin="0,51,0,51" RenderTransformOrigin="0.5,0.5">
@@ -62,8 +66,12 @@
             <ProgressBar x:Name="ProgressBar" Height="5" Margin="0" VerticalAlignment="Top" Visibility="Hidden" />
             <ProgressBar x:Name="ProgressBar2" Height="2" Margin="0,5,0,0" VerticalAlignment="Top" Visibility="Hidden" Foreground="#FF0183CD" />
             <Label x:Name="StatusText" Content="Done" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center"/>
-            <Button x:Name="UpdateButton" Content="Update" Margin="0,9,10,9" Width="80" HorizontalAlignment="Right" Click="UpdateButton_Click"/>
-            <Button x:Name="SummaryButton" Style="{StaticResource LiteButtonStyle}" Content="Summary" Margin="0,9,100,9" Width="100" HorizontalAlignment="Right" Click="SummaryButton_Click"/>
+            <Button x:Name="UpdateButton" 
+                    Content="Update" 
+                    Style="{StaticResource LiteButtonStyle}"
+                    Margin="0,9,10,9" Width="100" 
+                    HorizontalAlignment="Right" 
+                    Click="UpdateButton_Click"/>
         </Grid>
     </Grid>
 </Page>

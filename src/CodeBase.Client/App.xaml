@@ -5,6 +5,7 @@
     xmlns:local="clr-namespace:CodeBase.Client"
     StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
+        
         <!-- Button -->
 
         <Style x:Key="buttonStyle" TargetType="{x:Type Button}">
@@ -20,7 +21,7 @@
                     <ControlTemplate x:Name="__" TargetType="{x:Type Button}">
                         <Border CornerRadius="6" BorderBrush="#333" BorderThickness="1" Background="{TemplateBinding Background}">
                             <Grid>
-                                <ContentPresenter x:Name="__" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                                <ContentPresenter x:Name="__" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" />
                             </Grid>
                         </Border>
 
