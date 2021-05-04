@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -44,16 +45,11 @@ namespace CodeBase.Client.Pages
         {
             static List<string> ParseFolders(string text)
             {
-                var textInner = text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                var foldersInner = new List<string>();
-                foreach (var folder in textInner)
-                {
-                    if (folder.Trim() != "")
-                    {
-                        foldersInner.Add(folder.Trim());
-                    }
-                }
-                return foldersInner;
+                return text
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x.Trim())
+                    .ToList();
             }
 
             var project = _context.CurrentProject;
@@ -99,7 +95,8 @@ namespace CodeBase.Client.Pages
                 ProjectColor.Background = new SolidColorBrush(color);
             }
             catch
-            { }
+            { 
+            }
         }
     }
 }

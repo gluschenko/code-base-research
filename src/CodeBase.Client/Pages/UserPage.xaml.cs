@@ -5,7 +5,7 @@ using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
-    [PageDescriptor("User", 3)]
+    [PageDescriptor("User", 3, PageLifetime.Scoped)]
     public partial class UserPage : Page
     {
         private readonly Context _context;

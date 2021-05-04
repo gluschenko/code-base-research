@@ -21,20 +21,24 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <ItemsControl x:Name="SidebarMenu" HorizontalContentAlignment="Stretch">
 
-                    <models:PageLink Title="Lorem ipsum #1" />
-                    <models:PageLink Title="Lorem ipsum #2" />
-                    <models:PageLink Title="Lorem ipsum #3" />
+                    <models:PageLink Title="Lorem ipsum #1" IsActive="False" />
+                    <models:PageLink Title="Lorem ipsum #2" IsActive="False" />
+                    <models:PageLink Title="Lorem ipsum #3" IsActive="True" />
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border x:Name="border" BorderThickness="3,0,0,0" BorderBrush="{Binding Path=BrushColor}">
-                                <Grid MouseDown="SidebarItem_MouseDown" Tag="{Binding Path=PageTypeName}">
+                            <Border x:Name="ItemBorder" BorderThickness="3,0,0,0" BorderBrush="{Binding Path=BrushColor}">
+                                <Grid x:Name="ItemGrid" MouseDown="SidebarItem_MouseDown" Tag="{Binding Path=PageTypeName}">
                                     <Label Content="{Binding Path=Title}" FontSize="16" Margin="0,4" Foreground="#aaa" />
                                 </Grid>
                             </Border>
                             <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsActive}" Value="True">
+                                    <Setter TargetName="ItemGrid" Property="Background" Value="#4000" />
+                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#4000" />
+                                </DataTrigger>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush" Value="#fff" />
+                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#fff" />
                                 </Trigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>

@@ -9,17 +9,17 @@ namespace CodeBase.Domain
         public int Order { get; set; }
         public PageLifetime Lifetime { get; set; }
 
-        public PageDescriptorAttribute(PageLifetime lifetime = PageLifetime.Scoped)
+        public PageDescriptorAttribute(PageLifetime lifetime)
         {
             Lifetime = lifetime;
         }
 
-        public PageDescriptorAttribute(string title, PageLifetime lifetime = PageLifetime.Scoped) : this(lifetime)
+        public PageDescriptorAttribute(string title, PageLifetime lifetime) : this(lifetime)
         {
             Title = title;
         }
 
-        public PageDescriptorAttribute(string title, int order, PageLifetime lifetime = PageLifetime.Scoped) : this(title, lifetime)
+        public PageDescriptorAttribute(string title, int order, PageLifetime lifetime) : this(title, lifetime)
         {
             Order = order;
         }

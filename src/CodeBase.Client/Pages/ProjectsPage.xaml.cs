@@ -10,7 +10,7 @@ using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
-    [PageDescriptor("Projects", 1)]
+    [PageDescriptor("Projects", 1, PageLifetime.Scoped)]
     public partial class ProjectsPage : Page
     {
         private readonly Context _context;
@@ -51,16 +51,11 @@ namespace CodeBase.Client.Pages
         private void UpdateProjectsList()
         {
             _projects ??= new ObservableCollection<Project>();
-            _projects.Clear();
-            _context.AppData.Projects.ToList().ForEach(x => _projects.Add(x));
-
-            var list = _projects.OrderBy(proj => -proj.LastEdit).ToArray();
 
             _projects.Clear();
-            foreach (var item in list)
-            {
-                _projects.Add(item);
-            }
+            _context.AppData.Projects
+                .OrderByDescending(proj => proj.LastEdit).ToList()
+                .ForEach(x => _projects.Add(x));
 
             if (ProjectsListBox.ItemsSource == null)
             {

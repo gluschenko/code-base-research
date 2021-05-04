@@ -4,7 +4,7 @@ using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
-    [PageDescriptor("Summary", 2)]
+    [PageDescriptor("Summary", 2, PageLifetime.Scoped)]
     public partial class SummaryPage : Page
     {
         private readonly Context _context;

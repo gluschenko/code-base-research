@@ -17,6 +17,7 @@ namespace CodeBase.Client.Views
         private readonly AppData _appData;
         private readonly Context _context;
         private readonly HashSet<Page> _activePages;
+        private Type _currentPageType;
 
         public MainWindow()
         {
@@ -40,7 +41,6 @@ namespace CodeBase.Client.Views
 
             InitializeComponent();
 
-            FillSidebarMenu();
             Navigate(typeof(ProjectsPage));
         }
 
@@ -78,7 +78,7 @@ namespace CodeBase.Client.Views
             }
         }
 
-        private void FillSidebarMenu()
+        private void UpdateSidebarMenu()
         {
             var pages = GetType().Assembly.GetTypes()
                 .Where(x => x.IsSubclassOf(typeof(Page)))
@@ -92,12 +92,22 @@ namespace CodeBase.Client.Views
                 .OrderBy(x => x.Descriptor.Order)
                 .ToArray();
 
-            SidebarMenu.Items.Clear();
-            SidebarMenu.ItemsSource = pages.Select(x => new PageLink
+            var links = pages
+                .Select(x => new PageLink
+                {
+                    Title = x.Descriptor.Title,
+                    PageTypeName = x.Type.Name,
+                    IsActive = x.Type == _currentPageType,
+                })
+                .ToArray();
+
+            if(SidebarMenu.ItemsSource != null)
             {
-                Title = x.Descriptor.Title,
-                PageTypeName = x.Type.Name,
-            });
+                SidebarMenu.ItemsSource = null;
+            }
+
+            SidebarMenu.Items.Clear();
+            SidebarMenu.ItemsSource = links;
         }
 
         private void SidebarItem_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -137,7 +147,9 @@ namespace CodeBase.Client.Views
                 _activePages.Add(pageItem);
             }
 
+            _currentPageType = pageType;
             PageFrame.Navigate(pageItem);
+            UpdateSidebarMenu();
         }
     }
 }
