@@ -22,6 +22,7 @@ namespace CodeBase.Domain.Services
                 var data = File.ReadAllText(path);
                 return JsonConvert.DeserializeObject<T>(data);
             }
+
             return Activator.CreateInstance<T>();
         }
 

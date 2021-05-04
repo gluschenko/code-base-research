@@ -1,6 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
+using System.Diagnostics;
 using Microsoft.Win32;
 
 namespace CodeBase
@@ -9,11 +8,8 @@ namespace CodeBase
     {
         const string RegSubKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run\";
 
-        private string AppName 
-            => Path.GetFileNameWithoutExtension(AppPath).ToUpper();
-
-        private string AppPath 
-            => Assembly.GetExecutingAssembly().Location;
+        private string AppName => nameof(CodeBase);
+        private string AppPath => Process.GetCurrentProcess().MainModule.FileName;
 
         public RegistryKey GetSubKey()
         {
