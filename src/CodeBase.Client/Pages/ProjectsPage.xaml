@@ -12,17 +12,26 @@
 
     <Grid Background="White">
         <Grid Height="50" VerticalAlignment="Top" Background="#FFEEEEEE">
-            <CheckBox x:Name="AutorunCheckBox" Content="Run with Windows" HorizontalAlignment="Left" Margin="10,19,0,0" VerticalAlignment="Top" Click="AutorunCheckBox_Click"/>
+            <CheckBox x:Name="AutorunCheckBox" 
+                      Content="Run with Windows" 
+                      HorizontalAlignment="Left" 
+                      VerticalAlignment="Top" 
+                      Margin="10,19,0,0" 
+                      Click="AutorunCheckBox_Click" />
             <Button x:Name="AddProjectButton" 
-                    Style="{StaticResource LiteButtonStyle}" 
                     Content="Add Project" 
                     Margin="0,9,10,9" Width="100"
                     HorizontalAlignment="Right" 
-                    Click="AddProjectButton_Click"/>
+                    Click="AddProjectButton_Click" />
         </Grid>
 
-        <ScrollViewer Margin="0,51,0,51" RenderTransformOrigin="0.5,0.5">
-            <ItemsControl x:Name="ProjectsListBox" HorizontalContentAlignment="Stretch" Margin="5" Background="{x:Null}">
+        <ScrollViewer Margin="0,51,0,51" 
+                      VerticalScrollBarVisibility="Auto"
+                      RenderTransformOrigin="0.5,0.5">
+            <ItemsControl x:Name="ProjectsListBox" 
+                          HorizontalContentAlignment="Stretch" 
+                          Margin="5" 
+                          Background="{x:Null}">
 
                 <models:Project Title="Lorem ipsum" Location="www"/>
                 <models:Project Title="Test" Location="www"/>
@@ -43,17 +52,14 @@
                                 <Button Width="32" Content="🡲" 
                                     HorizontalAlignment="Right" Margin="0,0,70,0" 
                                     Tag="{Binding Path=ID}" 
-                                    Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectOpenButton_Click" />
                                 <Button Width="32" Content="✎" 
                                     HorizontalAlignment="Right" Margin="0,0,35,0" 
                                     Tag="{Binding Path=ID}" 
-                                    Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectEditButton_Click" />
                                 <Button Width="32" Content="✖" Margin="0" 
                                     HorizontalAlignment="Right"
                                     Tag="{Binding Path=ID}" 
-                                    Style="{StaticResource LiteButtonStyle}" 
                                     Click="ProjectDeleteButton_Click"/>
                             </Grid>
                         </Border>
@@ -68,7 +74,6 @@
             <Label x:Name="StatusText" Content="Done" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center"/>
             <Button x:Name="UpdateButton" 
                     Content="Update" 
-                    Style="{StaticResource LiteButtonStyle}"
                     Margin="0,9,10,9" Width="100" 
                     HorizontalAlignment="Right" 
                     Click="UpdateButton_Click"/>

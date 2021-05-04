@@ -14,5 +14,7 @@ namespace CodeBase.Domain.Services
 
         public Action<Type> Navigate { get; set; }
         public Action<Project> OnProjectCreated { get; set; }
+        public Action<Project> OnProjectDeleted { get; set; }
+        public Action<Project> OnProjectChanged { get; set; }
     }
 }

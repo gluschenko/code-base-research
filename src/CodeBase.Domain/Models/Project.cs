@@ -153,7 +153,7 @@ namespace CodeBase.Domain.Models
 
         private string RandomizeColor()
         {
-            _random ??= new Random(GetHashCode());
+            _random ??= new Random(Guid.NewGuid().GetHashCode());
 
             var rgb = _random.Next(0, 0xFFFFFF);
             Color = "#" + Convert.ToString(rgb, 16).PadLeft(6, '0');

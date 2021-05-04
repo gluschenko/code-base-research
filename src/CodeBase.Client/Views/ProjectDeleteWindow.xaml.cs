@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Views
@@ -13,14 +14,20 @@ namespace CodeBase.Client.Views
             Owner = _context.MainWindow;
 
             InitializeComponent();
+
+            Title = Title.Replace("{Title}", _context.CurrentProject?.Title ?? "??");
         }
 
         private void YesButtonClick(object sender, RoutedEventArgs e)
         {
+            _context.AppData.Projects = _context.AppData.Projects.Where(x => x != _context.CurrentProject).ToArray();
+            _context.OnProjectDeleted(_context.CurrentProject);
+            Close();
         }
 
         private void NoButtonClick(object sender, RoutedEventArgs e)
         {
+            Close();
         }
     }
 }

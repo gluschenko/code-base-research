@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CodeBase.Client.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="420" d:DesignWidth="250"
+      d:DesignHeight="400" d:DesignWidth="400"
       Title="EditProjectPage">
 
     <Grid Background="#fff">
@@ -14,8 +14,8 @@
             <TextBox x:Name="ProjectName" />
             <Label Content="Color" />
             <TextBox x:Name="ProjectColor" TextChanged="ProjectColor_TextChanged" />
-            <Label Content="Path" />
-            <TextBox x:Name="ProjectPath" MouseDoubleClick="PathTextBox_MouseDoubleClick" />
+            <Label Content="Location" />
+            <TextBox x:Name="ProjectLocation" MouseDoubleClick="PathTextBox_MouseDoubleClick" />
             <Label Content="Folders (foo, bar, baz...)" />
             <TextBox x:Name="ProjectFolders" />
             <Label Content="Ignored Folders (foo, bar, baz...)" />

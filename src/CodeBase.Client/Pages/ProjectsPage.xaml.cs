@@ -23,12 +23,26 @@ namespace CodeBase.Client.Pages
         {
             _context = context;
             _context.OnProjectCreated = OnProjectCreated;
+            _context.OnProjectDeleted = OnProjectDeleted;
+            _context.OnProjectChanged = OnProjectChanged;
 
             InitializeComponent();
             UpdateProjectsList();
         }
 
         private void OnProjectCreated(Project project)
+        {
+            UpdateProjectsList();
+            _context.DataManager.Save(_context.AppData);
+        }
+
+        private void OnProjectDeleted(Project project)
+        {
+            UpdateProjectsList();
+            _context.DataManager.Save(_context.AppData);
+        }
+
+        private void OnProjectChanged(Project project)
         {
             UpdateProjectsList();
             _context.DataManager.Save(_context.AppData);
@@ -104,11 +118,7 @@ namespace CodeBase.Client.Pages
             }
 
             _context.CurrentProject = project;
-            var win = new ProjectDeleteWindow(_context) 
-            { 
-                Owner = _context.MainWindow 
-            };
-
+            var win = new ProjectDeleteWindow(_context);
             win.Show();
         }
 
