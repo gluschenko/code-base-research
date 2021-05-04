@@ -5,26 +5,26 @@ using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
-    [PageDescriptor("User", 3, PageLifetime.Scoped)]
-    public partial class UserPage : Page
+    [PageDescriptor(PageLifetime.Transient)]
+    public partial class UserLoginPage : Page
     {
         private readonly Context _context;
 
-        public UserPage(Context context)
+        public UserLoginPage(Context context)
         {
             _context = context;
 
-            IsVisibleChanged += UserPage_IsVisibleChanged;
+            IsVisibleChanged += UserLoginPage_IsVisibleChanged;
 
             InitializeComponent();
         }
 
-        private void UserPage_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void UserLoginPage_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         {
             // TODO: ЗДЕСЬ ЗАПРОСЫ К АПИ
         }
 
-        private void Logout_Click(object sender, RoutedEventArgs e)
+        private void Login_Click(object sender, RoutedEventArgs e)
         {
         }
     }

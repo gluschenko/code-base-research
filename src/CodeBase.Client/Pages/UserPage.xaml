@@ -9,31 +9,31 @@
       Title="UserPage">
 
     <Grid Background="#fff">
-        <StackPanel x:Name="Login" Margin="10" Visibility="Hidden">
-            <Label Content="API Receiver URL" VerticalAlignment="Top"/>
-            <TextBox x:Name="ReceiverURL" VerticalAlignment="Top"/>
-            <Label Content="Name" VerticalAlignment="Top"/>
-            <TextBox x:Name="UserID" VerticalAlignment="Top" />
-            <Label Content="Password" VerticalAlignment="Top"/>
-            <PasswordBox x:Name="Password" PasswordChar="*" VerticalAlignment="Top" />
 
-            <Button Content="Login" Height="30" VerticalAlignment="Bottom" Margin="70,10,70,10" Click="Login_Click" />
-        </StackPanel>
-        <Grid x:Name="Logout" Margin="10">
-            <Label x:Name="LoggedInfo" Content="You are logged as {0}" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center"/>
-            <Button Content="Log out" Height="30" Width="80" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource RedButtonStyle}" Click="Logout_Click" />
-
-            <StackPanel Margin="0,35,0,0">
-                <CheckBox x:Name="AutoUpdateCheckBox" Content="Auto update" Margin="5"/>
-                <CheckBox x:Name="SendDataCheckBox" Content="Send data via Web" Margin="5"/>
-                <Grid>
-                    <Label Content="Update interval (minutes):" />
-                    <TextBox x:Name="UpdateIntervalTextBox" 
+        <StackPanel Margin="10">
+            <Grid>
+                <Label x:Name="LoggedInfo" 
+                       Content="You are logged as {0}" 
+                       Height="30" 
+                       HorizontalAlignment="Left" VerticalAlignment="Top" 
+                       VerticalContentAlignment="Center"/>
+                <Button Content="Log out" 
+                        Height="30" Width="80" 
+                        HorizontalAlignment="Right" 
+                        VerticalAlignment="Top" 
+                        Style="{StaticResource RedButtonStyle}" 
+                        Click="Logout_Click" />
+            </Grid>
+            <CheckBox x:Name="AutoUpdateCheckBox" Content="Auto update" Margin="5"/>
+            <CheckBox x:Name="SendDataCheckBox" Content="Send data via Web" Margin="5"/>
+            <Grid>
+                <Label Content="Update interval (minutes):" />
+                <TextBox x:Name="UpdateIntervalTextBox" 
                              HorizontalAlignment="Right" Width="100" 
                              HorizontalContentAlignment="Center" 
                              VerticalContentAlignment="Center" />
-                </Grid>
-            </StackPanel>
-        </Grid>
+            </Grid>
+        </StackPanel>
+
     </Grid>
 </Page>
