@@ -3,16 +3,16 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
 
-namespace CodeBase
+namespace CodeBase.Domain.Services
 {
-    public class Autorun
+    public class AutorunService
     {
         const string RegSubKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run\";
 
-        private string AppName 
+        private string AppName
             => Path.GetFileNameWithoutExtension(AppPath).ToUpper();
 
-        private string AppPath 
+        private string AppPath
             => Assembly.GetExecutingAssembly().Location;
 
         public RegistryKey GetSubKey()
