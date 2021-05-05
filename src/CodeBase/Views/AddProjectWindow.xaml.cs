@@ -7,7 +7,7 @@ namespace CodeBase
 {
     public partial class AddProjectWindow : Window
     {
-        private Action<Project> onCreate;
+        private readonly Action<Project> _onCreate;
 
         public AddProjectWindow(Action<Project> onCreate)
         {
@@ -15,7 +15,7 @@ namespace CodeBase
 
             Width *= 2;
 
-            this.onCreate = onCreate;
+            _onCreate = onCreate;
         }
 
         private void PathTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -29,7 +29,7 @@ namespace CodeBase
             {
                 if (System.IO.Directory.Exists(ProjectPath.Text))
                 {
-                    onCreate?.Invoke(new Project(ProjectPath.Text, ProjectName.Text));
+                    _onCreate?.Invoke(new Project(ProjectPath.Text, ProjectName.Text));
                 }
                 else
                 {

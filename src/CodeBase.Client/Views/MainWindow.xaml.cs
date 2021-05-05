@@ -138,11 +138,7 @@ namespace CodeBase.Client.Views
 
             if (pageDescriptor.Lifetime == PageLifetime.Transient || pageItem == null)
             {
-                if (pageItem is not null)
-                {
-                    _activePages.Remove(pageItem);
-                }
-
+                _activePages.Remove(pageItem);
                 pageItem = (Page)Activator.CreateInstance(pageType, args: _context);
                 _activePages.Add(pageItem);
             }

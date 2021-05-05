@@ -1,76 +1,45 @@
 ﻿<Page x:Class="CodeBase.Client.Pages.ProjectPage"
+      x:Name="This"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CodeBase.Client.Pages"
+      xmlns:controls="clr-namespace:CodeBase.Client.Controls" 
       xmlns:models="clr-namespace:CodeBase.Domain.Models;assembly=CodeBase.Domain" 
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="400"
       Title="ProjectPage">
 
-    <Grid Background="#fff">
-        <TabControl x:Name="TabControl" SelectionChanged="TabControl_SelectionChanged">
+    <Grid>
+        <controls:PageWrapper Title="Project">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
 
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="3">Info</TextBlock>
-                    </StackPanel>
-                </TabItem.Header>
-                <TabItem.Content>
-                    <Grid>
-                        <TextBox Name="OutputTextBox" 
-                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                            ScrollViewer.VerticalScrollBarVisibility="Auto"
-                            ScrollViewer.CanContentScroll="True"
-                            TextWrapping="NoWrap" AcceptsReturn="True" FontFamily="Consolas">
-                            SOME TEXT
-                        </TextBox>
-                    </Grid>
-                </TabItem.Content>
-            </TabItem>
+                <TextBox x:Name="qwe"
+                         Grid.Row="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.CanContentScroll="True"
+                         TextWrapping="NoWrap" 
+                         AcceptsReturn="True" 
+                         FontFamily="Consolas" 
+                         Text="{Binding ElementName=This, Path=_context.CurrentProject.Title}"/>
 
-            <TabItem Selector.Selected="SourceFilesTab_Selected">
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="3">Files</TextBlock>
-                    </StackPanel>
-                </TabItem.Header>
-                <TabItem.Content>
-                    <Grid>
-                        <ScrollViewer Margin="0,0,0,28">
-                            <ItemsControl x:Name="SourceFilesList">
-                                <models:FilesListItem Text="Lorem ipsum" Color="#ff0000" />
-                                <models:FilesListItem Text="Ipsum lorem" Color="#00ff00" />
-
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BorderThickness="5,0,0,0" Margin="0, 2" BorderBrush="{Binding Path=Color}">
-                                            <Label Foreground="Black" FontSize="13" Content="{Binding Path=Text}" />
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                        <Grid VerticalAlignment="Bottom" Height="28">
-                            <Label Content="Files excluded by .gitignore"></Label>
-                        </Grid>
-                    </Grid>
-                </TabItem.Content>
-            </TabItem>
-
-        </TabControl>
-
-        <Grid x:Name="FreezeOverlay" Background="#AA000000" Visibility="Hidden">
-            <TextBlock x:Name="FreezeText"
-                Text="Wait..."
-                TextWrapping="Wrap"
-                Foreground="#fff" 
-                FontSize="14"
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Center"
-                TextAlignment="Center"></TextBlock>
-        </Grid>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Button Content="Files" 
+                        Width="120" 
+                        Margin="5,0"
+                        Click="FilesButton_Click"></Button>
+                    <Button Content="Edit" 
+                        Width="120" 
+                        Margin="5,0"
+                        Click="EditButton_Click"></Button>
+                </StackPanel>
+            </Grid>
+        </controls:PageWrapper>
     </Grid>
 </Page>

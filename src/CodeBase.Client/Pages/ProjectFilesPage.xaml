@@ -1,0 +1,34 @@
+﻿<Page x:Class="CodeBase.Client.Pages.ProjectFilesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CodeBase.Client.Pages"
+      xmlns:models="clr-namespace:CodeBase.Domain.Models;assembly=CodeBase.Domain" 
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="400"
+      Title="ProjectFilesPage">
+
+    <Grid Background="#fff">
+        <Grid>
+            <Label>Project Files</Label>
+            <ScrollViewer Margin="0,40,0,28">
+                <ItemsControl x:Name="SourceFilesList">
+                    <models:FilesListItem Text="Lorem ipsum" Color="#ff0000" />
+                    <models:FilesListItem Text="Ipsum lorem" Color="#00ff00" />
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="5,0,0,0" Margin="0, 2" BorderBrush="{Binding Path=Color}">
+                                <Label Foreground="Black" FontSize="13" Content="{Binding Path=Text}" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <Grid VerticalAlignment="Bottom" Height="28">
+                <Label Content="Files excluded by .gitignore"></Label>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

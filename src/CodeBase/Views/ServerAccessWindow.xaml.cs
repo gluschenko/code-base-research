@@ -6,9 +6,10 @@ namespace CodeBase
 {
     public partial class ServerAccessWindow : Window
     {
-        private ApplicationData _data;
-        private Secure _secure;
-        private Action _onDone;
+        private readonly ApplicationData _data;
+        private readonly Secure _secure;
+        private readonly Action _onDone;
+        private string _loggedInfoTemplate = "";
 
         public ServerAccessWindow(ApplicationData data, Action onDone)
         {
@@ -58,15 +59,14 @@ namespace CodeBase
 
         }
 
-        string loggedInfoTemplate = "";
 
         public void WakeUp()
         {
             Login.Visibility = _secure.IsLogged ? Visibility.Hidden : Visibility.Visible;
             Logout.Visibility = !_secure.IsLogged ? Visibility.Hidden : Visibility.Visible;
 
-            if (loggedInfoTemplate == "") loggedInfoTemplate = (string)LoggedInfo.Content;
-            LoggedInfo.Content = string.Format(loggedInfoTemplate, _data.UserID);
+            if (_loggedInfoTemplate == "") _loggedInfoTemplate = (string)LoggedInfo.Content;
+            LoggedInfo.Content = string.Format(_loggedInfoTemplate, _data.UserID);
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)

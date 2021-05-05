@@ -17,12 +17,14 @@ namespace CodeBase.Client.Pages
             InitializeComponent();
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void EditButton_Click(object sender, RoutedEventArgs e)
         {
+            _context.Navigate(typeof(ProjectEditPage));
         }
 
-        private void SourceFilesTab_Selected(object sender, RoutedEventArgs e)
+        private void FilesButton_Click(object sender, RoutedEventArgs e)
         {
+            _context.Navigate(typeof(ProjectFilesPage));
         }
     }
 }

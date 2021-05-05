@@ -9,14 +9,14 @@ namespace CodeBase.Client
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-
             if (!IsRunningOnce())
             {
                 var currentProcess = Process.GetCurrentProcess();
                 MessageHelper.Warning($"{currentProcess.ProcessName} is already running! Close all instances and try again");
                 Shutdown();
             }
+
+            base.OnStartup(e);
         }
 
         private static bool IsRunningOnce()
