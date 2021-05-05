@@ -25,7 +25,7 @@
                     Click="AddProjectButton_Click" />
         </Grid>
 
-        <ScrollViewer Margin="0,51,0,51" 
+        <ScrollViewer Margin="0,51,0,0" 
                       VerticalScrollBarVisibility="Auto"
                       RenderTransformOrigin="0.5,0.5">
             <ItemsControl x:Name="ProjectsListBox" 
@@ -35,6 +35,8 @@
 
                 <models:Project Title="Lorem ipsum" Location="www"/>
                 <models:Project Title="Test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
+                <models:Project Title="Test test test" Location="www"/>
                 <models:Project Title="Test test test" Location="www"/>
                 <models:Project Title="Test test test" Location="www"/>
                 <models:Project Title="Test test test" Location="www"/>
@@ -67,16 +69,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-
-        <Grid Height="50" VerticalAlignment="Bottom" Background="#FFEEEEEE">
-            <ProgressBar x:Name="ProgressBar" Height="5" Margin="0" VerticalAlignment="Top" Visibility="Hidden" />
-            <ProgressBar x:Name="ProgressBar2" Height="2" Margin="0,5,0,0" VerticalAlignment="Top" Visibility="Hidden" Foreground="#FF0183CD" />
-            <Label x:Name="StatusText" Content="Done" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center"/>
-            <Button x:Name="UpdateButton" 
-                    Content="Update" 
-                    Margin="0,9,10,9" Width="100" 
-                    HorizontalAlignment="Right" 
-                    Click="UpdateButton_Click"/>
-        </Grid>
+        
     </Grid>
 </Page>

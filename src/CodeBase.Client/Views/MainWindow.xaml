@@ -18,7 +18,8 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0" Background="#333">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0, 0, 0, 50">
+                
                 <ItemsControl x:Name="SidebarMenu" HorizontalContentAlignment="Stretch">
 
                     <models:PageLink Title="Lorem ipsum #1" IsActive="False" />
@@ -29,23 +30,52 @@
                         <DataTemplate>
                             <Border x:Name="ItemBorder" BorderThickness="3,0,0,0" BorderBrush="{Binding Path=BrushColor}">
                                 <Grid x:Name="ItemGrid" MouseDown="SidebarItem_MouseDown" Tag="{Binding Path=PageTypeName}">
-                                    <Label Content="{Binding Path=Title}" FontSize="16" Margin="0,4" Foreground="#aaa" />
+                                    <Label Content="{Binding Path=Title}" FontSize="16" Margin="4" Foreground="#aaa" />
                                 </Grid>
                             </Border>
                             <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding Path=IsActive}" Value="True">
-                                    <Setter TargetName="ItemGrid" Property="Background" Value="#4000" />
-                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#4000" />
-                                </DataTrigger>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#fff" />
+                                    <Setter TargetName="ItemGrid" Property="Background" Value="#3000" />
+                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#3000" />
                                 </Trigger>
+                                <DataTrigger Binding="{Binding Path=IsActive}" Value="True">
+                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#fff" />
+                                </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 
             </ScrollViewer>
+
+            <Grid Height="50" VerticalAlignment="Bottom" Background="#3000">
+                <ProgressBar x:Name="ProgressBarPrimary" 
+                             Height="3" Margin="0" 
+                             VerticalAlignment="Top" 
+                             Foreground="#00EF0B"
+                             Background="#4fff"
+                             BorderThickness="0"
+                             Value="50" />
+                <ProgressBar x:Name="ProgressBarSecondary" 
+                             Height="3" Margin="0,3,0,0" 
+                             VerticalAlignment="Top" 
+                             Foreground="#FF7700"
+                             Background="#4fff"
+                             BorderThickness="0"
+                             Value="50"/>
+                <Label x:Name="StatusText" 
+                       Content="Done" 
+                       Margin="10" 
+                       HorizontalAlignment="Left" 
+                       VerticalAlignment="Center" 
+                       Foreground="#aaa"/>
+                <Button x:Name="UpdateButton" 
+                        Content="Update" 
+                        Margin="0,9,10,9" Width="70" 
+                        HorizontalAlignment="Right" 
+                        Click="UpdateButton_Click" 
+                        Style="{StaticResource LightButtonStyle}"/>
+            </Grid>
         </Grid>
 
         <Grid Grid.Column="1">

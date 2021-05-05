@@ -142,10 +142,6 @@ namespace CodeBase.Client.Pages
             _context.Navigate(typeof(ProjectEditPage));
         }
 
-        private void UpdateButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         #endregion
     }
 }

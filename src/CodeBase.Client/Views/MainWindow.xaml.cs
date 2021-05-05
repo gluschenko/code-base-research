@@ -151,5 +151,10 @@ namespace CodeBase.Client.Views
             PageFrame.Navigate(pageItem);
             UpdateSidebarMenu();
         }
+
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
     }
 }

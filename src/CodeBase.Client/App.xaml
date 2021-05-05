@@ -57,6 +57,11 @@
             <Setter Property="Foreground" Value="White" />
         </Style>
 
+        <Style x:Key="LightButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ResourceKey=buttonStyle}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#aaa" />
+        </Style>
+
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ResourceKey=buttonStyle}"/>
 
         <!-- TextBox -->
