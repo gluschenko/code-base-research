@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:CodeBase.Client.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="40" d:DesignWidth="400">
-    <DockPanel Background="#fff">
+    <DockPanel Background="#1000">
         <Label DockPanel.Dock="Top"
                Content="{Binding ElementName=This, Path=Title}"
                Visibility="{Binding ElementName=This, Path=TitleVisibility}"

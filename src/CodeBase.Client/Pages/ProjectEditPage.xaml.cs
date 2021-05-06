@@ -38,7 +38,7 @@ namespace CodeBase.Client.Pages
             IgnoredProjectFolders.Text = string.Join(", ", project.IgnoredFolders ?? new List<string>());
             ProjectIsPublic.IsChecked = project.IsPublic;
             ProjectIsLocal.IsChecked = project.IsLocal;
-            ProjectIsNameHidden.IsChecked = project.IsNameHidden;
+            ProjectIsNameHidden.IsChecked = project.IsTitleHidden;
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -75,7 +75,7 @@ namespace CodeBase.Client.Pages
 
             project.IsPublic = ProjectIsPublic.IsChecked.Value;
             project.IsLocal = ProjectIsLocal.IsChecked.Value;
-            project.IsNameHidden = ProjectIsNameHidden.IsChecked.Value;
+            project.IsTitleHidden = ProjectIsNameHidden.IsChecked.Value;
 
             _context.OnProjectChanged(project);
             _context.Navigate(typeof(ProjectsPage));

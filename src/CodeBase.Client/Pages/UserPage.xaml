@@ -4,36 +4,39 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CodeBase.Client.Pages"
+      xmlns:controls="clr-namespace:CodeBase.Client.Controls" 
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="400"
       Title="UserPage">
 
-    <Grid Background="#fff">
+    <DockPanel Background="#fff">
+        <controls:PageHeader x:Name="PageHeader" Title="User" DockPanel.Dock="Top" />
 
-        <StackPanel Margin="10">
-            <Grid>
-                <Label x:Name="LoggedInfo" 
+        <Grid DockPanel.Dock="Bottom">
+            <StackPanel Margin="10">
+                <Grid>
+                    <Label x:Name="LoggedInfo" 
                        Content="You are logged as {0}" 
                        Height="30" 
                        HorizontalAlignment="Left" VerticalAlignment="Top" 
                        VerticalContentAlignment="Center"/>
-                <Button Content="Log out" 
+                    <Button Content="Log out" 
                         Height="30" Width="80" 
                         HorizontalAlignment="Right" 
                         VerticalAlignment="Top" 
                         Style="{StaticResource RedButtonStyle}" 
                         Click="Logout_Click" />
-            </Grid>
-            <CheckBox x:Name="AutoUpdateCheckBox" Content="Auto update" Margin="5"/>
-            <CheckBox x:Name="SendDataCheckBox" Content="Send data via Web" Margin="5"/>
-            <Grid>
-                <Label Content="Update interval (minutes):" />
-                <TextBox x:Name="UpdateIntervalTextBox" 
+                </Grid>
+                <CheckBox x:Name="AutoUpdateCheckBox" Content="Auto update" Margin="5"/>
+                <CheckBox x:Name="SendDataCheckBox" Content="Send data via Web" Margin="5"/>
+                <Grid>
+                    <Label Content="Update interval (minutes):" />
+                    <TextBox x:Name="UpdateIntervalTextBox" 
                              HorizontalAlignment="Right" Width="100" 
                              HorizontalContentAlignment="Center" 
                              VerticalContentAlignment="Center" />
-            </Grid>
-        </StackPanel>
-
-    </Grid>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Page>

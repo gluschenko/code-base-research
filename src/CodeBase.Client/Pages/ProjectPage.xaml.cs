@@ -12,9 +12,11 @@ namespace CodeBase.Client.Pages
 
         public ProjectPage(Context context)
         {
+            InitializeComponent();
+
             _context = context;
 
-            InitializeComponent();
+            PageHeader.Title = _context.CurrentProject.Title;
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)

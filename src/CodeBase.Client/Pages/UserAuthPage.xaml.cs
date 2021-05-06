@@ -6,11 +6,11 @@ using CodeBase.Domain.Services;
 namespace CodeBase.Client.Pages
 {
     [PageDescriptor(PageLifetime.Transient)]
-    public partial class UserLoginPage : Page
+    public partial class UserAuthPage : Page
     {
         private readonly Context _context;
 
-        public UserLoginPage(Context context)
+        public UserAuthPage(Context context)
         {
             _context = context;
 

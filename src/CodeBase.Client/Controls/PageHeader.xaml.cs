@@ -5,13 +5,18 @@ namespace CodeBase.Client.Controls
 {
     public partial class PageHeader : UserControl
     {
-        public static readonly DependencyProperty TitlePropery = 
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(PageHeader), new PropertyMetadata(OnTitleChanged));
+        public static readonly DependencyProperty TitleProperty = DependencyProperty
+            .Register(nameof(Title), typeof(string), typeof(PageHeader), new PropertyMetadata((d, e) =>
+            {
+                var item = d as PageHeader;
+                var isVisible = !string.IsNullOrWhiteSpace(e.NewValue?.ToString());
+                item.TitleVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            }));
 
         public string Title 
         {
-            get => GetValue(TitlePropery)?.ToString();
-            set => SetValue(TitlePropery, value); 
+            get => GetValue(TitleProperty)?.ToString();
+            set => SetValue(TitleProperty, value); 
         }
 
         public Visibility TitleVisibility { get; set; } = Visibility.Visible;
@@ -19,12 +24,6 @@ namespace CodeBase.Client.Controls
         public PageHeader()
         {
             InitializeComponent();
-        }
-
-        private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var item = d as PageHeader;
-            item.TitleVisibility = !string.IsNullOrWhiteSpace(e.NewValue?.ToString()) ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

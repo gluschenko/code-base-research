@@ -16,7 +16,7 @@ namespace CodeBase.Domain.Models
         public List<string> IgnoredFolders { get; set; }
         public bool IsPublic { get; set; }
         public bool IsLocal { get; set; }
-        public bool IsNameHidden { get; set; }
+        public bool IsTitleHidden { get; set; }
         public long LastEdit { get; set; }
         public ProjectInfo Info { get; set; }
         
@@ -32,7 +32,7 @@ namespace CodeBase.Domain.Models
             IgnoredFolders = new List<string>();
             Info = new ProjectInfo();
             IsPublic = false;
-            IsNameHidden = false;
+            IsTitleHidden = false;
             IsLocal = true;
         }
 
@@ -52,7 +52,7 @@ namespace CodeBase.Domain.Models
                 Title,
                 IsPublic ? " ✔" : "",
                 IsLocal ? " [local]" : "",
-                IsNameHidden ? " [hidden]" : "");
+                IsTitleHidden ? " [hidden]" : "");
         }
 
         public Brush GetBrush()
