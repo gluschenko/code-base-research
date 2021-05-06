@@ -4,12 +4,12 @@ using CodeBase.Domain.Services;
 
 namespace CodeBase.Client.Pages
 {
-    [PageDescriptor("Summary", 2, PageLifetime.Scoped)]
-    public partial class SummaryPage : Page
+    [PageDescriptor("Settings", 4, PageLifetime.Scoped)]
+    public partial class SettingsPage : Page
     {
         private readonly Context _context;
 
-        public SummaryPage(Context context)
+        public SettingsPage(Context context)
         {
             InitializeComponent();
 

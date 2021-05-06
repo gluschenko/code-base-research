@@ -35,10 +35,11 @@
                             </Border>
                             <DataTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="ItemGrid" Property="Background" Value="#3000" />
-                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#3000" />
+                                    <Setter TargetName="ItemGrid" Property="Background" Value="#2000" />
+                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#2000" />
                                 </Trigger>
                                 <DataTrigger Binding="{Binding Path=IsActive}" Value="True">
+                                    <Setter TargetName="ItemGrid" Property="Background" Value="#2000" />
                                     <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#fff" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>
