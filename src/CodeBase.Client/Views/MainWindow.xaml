@@ -28,7 +28,7 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border x:Name="ItemBorder" BorderThickness="3,0,0,0" BorderBrush="{Binding Path=BrushColor}">
+                            <Border x:Name="ItemBorder" BorderThickness="3,0,0,0">
                                 <Grid x:Name="ItemGrid" MouseDown="SidebarItem_MouseDown" Tag="{Binding Path=PageTypeName}">
                                     <Label Content="{Binding Path=Title}" FontSize="16" Margin="4" Foreground="#aaa" />
                                 </Grid>

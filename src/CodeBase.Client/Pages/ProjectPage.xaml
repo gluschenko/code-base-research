@@ -11,35 +11,34 @@
       d:DesignHeight="400" d:DesignWidth="400"
       Title="ProjectPage">
 
-    <Grid>
-        <controls:PageWrapper Title="Project">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="40"/>
-                </Grid.RowDefinitions>
+    <DockPanel Background="#fff">
+        <controls:PageHeader Title="Project" DockPanel.Dock="Top" />
 
-                <TextBox x:Name="qwe"
-                         Grid.Row="0"
-                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         ScrollViewer.CanContentScroll="True"
-                         TextWrapping="NoWrap" 
-                         AcceptsReturn="True" 
-                         FontFamily="Consolas" 
-                         Text="{Binding ElementName=This, Path=_context.CurrentProject.Title}"/>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Content="Files" 
+            <TextBox x:Name="qwe"
+                     Grid.Row="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.CanContentScroll="True"
+                     TextWrapping="NoWrap" 
+                     AcceptsReturn="True" 
+                     FontFamily="Consolas" />
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Button Content="Files" 
                         Width="120" 
                         Margin="5,0"
                         Click="FilesButton_Click"></Button>
-                    <Button Content="Edit" 
+                <Button Content="Edit" 
                         Width="120" 
                         Margin="5,0"
                         Click="EditButton_Click"></Button>
-                </StackPanel>
-            </Grid>
-        </controls:PageWrapper>
-    </Grid>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Page>
