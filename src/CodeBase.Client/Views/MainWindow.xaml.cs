@@ -77,8 +77,8 @@ namespace CodeBase.Client.Views
                 Text = Title,
             };
 
-            _notifyIcon.MouseClick += NotifyIcon_MouseDoubleClick;
-            _notifyIcon.MouseDoubleClick += NotifyIcon_MouseDoubleClick;
+            _notifyIcon.MouseClick += NotifyIcon_MouseClick;
+            _notifyIcon.MouseDoubleClick += NotifyIcon_MouseClick;
 
             var menuStrip = new System.Windows.Forms.ContextMenuStrip();
 
@@ -125,7 +125,7 @@ namespace CodeBase.Client.Views
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            if(_context.AppData.IsTrayCollapseEnabled)
+            if(_context.AppData.IsTrayCollapseEnabled && _notifyIcon is not null)
             {
                 _notifyIcon.Visible = WindowState == WindowState.Minimized;
                 ShowInTaskbar = WindowState != WindowState.Minimized;
@@ -143,7 +143,7 @@ namespace CodeBase.Client.Views
             }
         }
 
-        private void NotifyIcon_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void NotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {

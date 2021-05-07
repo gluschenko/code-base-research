@@ -37,10 +37,10 @@ namespace CodeBase
         {
             Stop();
 
-            _thread = new Thread(run) { IsBackground = true };
+            _thread = new Thread(Run) { IsBackground = true };
             _thread.Start();
 
-            void run()
+            void Run()
             {
                 try
                 {

@@ -46,7 +46,7 @@ namespace CodeBase.Client.Pages
                 Push(project.Title);
             }
 
-            if (project.Location != "")
+            if (!string.IsNullOrWhiteSpace(project.Location))
             {
                 Push($"Location: {project.Location}");
             }
