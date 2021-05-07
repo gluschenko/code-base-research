@@ -12,8 +12,11 @@
     <DockPanel Background="#fff">
         <controls:PageHeader x:Name="PageHeader" Title="Settings" DockPanel.Dock="Top" />
 
-        <Grid DockPanel.Dock="Bottom">
-
-        </Grid>
+        <StackPanel DockPanel.Dock="Bottom">
+            <CheckBox x:Name="AutorunCheckBox" Content="Run with Windows" 
+                      Margin="20,10" Click="AutorunCheckBox_Click" />
+            <CheckBox x:Name="TrayCheckBox" Content="Collapse into Tray" 
+                      Margin="20,10" Click="TrayCheckBox_Click" />
+        </StackPanel>
     </DockPanel>
 </Page>

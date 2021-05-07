@@ -19,8 +19,12 @@ namespace CodeBase.Client.Views
         private readonly HashSet<Page> _activePages;
         private Type _currentPageType;
 
+        private System.Windows.Forms.NotifyIcon _notifyIcon;
+
         public MainWindow()
         {
+            InitializeComponent();
+
             _activePages = new HashSet<Page>();
             _dataManager = new DataManager<AppData>("prefs.json");
 
@@ -37,10 +41,19 @@ namespace CodeBase.Client.Views
             _context = CreateContext();
 
             Loaded += MainWindow_Loaded;
+            StateChanged += MainWindow_StateChanged;
             Closing += MainWindow_Closing;
 
-            InitializeComponent();
+            Start();
+        }
 
+        ~MainWindow()
+        {
+            _notifyIcon?.Dispose();
+        }
+
+        private void Start()
+        {
             Navigate(typeof(ProjectsPage));
         }
 
@@ -55,26 +68,87 @@ namespace CodeBase.Client.Views
             };
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void CreateTrayIcon()
         {
-            Width = _appData.WindowWidth ?? Width;
-            Height = _appData.WindowHeight ?? Height;
-            WindowState = _appData.WindowState ?? WindowState;
+            // Поведение иконки в tray
+            _notifyIcon = new System.Windows.Forms.NotifyIcon
+            {
+                Icon = new System.Drawing.Icon(@".\Resources\CodeBaseLogo.ico"),
+                Text = Title,
+            };
+
+            _notifyIcon.MouseClick += NotifyIcon_MouseDoubleClick;
+            _notifyIcon.MouseDoubleClick += NotifyIcon_MouseDoubleClick;
+
+            var menuStrip = new System.Windows.Forms.ContextMenuStrip();
+
+            var closeItem = new System.Windows.Forms.ToolStripButton
+            {
+                Text = "Close",
+                Image = System.Drawing.Image.FromFile(@".\Resources\Close.png"),
+            };
+
+            closeItem.Click += (s, e) => Application.Current.Shutdown();
+
+            menuStrip.Items.Add(closeItem);
+            menuStrip.Width = 200;
+            
+            _notifyIcon.ContextMenuStrip = menuStrip;
         }
 
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            _appData.WindowWidth = Width;
-            _appData.WindowHeight = Height;
-            _appData.WindowState = WindowState;
+        
 
+        private void SaveData()
+        {
             try
             {
+                _appData.WindowWidth = Width;
+                _appData.WindowHeight = Height;
+                _appData.WindowState = WindowState;
+
                 _dataManager.Save(_appData);
             }
             catch (Exception ex)
             {
                 MessageHelper.Error(ex.Message);
+            }
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Width = _appData.WindowWidth ?? Width;
+            Height = _appData.WindowHeight ?? Height;
+            WindowState = _appData.WindowState ?? WindowState;
+
+            CreateTrayIcon();
+        }
+
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            if(_context.AppData.IsTrayCollapseEnabled)
+            {
+                _notifyIcon.Visible = WindowState == WindowState.Minimized;
+                ShowInTaskbar = WindowState != WindowState.Minimized;
+            }
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SaveData();
+
+            if (_context.AppData.IsTrayCollapseEnabled)
+            {
+                WindowState = WindowState.Minimized;
+                e.Cancel = true;
+            }
+        }
+
+        private void NotifyIcon_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                WindowState = WindowState.Normal;
+                Activate();
             }
         }
 

@@ -4,71 +4,66 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CodeBase.Client.Pages"
-      xmlns:models="clr-namespace:CodeBase.Domain.Models;assembly=CodeBase.Domain" 
+      xmlns:models="clr-namespace:CodeBase.Domain.Models;assembly=CodeBase.Domain"
+      xmlns:controls="clr-namespace:CodeBase.Client.Controls" 
       mc:Ignorable="d" 
       d:DesignHeight="400" 
       d:DesignWidth="400"
       Title="MainPage">
 
-    <Grid Background="White">
-        <Grid Height="50" VerticalAlignment="Top" Background="#FFEEEEEE">
-            <CheckBox x:Name="AutorunCheckBox" 
-                      Content="Run with Windows" 
-                      HorizontalAlignment="Left" 
-                      VerticalAlignment="Top" 
-                      Margin="10,19,0,0" 
-                      Click="AutorunCheckBox_Click" />
-            <Button x:Name="AddProjectButton" 
-                    Content="Add Project" 
-                    Margin="0,9,10,9" Width="100"
-                    HorizontalAlignment="Right" 
-                    Click="AddProjectButton_Click" />
+    <DockPanel Background="#fff">
+        <controls:PageHeader x:Name="PageHeader" Title="Projects" DockPanel.Dock="Top" />
+
+        <Grid DockPanel.Dock="Bottom">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,50">
+                <ItemsControl x:Name="ProjectsListBox" 
+                              HorizontalContentAlignment="Stretch" 
+                              Margin="5" 
+                              Background="{x:Null}">
+
+                    <models:Project Title="Lorem ipsum" Location="www"/>
+                    <models:Project Title="Test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+                    <models:Project Title="Test test test" Location="www"/>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="5,0,0,0" Margin="0, 2" BorderBrush="{Binding Path=BrushColor}">
+                                <Grid>
+                                    <Label FontSize="16" Content="{Binding Path=TitleText}" />
+                                    <Label FontSize="16" Content="{Binding Path=Info.SourceLinesText}" 
+                                           HorizontalAlignment="Right" Margin="0,0,105,0" />
+                                    <Button Width="32" Content="🡲" 
+                                            HorizontalAlignment="Right" Margin="0,0,70,0" 
+                                            Tag="{Binding Path=ID}" 
+                                            Click="ProjectOpenButton_Click" />
+                                    <Button Width="32" Content="✎" 
+                                            HorizontalAlignment="Right" Margin="0,0,35,0" 
+                                            Tag="{Binding Path=ID}" 
+                                            Click="ProjectEditButton_Click" />
+                                    <Button Width="32" Content="✖" Margin="0" 
+                                            HorizontalAlignment="Right"
+                                            Tag="{Binding Path=ID}" 
+                                            Click="ProjectDeleteButton_Click" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <Grid Height="50" Background="#FFEEEEEE" VerticalAlignment="Bottom">
+                <Button x:Name="AddProjectButton"
+                        HorizontalAlignment="Center"
+                        Content="➕" 
+                        Click="AddProjectButton_Click" />
+            </Grid>
         </Grid>
-
-        <ScrollViewer Margin="0,51,0,0" 
-                      VerticalScrollBarVisibility="Auto"
-                      RenderTransformOrigin="0.5,0.5">
-            <ItemsControl x:Name="ProjectsListBox" 
-                          HorizontalContentAlignment="Stretch" 
-                          Margin="5" 
-                          Background="{x:Null}">
-
-                <models:Project Title="Lorem ipsum" Location="www"/>
-                <models:Project Title="Test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-                <models:Project Title="Test test test" Location="www"/>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderThickness="5,0,0,0" Margin="0, 2" BorderBrush="{Binding Path=BrushColor}">
-                            <Grid>
-                                <Label FontSize="16" Content="{Binding Path=TitleText}" />
-                                <Label FontSize="16" Content="{Binding Path=Info.SourceLinesText}" 
-                                    HorizontalAlignment="Right" Margin="0,0,105,0" />
-                                <Button Width="32" Content="🡲" 
-                                    HorizontalAlignment="Right" Margin="0,0,70,0" 
-                                    Tag="{Binding Path=ID}" 
-                                    Click="ProjectOpenButton_Click" />
-                                <Button Width="32" Content="✎" 
-                                    HorizontalAlignment="Right" Margin="0,0,35,0" 
-                                    Tag="{Binding Path=ID}" 
-                                    Click="ProjectEditButton_Click" />
-                                <Button Width="32" Content="✖" Margin="0" 
-                                    HorizontalAlignment="Right"
-                                    Tag="{Binding Path=ID}" 
-                                    Click="ProjectDeleteButton_Click"/>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
-        
-    </Grid>
+    </DockPanel>
 </Page>

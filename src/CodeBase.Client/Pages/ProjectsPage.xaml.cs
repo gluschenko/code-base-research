@@ -14,7 +14,6 @@ namespace CodeBase.Client.Pages
     public partial class ProjectsPage : Page
     {
         private readonly Context _context;
-        private readonly AutorunService _autorunService;
 
         private ObservableCollection<Project> _projects;
         private ProjectCreateWindow _addProjectWindow;
@@ -26,12 +25,8 @@ namespace CodeBase.Client.Pages
             _context.OnProjectDeleted = OnProjectDeleted;
             _context.OnProjectChanged = OnProjectChanged;
 
-            _autorunService = new AutorunService();
-
             InitializeComponent();
             UpdateProjectsList();
-
-            AutorunCheckBox.IsChecked = _autorunService.GetState();
         }
 
         private void OnProjectCreated(Project project)
@@ -72,16 +67,6 @@ namespace CodeBase.Client.Pages
         }
 
         #region Window Events
-
-        private void AutorunCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            var checkBox = sender as CheckBox;
-            checkBox.IsChecked = _autorunService
-                .SetState(checkBox.IsChecked.Value, ex => 
-                {
-                    MessageHelper.Error(ex.Message, ex.GetType().Name);
-                });
-        }
 
         private void AddProjectButton_Click(object sender, RoutedEventArgs e)
         {

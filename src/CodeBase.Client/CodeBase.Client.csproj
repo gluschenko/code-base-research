@@ -15,4 +15,13 @@
     <ProjectReference Include="..\CodeBase.Domain\CodeBase.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\Close.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\CodeBaseLogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
