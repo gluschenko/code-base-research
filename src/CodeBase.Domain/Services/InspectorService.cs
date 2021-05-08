@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows.Threading;
+using CodeBase.Domain.Models;
 
-namespace CodeBase
+namespace CodeBase.Domain.Services
 {
     public delegate void InspectStartHandler();
     public delegate void InspectUpdateHandler(InspectorStage stage, InspectState state);
@@ -25,7 +26,7 @@ namespace CodeBase
         FetchingLines,
     }
 
-    public class Inspector
+    public class InspectorService
     {
         public event InspectStartHandler OnStart;
         public event InspectUpdateHandler OnUpdate;
@@ -82,7 +83,7 @@ namespace CodeBase
                     All = projects.Count
                 });
                 //
-                var projectPath = project.Path.Replace('\\', '/');
+                var projectPath = project.Location.Replace('\\', '/');
                 var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) =>
                 {
                     ProcessUpdate(InspectorStage.Progress2, new InspectState
@@ -160,8 +161,11 @@ namespace CodeBase
                         {
                             data = File.ReadAllText(file.Path);
                             //
-                            var newLastEdit = UnixTime.ToTimestamp(File.GetLastWriteTime(file.Path));
-                            project.LastEdit = Math.Max(project.LastEdit, newLastEdit);
+                            var newLastEdit = File.GetLastWriteTime(file.Path);
+                            if(project.LastRevision < newLastEdit)
+                            {
+                                project.LastRevision = newLastEdit;
+                            }
                         }
                         catch (Exception ex)
                         {

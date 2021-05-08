@@ -17,7 +17,7 @@ namespace CodeBase.Domain.Models
         public bool IsPublic { get; set; }
         public bool IsLocal { get; set; }
         public bool IsTitleHidden { get; set; }
-        public long LastEdit { get; set; }
+        public DateTime LastRevision { get; set; }
         public ProjectInfo Info { get; set; }
         
         public string TitleText => GetTitle();

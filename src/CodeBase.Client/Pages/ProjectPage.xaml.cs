@@ -51,9 +51,9 @@ namespace CodeBase.Client.Pages
                 Push($"Location: {project.Location}");
             }
 
-            if (project.LastEdit != 0)
+            if (project.LastRevision > default(DateTime))
             {
-                Push($"Last edit: {project.LastEdit}");
+                Push($"Last edit: {project.LastRevision}");
             }
 
             Push("");

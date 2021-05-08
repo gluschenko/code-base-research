@@ -17,8 +17,11 @@ namespace CodeBase.Client.Views
         private readonly AppData _appData;
         private readonly Context _context;
         private readonly HashSet<Page> _activePages;
-        private Type _currentPageType;
+        private readonly Pulse _pulse;
+        private readonly InspectorService _inspector;
 
+        private bool _isUpdateAssigned;
+        private Type _currentPageType;
         private System.Windows.Forms.NotifyIcon _notifyIcon;
 
         public MainWindow()
@@ -39,6 +42,8 @@ namespace CodeBase.Client.Views
             }
 
             _context = CreateContext();
+            _pulse = new Pulse(_context, () => StartInspector());
+            _inspector = new InspectorService();
 
             Loaded += MainWindow_Loaded;
             StateChanged += MainWindow_StateChanged;
@@ -54,6 +59,7 @@ namespace CodeBase.Client.Views
 
         private void Start()
         {
+            _pulse.Start();
             Navigate(typeof(ProjectsPage));
         }
 
@@ -224,6 +230,59 @@ namespace CodeBase.Client.Views
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
+            StartInspector();
+        }
+
+        private void StartInspector() 
+        {
+            if (!_isUpdateAssigned)
+            {
+                _isUpdateAssigned = true;
+
+                _inspector.OnStart += () =>
+                {
+                    StatusText.Content = "Wait...";
+                };
+
+                _inspector.OnUpdate += (stage, state) =>
+                {
+                    if (stage == InspectorStage.Progress)
+                    {
+                        ProgressBarPrimary.Visibility = Visibility.Visible;
+                        ProgressBarPrimary.Maximum = state.All;
+                        ProgressBarPrimary.Value = state.Used;
+                    }
+
+                    if (stage == InspectorStage.Progress2)
+                    {
+                        ProgressBarSecondary.Visibility = Visibility.Visible;
+                        ProgressBarSecondary.Maximum = state.All;
+                        ProgressBarSecondary.Value = state.Used;
+                    }
+
+                    if (stage == InspectorStage.FetchingFiles)
+                    {
+                        StatusText.Content = $"Fetching files: {state.All}";
+                    }
+
+                    if (stage == InspectorStage.FetchingLines)
+                    {
+                        StatusText.Content = $"Fetching lines: {state.All}";
+                    }
+                };
+
+                _inspector.OnComplete += () =>
+                {
+                    Navigate(_currentPageType);
+                    SaveData();
+                    //
+                    StatusText.Content = "Complete";
+                    ProgressBarPrimary.Visibility = Visibility.Hidden;
+                    ProgressBarSecondary.Visibility = Visibility.Hidden;
+                };
+            }
+
+            _inspector.Start(_appData.Projects.ToList(), Dispatcher);
         }
 
     }

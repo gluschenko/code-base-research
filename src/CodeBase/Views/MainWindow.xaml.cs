@@ -16,7 +16,7 @@ namespace CodeBase
 
         private readonly ObservableCollection<Project> _projects;
 
-        private Heart _heart;
+        private readonly Heart _heart;
         private readonly Autorun _autorun;
         private readonly Inspector _inspector;
 
@@ -25,7 +25,7 @@ namespace CodeBase
 
         private NotifyIcon _notifyIcon;
 
-        private bool _isUpdateAssugned = false;
+        private bool _isUpdateAssigned = false;
 
         public MainWindow()
         {
@@ -51,7 +51,6 @@ namespace CodeBase
         ~MainWindow()
         {
             _notifyIcon.Dispose();
-            _heart = null;
         }
 
         #region Other Methods
@@ -186,9 +185,9 @@ namespace CodeBase
 
         public void StartInspector()
         {
-            if (!_isUpdateAssugned)
+            if (!_isUpdateAssigned)
             {
-                _isUpdateAssugned = true;
+                _isUpdateAssigned = true;
 
                 _inspector.OnStart += () =>
                 {

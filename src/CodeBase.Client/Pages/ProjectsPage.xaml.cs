@@ -53,7 +53,7 @@ namespace CodeBase.Client.Pages
 
             _projects.Clear();
             _context.AppData.Projects
-                .OrderByDescending(proj => proj.LastEdit).ToList()
+                .OrderByDescending(proj => proj.LastRevision).ToList()
                 .ForEach(x => _projects.Add(x));
 
             if (ProjectsListBox.ItemsSource == null)
