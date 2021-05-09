@@ -19,10 +19,10 @@ namespace CodeBase.Domain.Models
         public bool IsTitleHidden { get; set; }
         public DateTime LastRevision { get; set; }
         public ProjectInfo Info { get; set; }
-        
+
         public string TitleText => GetTitle();
         public Brush BrushColor => GetBrush();
-        
+
         public delegate void GetFilesUpdate(int files, int dirs, string currentDir);
 
         public Project()

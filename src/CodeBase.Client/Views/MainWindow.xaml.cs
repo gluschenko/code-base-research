@@ -98,11 +98,11 @@ namespace CodeBase.Client.Views
 
             menuStrip.Items.Add(closeItem);
             menuStrip.Width = 200;
-            
+
             _notifyIcon.ContextMenuStrip = menuStrip;
         }
 
-        
+
 
         private void SaveData()
         {
@@ -134,7 +134,7 @@ namespace CodeBase.Client.Views
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            if(_context.AppData.IsTrayCollapseEnabled && _notifyIcon is not null)
+            if (_context.AppData.IsTrayCollapseEnabled && _notifyIcon is not null)
             {
                 _notifyIcon.Visible = WindowState == WindowState.Minimized;
                 ShowInTaskbar = WindowState != WindowState.Minimized;
@@ -184,7 +184,7 @@ namespace CodeBase.Client.Views
                 })
                 .ToArray();
 
-            if(SidebarMenu.ItemsSource != null)
+            if (SidebarMenu.ItemsSource != null)
             {
                 SidebarMenu.ItemsSource = null;
             }
@@ -236,7 +236,7 @@ namespace CodeBase.Client.Views
             StartInspector();
         }
 
-        private void StartInspector() 
+        private void StartInspector()
         {
             if (!_isUpdateAssigned)
             {

@@ -95,7 +95,7 @@ namespace CodeBase.Client.Pages
                 ProjectColor.Background = new SolidColorBrush(color);
             }
             catch
-            { 
+            {
             }
         }
     }

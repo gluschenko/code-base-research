@@ -19,7 +19,7 @@ namespace CodeBase.Domain.Services
             _timer.Tick += Tick;
         }
 
-        public void Start() 
+        public void Start()
         {
             _lastTime = DateTime.Now;
             _timer.Start();
@@ -38,6 +38,6 @@ namespace CodeBase.Domain.Services
                 _lastTime = now;
             }
         }
-        
+
     }
 }

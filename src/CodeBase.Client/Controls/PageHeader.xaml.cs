@@ -13,10 +13,10 @@ namespace CodeBase.Client.Controls
                 item.TitleVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             }));
 
-        public string Title 
+        public string Title
         {
             get => GetValue(TitleProperty)?.ToString();
-            set => SetValue(TitleProperty, value); 
+            set => SetValue(TitleProperty, value);
         }
 
         public Visibility TitleVisibility { get; set; } = Visibility.Visible;

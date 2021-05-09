@@ -40,7 +40,7 @@ namespace CodeBase.Client.Pages
                 text.Append(line);
                 text.Append(Environment.NewLine);
             }
-            
+
             if (!string.IsNullOrWhiteSpace(project.Title))
             {
                 Push(project.Title);

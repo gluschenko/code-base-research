@@ -162,7 +162,7 @@ namespace CodeBase.Domain.Services
                             data = File.ReadAllText(file.Path);
                             //
                             var newLastEdit = File.GetLastWriteTime(file.Path);
-                            if(project.LastRevision < newLastEdit)
+                            if (project.LastRevision < newLastEdit)
                             {
                                 project.LastRevision = newLastEdit;
                             }
