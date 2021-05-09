@@ -127,6 +127,9 @@ namespace CodeBase.Client.Views
             WindowState = _appData.WindowState ?? WindowState;
 
             CreateTrayIcon();
+
+            ProgressBarPrimary.Visibility = Visibility.Hidden;
+            ProgressBarSecondary.Visibility = Visibility.Hidden;
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
@@ -246,14 +249,14 @@ namespace CodeBase.Client.Views
 
                 _inspector.OnUpdate += (stage, state) =>
                 {
-                    if (stage == InspectorStage.Progress)
+                    if (stage == InspectorStage.ProgressPrimary)
                     {
                         ProgressBarPrimary.Visibility = Visibility.Visible;
                         ProgressBarPrimary.Maximum = state.All;
                         ProgressBarPrimary.Value = state.Used;
                     }
 
-                    if (stage == InspectorStage.Progress2)
+                    if (stage == InspectorStage.ProgressSecondary)
                     {
                         ProgressBarSecondary.Visibility = Visibility.Visible;
                         ProgressBarSecondary.Maximum = state.All;

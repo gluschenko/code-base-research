@@ -20,8 +20,8 @@ namespace CodeBase.Domain.Services
 
     public enum InspectorStage
     {
-        Progress,
-        Progress2,
+        ProgressPrimary,
+        ProgressSecondary,
         FetchingFiles,
         FetchingLines,
     }
@@ -77,7 +77,7 @@ namespace CodeBase.Domain.Services
 
             foreach (var project in projects)
             {
-                ProcessUpdate(InspectorStage.Progress, new InspectState
+                ProcessUpdate(InspectorStage.ProgressPrimary, new InspectState
                 {
                     Used = ++i,
                     All = projects.Count
@@ -86,7 +86,7 @@ namespace CodeBase.Domain.Services
                 var projectPath = project.Location.Replace('\\', '/');
                 var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) =>
                 {
-                    ProcessUpdate(InspectorStage.Progress2, new InspectState
+                    ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
                     {
                         Used = Math.Min(files, dirs),
                         All = Math.Max(files, dirs)
@@ -107,7 +107,7 @@ namespace CodeBase.Domain.Services
                 {
                     if (j % 10 == 0)
                     {
-                        ProcessUpdate(InspectorStage.Progress2, new InspectState
+                        ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
                         {
                             Used = j,
                             All = files.Count
@@ -140,7 +140,7 @@ namespace CodeBase.Domain.Services
                     //
                     if (j % 10 == 0)
                     {
-                        ProcessUpdate(InspectorStage.Progress2, new InspectState
+                        ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
                         {
                             Used = j,
                             All = files.Count

@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBase.Shared\CodeBase.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

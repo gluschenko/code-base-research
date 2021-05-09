@@ -31,11 +31,46 @@ jobs:
       working-directory: ${{env.ROOT}}/CodeBase.Client
       run: dotnet publish -c RELEASE -o out
 
+    - name: 🚀 Pack CodeBase.Shared
+      working-directory: ${{env.ROOT}}/CodeBase.Shared
+      run: dotnet pack -c Release -o out 
+
     - uses: actions/upload-artifact@v2
       with:
         name: builds
         path: ${{env.ROOT}}/**/out
         retention-days: 1
+
+  deploy_nugets:
+    runs-on: ubuntu-latest
+    needs: build
+    #if: github.ref == 'refs/heads/master'
+    env:
+      ROOT: ./src
+      NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}} 
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: builds
+        path: ${{env.ROOT}}
+
+    - name: 📂 Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.100
+        source-url: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_READ_TOKEN}} 
+
+    - name: 📂 Files
+      working-directory: ${{env.ROOT}}
+      run: ls -R
+
+    - name: 🚚 Push CodeBase.Shared to GitHub registry
+      working-directory: ${{env.ROOT}}/CodeBase.Shared
+      run: dotnet nuget push ./out/*.nupkg --skip-duplicate --no-symbols true -k ${{env.NUGET_AUTH_TOKEN}}
 
   deploy:
 
