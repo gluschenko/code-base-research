@@ -57,12 +57,12 @@ namespace CodeBase.Client.Pages
             }
 
             Push("");
-            if (project.Folders?.Count > 0)
+            if (project.AllowedFolders?.Count > 0)
             {
                 Push($"Folders: ");
 
                 var i = 0;
-                foreach (var folder in project.Folders)
+                foreach (var folder in project.AllowedFolders)
                 {
                     Push($"{++i}. {folder}");
                 }

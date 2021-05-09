@@ -124,7 +124,9 @@ namespace CodeBase.Client.Views
         {
             Width = _appData.WindowWidth ?? Width;
             Height = _appData.WindowHeight ?? Height;
-            WindowState = _appData.WindowState ?? WindowState;
+
+            var windowState = _appData.WindowState ?? WindowState;
+            WindowState = windowState != WindowState.Minimized ? windowState : WindowState.Normal;
 
             CreateTrayIcon();
 

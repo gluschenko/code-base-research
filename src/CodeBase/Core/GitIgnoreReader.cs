@@ -25,8 +25,8 @@ namespace CodeBase
     /// </summary>
     public class GitIgnoreReader
     {
-        const string gitFileName = ".gitignore";
-        const string gitDefaultDir = ".git/";
+        const string GIT_FILE_NAME = ".gitignore";
+        const string GIT_DEFAULT_DIRECTORY = ".git/";
         // public
         /// <summary>Path to the .gitignore file</summary>
         public string Path { get; private set; }
@@ -35,12 +35,12 @@ namespace CodeBase
         public string BaseDir { get; private set; }
 
         /// <summary>Does this reader instance is ready to work?</summary>
-        public bool IsParsed { get => positives != null && negatives != null; }
+        public bool IsParsed { get => _positives != null && _negatives != null; }
 
-        public IReadOnlyCollection<GitIgnoreRule> Rules { get => rules_; }
+        public IReadOnlyCollection<GitIgnoreRule> Rules { get => _rules; }
         // private
-        private readonly List<GitIgnoreRule> rules_;
-        private Regex positives, negatives;
+        private readonly List<GitIgnoreRule> _rules;
+        private Regex _positives, _negatives;
 
         // ctor
         public GitIgnoreReader(string path = "")
@@ -48,15 +48,15 @@ namespace CodeBase
             Path = PreparePath(path, relative: false);
             BaseDir = PathIO.GetDirectoryName(Path) ?? "";
 
-            rules_ = new List<GitIgnoreRule>();
+            _rules = new List<GitIgnoreRule>();
         }
 
         #region PUBLIC
 
         public static GitIgnoreReader Load(string path)
         {
-            if (!path.EndsWith(gitFileName))
-                path = PathIO.Combine(path, gitFileName);
+            if (!path.EndsWith(GIT_FILE_NAME))
+                path = PathIO.Combine(path, GIT_FILE_NAME);
 
             var reader = new GitIgnoreReader(path);
 
@@ -71,7 +71,7 @@ namespace CodeBase
 
         public void Parse(string[] lines)
         {
-            var rules = new string[] { gitDefaultDir } // Git исключает из репозитория сам себя (c) Кэп
+            var rules = new string[] { GIT_DEFAULT_DIRECTORY } // Git исключает из репозитория сам себя (c) Кэп
                 .Concat(lines)
                 .Select(s => s.Trim())
                 .Where(s => !s.StartsWith("#")         // Исключаем комментарии
@@ -79,8 +79,8 @@ namespace CodeBase
                     && !s.All(ch => ch == '-')
                     && !s.All(ch => ch == '_'));       // Исключаем строки разделения ("black lines" в документации Git)
 
-            rules_.Clear();
-            rules_.AddRange(rules.Select(r => new GitIgnoreRule(r)));
+            _rules.Clear();
+            _rules.AddRange(rules.Select(r => new GitIgnoreRule(r)));
 
             CreateRegex();
         }
@@ -90,7 +90,7 @@ namespace CodeBase
             if (IsParsed)
             {
                 path = PreparePath(path, relative: true);
-                return !positives.IsMatch(path) || negatives.IsMatch(path);
+                return !_positives.IsMatch(path) || _negatives.IsMatch(path);
             }
             return true;
         }
@@ -100,18 +100,18 @@ namespace CodeBase
             if (IsParsed)
             {
                 path = PreparePath(path, relative: true);
-                return (positives.Matches(path), negatives.Matches(path));
+                return (_positives.Matches(path), _negatives.Matches(path));
             }
             return (null, null);
         }
 
         public string MatchesToString(MatchCollection pos, MatchCollection neg)
         {
-            string bake(MatchCollection matches)
+            static string Bake(MatchCollection matches)
             {
                 var mt = matches.Cast<Match>().Select(m =>
                 {
-                    var _res = new List<string>();
+                    var res = new List<string>();
                     for (int i = 0; i < m.Groups.Count; i++)
                     {
                         var group = m.Groups[i];
@@ -122,18 +122,18 @@ namespace CodeBase
                         }
 
                         if (captures.Count > 0)
-                            _res.Add($"{string.Join(", ", captures)} ({i})");
+                            res.Add($"{string.Join(", ", captures)} ({i})");
                     }
-                    return string.Join(" | ", _res);
+                    return string.Join(" | ", res);
                 });
                 return string.Join(" match -> ", mt);
             }
 
             var res = new List<string>();
             if (pos.Count > 0)
-                res.Add("pos: " + bake(pos) + "\n");
+                res.Add("pos: " + Bake(pos) + "\n");
             if (neg.Count > 0)
-                res.Add("neg: " + bake(neg) + "\n");
+                res.Add("neg: " + Bake(neg) + "\n");
 
             return string.Join("\n", res);
         }
@@ -158,12 +158,12 @@ namespace CodeBase
 
         public static string[] Find(string path, SearchOption search)
         {
-            return Directory.GetFiles(path, gitFileName, search);
+            return Directory.GetFiles(path, GIT_FILE_NAME, search);
         }
 
         public static bool HasFile(string path)
         {
-            path = PathIO.Combine(path, gitFileName);
+            path = PathIO.Combine(path, GIT_FILE_NAME);
             return File.Exists(path);
         }
 
@@ -200,7 +200,7 @@ namespace CodeBase
                 positiveRules = new List<GitIgnoreRule>(),
                 negativeRules = new List<GitIgnoreRule>();
 
-            rules_.ForEach(e =>
+            _rules.ForEach(e =>
             {
                 if (e.IsValid)
                 {
@@ -215,8 +215,8 @@ namespace CodeBase
                 }
             });
             //
-            positives = BuildRegex(positiveRules.Select(e => e.Pattern).ToArray());
-            negatives = BuildRegex(negativeRules.Select(e => e.Pattern).ToArray());
+            _positives = BuildRegex(positiveRules.Select(e => e.Pattern).ToArray());
+            _negatives = BuildRegex(negativeRules.Select(e => e.Pattern).ToArray());
         }
 
         internal static string PrepareRegexPattern(string pattern)

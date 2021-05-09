@@ -49,6 +49,13 @@ namespace CodeBase.Domain.Services
 
         private Thread _thread;
 
+        private readonly FileProvider _fileProvider;
+
+        public InspectorService()
+        {
+            _fileProvider = new FileProvider();
+        }
+
         public void Start(List<Project> projects, Dispatcher dispatcher)
         {
             Stop();
@@ -82,6 +89,7 @@ namespace CodeBase.Domain.Services
         private void Process(List<Project> projects, Dispatcher dispatcher)
         {
             var extentions = Languages.Get().SelectMany(x => x.Extensions).ToHashSet();
+            var ignoredFiles = InspectorConfig.IgnoredFilesList;
 
             void ProcessUpdate(InspectorStage stage, InspectState state)
             {
@@ -101,7 +109,7 @@ namespace CodeBase.Domain.Services
                 });
                 //
                 var projectPath = project.Location.Replace('\\', '/');
-                var files = project.GetFiles(extentions, InspectorConfig.IgnoredFilesList, (files, dirs, cur) =>
+                var files = _fileProvider.GetFilesData(project, extentions, ignoredFiles, (files, dirs, cur) =>
                 {
                     ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
                     {
@@ -114,7 +122,7 @@ namespace CodeBase.Domain.Services
                 //
                 var projectVolume = new CodeVolume();
 
-                if (files.Count == 0)
+                if (!files.Any())
                 {
                     project.Info.Error("This project has no files to analyse");
                 }
@@ -127,7 +135,7 @@ namespace CodeBase.Domain.Services
                         ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
                         {
                             Used = j,
-                            All = files.Count
+                            All = files.Count()
                         });
                     }
                     j++;
@@ -160,7 +168,7 @@ namespace CodeBase.Domain.Services
                         ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
                         {
                             Used = j,
-                            All = files.Count
+                            All = files.Count()
                         });
 
                         ProcessUpdate(InspectorStage.FetchingLines, new InspectState
