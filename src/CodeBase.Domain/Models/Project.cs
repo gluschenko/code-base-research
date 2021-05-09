@@ -66,12 +66,12 @@ namespace CodeBase.Domain.Models
             var location = Location;
             var list = new List<FileItem>();
 
-            /*if (Directory.Exists(location))
+            if (Directory.Exists(location))
             {
                 var allowedDirs = GetAllowedFolders();
                 //
-                var gitIgnores = GitIgnoreReader.Find(location, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
-                var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
+                //var gitIgnores = GitIgnoreReader.Find(location, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
+                //var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
 
                 var dirsCount = 0;
 
@@ -79,50 +79,50 @@ namespace CodeBase.Domain.Models
 
                 void GetFiles(string dir)
                 {
-                    var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(f.BaseDir, dir));
+                    //var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(f.BaseDir, dir));
 
-                    var isAllowedDir =
-                        allowedDirs.Count > 0 ? allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, dir)) : true;
+                    //var isAllowedDir =
+                    //    allowedDirs.Count > 0 ? allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, dir)) : true;
 
                     var subs = Directory.EnumerateDirectories(dir)
-                        .Where(p => !IsIgnoredForder(p))
+                        //.Where(p => !IsIgnoredForder(p))
                         .Select(s => s.Replace('\\', '/'));
 
                     var files = Directory.EnumerateFiles(dir)
-                        .Where(s => isAllowedDir)
-                        .Where(s => extensions.Contains(PathIO.GetExtension(s)))
+                        //.Where(s => isAllowedDir)
+                        .Where(s => extensions.Contains(Path.GetExtension(s)))
                         .Where(s => blackList.All(end => !s.EndsWith(end)))
                         .Select(s => s.Replace('\\', '/'));
 
                     dirsCount += subs.Count();
 
-                    onProgress?.Invoke(queue.Count, dirsCount, dir);
+                    //onProgress?.Invoke(queue.Count, dirsCount, dir);
 
                     foreach (var file in files)
                     {
-                        queue.Enqueue(new KeyValuePair<string, IEnumerable<GitIgnoreReader>>(file, relevantGitFiles));
+                        //queue.Enqueue(new KeyValuePair<string, IEnumerable<GitIgnoreReader>>(file, relevantGitFiles));
                     }
 
                     foreach (var sub in subs.Select(s => s + '/'))
                     {
-                        var isMatch = relevantGitFiles.All(r => r.IsMatch(sub));
+                        //var isMatch = relevantGitFiles.All(r => r.IsMatch(sub));
 
-                        if (isMatch)
+                        //if (isMatch)
                         {
                             GetFiles(sub);
                         }
                     }
                 }
 
-                while (queue.Count > 0)
+                //while (queue.Count > 0)
                 {
-                    var pair = queue.Dequeue();
-                    var isMatch = pair.Value.All(r => r.IsMatch(pair.Key));
-                    list.Add(new FileItem(pair.Key, isMatch));
+                    //var pair = queue.Dequeue();
+                    //var isMatch = pair.Value.All(r => r.IsMatch(pair.Key));
+                    //list.Add(new FileItem(pair.Key, isMatch));
 
-                    onProgress?.Invoke(queue.Count, 0, pair.Key);
+                    //onProgress?.Invoke(queue.Count, 0, pair.Key);
                 }
-            }*/
+            }
 
             return list;
         }

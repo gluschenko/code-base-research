@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Threading;
 using CodeBase.Domain.Models;
+using CodeBase.Shared;
 
 namespace CodeBase.Domain.Services
 {
@@ -24,6 +26,19 @@ namespace CodeBase.Domain.Services
         ProgressSecondary,
         FetchingFiles,
         FetchingLines,
+    }
+
+    public class InspectorConfig
+    {
+        public static readonly HashSet<string> IgnoredFilesList = new()
+        {
+            ".i.g.cs",
+            ".g.i.cs",
+            ".i.cs",
+            ".g.cs",
+            ".Designer.cs",
+            "AssemblyInfo.cs",
+        };
     }
 
     public class InspectorService
@@ -66,6 +81,8 @@ namespace CodeBase.Domain.Services
 
         private void Process(List<Project> projects, Dispatcher dispatcher)
         {
+            var extentions = Languages.Get().SelectMany(x => x.Extensions).ToHashSet();
+
             void ProcessUpdate(InspectorStage stage, InspectState state)
             {
                 dispatcher.Invoke(() => OnUpdate?.Invoke(stage, state));
@@ -84,7 +101,7 @@ namespace CodeBase.Domain.Services
                 });
                 //
                 var projectPath = project.Location.Replace('\\', '/');
-                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) =>
+                var files = project.GetFiles(extentions, InspectorConfig.IgnoredFilesList, (files, dirs, cur) =>
                 {
                     ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
                     {
