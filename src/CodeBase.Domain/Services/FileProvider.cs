@@ -18,33 +18,59 @@ namespace CodeBase.Domain.Services
 
         public IEnumerable<FileItem> GetFilesData(Project project, HashSet<string> extensions, HashSet<string> blackList, GetFilesUpdate onProgress = null)
         {
-            if (project.Title != "GitHub")
+            if (project.Title != "GitHub") // УДОЛИ!
             {
                 return System.Array.Empty<FileItem>();
+            }
+
+            if (!Directory.Exists(project.Location))
+            {
+                throw new System.Exception($"Project '{project.Title}' has no existing folder on path '{project.Location}'");
             }
 
             var location = project.Location;
             var repos = FindGitRepositories(location).ToList();
             var hasGit = repos.Any();
+            var allFiles = new List<string>();
+
+            static string Normalize(string a) => a.Replace('\\', '/');
 
             if (hasGit)
             {
-                foreach (var path in repos)
+                var reposNorm = repos.Select(x => x + '\\');
+
+                var nonGitFiles = Directory
+                    .GetFiles(location, "*", SearchOption.AllDirectories)
+                    .Where(x => !reposNorm.Any(y => x.StartsWith(y)))
+                    .Select(x => Normalize(x));
+
+                allFiles.AddRange(nonGitFiles);
+
+                foreach (var repo in repos)
                 {
-                    var files = FindFilesFromGitRepo(path);
-                    ;
+                    var files = FindFilesInGitRepo(repo)
+                        .Select(x => Path.Combine(repo, x))
+                        .Select(x => Normalize(x));
+
+                    allFiles.AddRange(files);
                 }
             }
             else
             {
+                var nonGitFiles = Directory
+                    .GetFiles(location, "*", SearchOption.AllDirectories)
+                    .Select(x => Normalize(x));
 
+                allFiles.AddRange(nonGitFiles);
             }
+
+            var allowedFiles = GetAllowedFiles(project, allFiles);
 
             var list = new List<FileItem>();
 
             if (Directory.Exists(location))
             {
-                var allowedDirs = GetAllowedFolders(project);
+                var allowedDirs = GetAllowedFiles(project, allFiles);
 
                 //var gitIgnores = GitIgnoreReader.Find(location, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
                 //var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
@@ -103,7 +129,7 @@ namespace CodeBase.Domain.Services
             return list;
         }
 
-        private IEnumerable<string> FindFilesFromGitRepo(string basePath)
+        private IEnumerable<string> FindFilesInGitRepo(string basePath)
         {
             var shellResult = ShellHelper.Execute($"cd {basePath} | git ls-tree --full-tree -r --name-only HEAD");
 
@@ -112,7 +138,11 @@ namespace CodeBase.Domain.Services
                 throw new System.Exception("Failed to run PowerShell command");
             }
 
-            var files = shellResult.Result.Split("\n").Select(x => x.Trim()).ToArray();
+            var files = shellResult.Result.Split("\n")
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToArray();
+
             return files;
         }
 
@@ -124,25 +154,30 @@ namespace CodeBase.Domain.Services
                 .Distinct();
         }
 
-        /*public bool IsIgnoredForder(string path)
+        private List<string> GetAllowedFiles(Project project, IEnumerable<string> files)
         {
-            return IgnoredFolders?.Any(f => GitIgnoreReader.IsChildedPath(PathIO.Combine(Path, f), path)) ?? false;
-        }*/
+            var location = project.Location;
 
-        public List<string> GetAllowedFolders(Project project)
-        {
+            var allowedFolders = new HashSet<string>();
+            var disallowedFolders = new HashSet<string>();
+
             if (project.AllowedFolders?.Count == 0)
             {
-                return new List<string>(Directory.GetDirectories(project.Location));
+                var dirs = Directory.GetDirectories(location, "*", SearchOption.AllDirectories);
+                dirs.ToList().ForEach(x => allowedFolders.Add(x));
             }
             else
             {
-                var dirs = project.AllowedFolders
-                    .Select(folder => Path.Combine(project.Location, folder))
-                    .Where(dir => Directory.Exists(dir));
+                var searchRules = project.AllowedFolders.Select(x => x.Trim('/', '\\'));
 
-                return dirs.ToList();
+                var dirs = searchRules
+                    .Select(x => Directory.GetDirectories(location, x, SearchOption.AllDirectories))
+                    .SelectMany(x => x);
+
+                ;
             }
+
+            return new List<string>();
         }
     }
 }
