@@ -68,7 +68,7 @@ namespace CodeBase.Domain.Services
 
             var list = new List<FileItem>();
 
-            if (Directory.Exists(location))
+            /*if (Directory.Exists(location))
             {
                 var allowedDirs = GetAllowedFiles(project, allFiles);
 
@@ -124,7 +124,7 @@ namespace CodeBase.Domain.Services
 
                     //onProgress?.Invoke(queue.Count, 0, pair.Key);
                 }
-            }
+            }*/
 
             return list;
         }
@@ -159,7 +159,7 @@ namespace CodeBase.Domain.Services
             var location = project.Location;
 
             var allowedFolders = new HashSet<string>();
-            var disallowedFolders = new HashSet<string>();
+            var excludedFolders = new HashSet<string>();
 
             if (project.AllowedFolders?.Count == 0)
             {
@@ -168,16 +168,89 @@ namespace CodeBase.Domain.Services
             }
             else
             {
-                var searchRules = project.AllowedFolders.Select(x => x.Trim('/', '\\'));
+                var searchRules = project.AllowedFolders.Select(x => x.Replace('/', '\\'));
 
                 var dirs = searchRules
                     .Select(x => Directory.GetDirectories(location, x, SearchOption.AllDirectories))
                     .SelectMany(x => x);
 
-                ;
+                dirs.ToList().ForEach(x => allowedFolders.Add(x));
+            }
+
+            if (project.ExcludedFolders?.Count != 0)
+            {
+                var searchRules = project.ExcludedFolders.Select(x => x.Replace('/', '\\'));
+
+                var dirs = searchRules
+                    .Select(x => Directory.GetDirectories(location, x, SearchOption.AllDirectories))
+                    .SelectMany(x => x);
+
+                dirs.ToList().ForEach(x => excludedFolders.Add(x));
             }
 
             return new List<string>();
+        }
+
+        public static bool IsChildedPath(string parent, string child, bool normalize = true)
+        {
+            var result = false;
+            if (normalize)
+            {
+                parent = NormalizePath(parent);
+                child = NormalizePath(child);
+            }
+
+            if (child.Length > parent.Length)
+            {
+                result = child.StartsWith(parent + '/');
+            }
+
+            if (child == parent)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public static bool IsRelativeChild(string parent, string child, string pattern, bool normalize = true)
+        {
+            var result = false;
+            if (normalize)
+            {
+                parent = NormalizePath(parent);
+                child = NormalizePath(child);
+            }
+
+            var isRelative = pattern.StartsWith(".");
+
+
+
+            return result;
+        }
+
+        public static string NormalizePath(string path)
+        {
+            var words = path.Split(new char[] { '\\', '/' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+            var stack = new Stack<string>();
+
+            foreach (var word in words)
+            {
+                if (word == ".")
+                {
+                    continue;
+                }
+
+                if (word == "..")
+                {
+                    stack.Pop();
+                }
+
+                stack.Push(word);
+            }
+
+            return string.Join('\\', stack);
         }
     }
 }

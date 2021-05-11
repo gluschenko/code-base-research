@@ -11,7 +11,7 @@ namespace CodeBase.Domain.Models
         public string Title { get; set; }
         public string Color { get; set; }
         public List<string> AllowedFolders { get; set; }
-        public List<string> IgnoredFolders { get; set; }
+        public List<string> ExcludedFolders { get; set; }
         public bool IsPublic { get; set; }
         public bool IsLocal { get; set; }
         public bool IsTitleHidden { get; set; }
@@ -27,7 +27,7 @@ namespace CodeBase.Domain.Models
         {
             Color = RandomizeColor();
             AllowedFolders = new List<string>();
-            IgnoredFolders = new List<string>();
+            ExcludedFolders = new List<string>();
             Info = new ProjectInfo();
             IsPublic = false;
             IsTitleHidden = false;
