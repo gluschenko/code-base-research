@@ -140,9 +140,9 @@ namespace CodeBase.Domain.Services
                     }
                     j++;
                     //
-                    if (!allFiles.Contains(file.Path))
+                    if (!allFiles.Contains(file))
                     {
-                        allFiles.Add(file.Path);
+                        allFiles.Add(file);
 
                         if (allFiles.Count % 10 == 0)
                         {
@@ -154,15 +154,13 @@ namespace CodeBase.Domain.Services
                     }
                     else
                     {
-                        project.Info.Error($"File '{file.Path}' already has added");
+                        project.Info.Error($"File '{file}' already has added");
                     }
                 }
 
                 j = 0;
                 foreach (var file in files)
                 {
-                    if (!file.IsMatch) continue;
-                    //
                     if (j % 10 == 0)
                     {
                         ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
@@ -178,15 +176,15 @@ namespace CodeBase.Domain.Services
                     }
                     j++;
 
-                    if (File.Exists(file.Path))
+                    if (File.Exists(file))
                     {
                         // Geting data
                         var data = "";
                         try
                         {
-                            data = File.ReadAllText(file.Path);
+                            data = File.ReadAllText(file);
                             //
-                            var newLastEdit = File.GetLastWriteTime(file.Path);
+                            var newLastEdit = File.GetLastWriteTime(file);
                             if (project.LastRevision < newLastEdit)
                             {
                                 project.LastRevision = newLastEdit;
@@ -194,10 +192,10 @@ namespace CodeBase.Domain.Services
                         }
                         catch (Exception ex)
                         {
-                            project.Info.Error($"File '{file.Path}' thrown {ex.GetType().Name}");
+                            project.Info.Error($"File '{file}' thrown {ex.GetType().Name}");
                         }
                         // Calculating lines
-                        var localPath = file.Path.StartsWith(projectPath) ? file.Path[projectPath.Length..] : file.Path;
+                        var localPath = file.StartsWith(projectPath) ? file[projectPath.Length..] : file;
                         var lines = data.Split("\n\r".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                         var linesCount = lines.Length;
                         var sloc = 0;
@@ -222,7 +220,7 @@ namespace CodeBase.Domain.Services
                         projectVolume += volume;
                         //
 
-                        var ext = Path.GetExtension(file.Path);
+                        var ext = Path.GetExtension(file);
 
                         // Пушим список расширений
                         project.Info.ExtensionsVolume.Push(ext, volume, (a, b) => a + b);

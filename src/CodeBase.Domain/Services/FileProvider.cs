@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CodeBase.Domain.Models;
@@ -16,121 +17,54 @@ namespace CodeBase.Domain.Services
 
         }
 
-        public IEnumerable<FileItem> GetFilesData(Project project, HashSet<string> extensions, HashSet<string> blackList, GetFilesUpdate onProgress = null)
+        public IEnumerable<string> GetFilesData(Project project, HashSet<string> extensions, HashSet<string> blackList, GetFilesUpdate onProgress = null)
         {
-            if (project.Title != "GitHub") // УДОЛИ!
-            {
-                return System.Array.Empty<FileItem>();
-            }
-
             if (!Directory.Exists(project.Location))
             {
                 throw new System.Exception($"Project '{project.Title}' has no existing folder on path '{project.Location}'");
             }
 
             var location = project.Location;
-            var repos = FindGitRepositories(location).ToList();
-            var hasGit = repos.Any();
+            var repos = FindGitRepositories(location).ToArray();
             var allFiles = new List<string>();
 
-            static string Normalize(string a) => a.Replace('\\', '/');
-
-            if (hasGit)
+            if (repos.Any())
             {
-                var reposNorm = repos.Select(x => x + '\\');
-
                 var nonGitFiles = Directory
-                    .GetFiles(location, "*", SearchOption.AllDirectories)
-                    .Where(x => !reposNorm.Any(y => x.StartsWith(y)))
-                    .Select(x => Normalize(x));
+                    .EnumerateFiles(location, "*", SearchOption.AllDirectories)
+                    .Where(x => repos.All(y => !IsChildedPath(y, x)));
 
                 allFiles.AddRange(nonGitFiles);
 
                 foreach (var repo in repos)
                 {
-                    var files = FindFilesInGitRepo(repo)
-                        .Select(x => Path.Combine(repo, x))
-                        .Select(x => Normalize(x));
-
+                    var files = FindFilesInGitRepo(repo);
                     allFiles.AddRange(files);
                 }
             }
             else
             {
                 var nonGitFiles = Directory
-                    .GetFiles(location, "*", SearchOption.AllDirectories)
-                    .Select(x => Normalize(x));
+                    .EnumerateFiles(location, "*", SearchOption.AllDirectories);
 
                 allFiles.AddRange(nonGitFiles);
             }
 
-            var allowedFiles = GetAllowedFiles(project, allFiles);
+            var filteredFiles = allFiles
+                .Where(x => extensions.Contains(Path.GetExtension(x).Trim(), StringComparer.OrdinalIgnoreCase))
+                .Where(x => blackList.All(end => !x.EndsWith(end, StringComparison.OrdinalIgnoreCase)))
+                .ToArray();
 
-            var list = new List<FileItem>();
+            var allowedFiles = GetAllowedFiles(project, filteredFiles);
 
-            /*if (Directory.Exists(location))
-            {
-                var allowedDirs = GetAllowedFiles(project, allFiles);
-
-                //var gitIgnores = GitIgnoreReader.Find(location, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
-                //var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
-
-                var dirsCount = 0;
-
-                GetFiles(location);
-
-                void GetFiles(string dir)
-                {
-                    //var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(f.BaseDir, dir));
-
-                    //var isAllowedDir =
-                    //    allowedDirs.Count > 0 ? allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, dir)) : true;
-
-                    var subs = Directory.EnumerateDirectories(dir)
-                        //.Where(p => !IsIgnoredForder(p))
-                        .Select(s => s.Replace('\\', '/'));
-
-                    var files = Directory.EnumerateFiles(dir)
-                        //.Where(s => isAllowedDir)
-                        .Where(s => extensions.Contains(Path.GetExtension(s)))
-                        .Where(s => blackList.All(end => !s.EndsWith(end)))
-                        .Select(s => s.Replace('\\', '/'));
-
-                    dirsCount += subs.Count();
-
-                    //onProgress?.Invoke(queue.Count, dirsCount, dir);
-
-                    foreach (var file in files)
-                    {
-                        //queue.Enqueue(new KeyValuePair<string, IEnumerable<GitIgnoreReader>>(file, relevantGitFiles));
-                    }
-
-                    foreach (var sub in subs.Select(s => s + '/'))
-                    {
-                        //var isMatch = relevantGitFiles.All(r => r.IsMatch(sub));
-
-                        //if (isMatch)
-                        {
-                            GetFiles(sub);
-                        }
-                    }
-                }
-
-                //while (queue.Count > 0)
-                {
-                    //var pair = queue.Dequeue();
-                    //var isMatch = pair.Value.All(r => r.IsMatch(pair.Key));
-                    //list.Add(new FileItem(pair.Key, isMatch));
-
-                    //onProgress?.Invoke(queue.Count, 0, pair.Key);
-                }
-            }*/
-
-            return list;
+            var result = allowedFiles.AsParallel().ToArray();
+            return result;
         }
 
-        private IEnumerable<string> FindFilesInGitRepo(string basePath)
+        private static IEnumerable<string> FindFilesInGitRepo(string basePath)
         {
+            static string Normalize(string a) => a.Replace('/', '\\');
+
             var shellResult = ShellHelper.Execute($"cd {basePath} | git ls-tree --full-tree -r --name-only HEAD");
 
             if (!shellResult.IsSuccess)
@@ -141,54 +75,50 @@ namespace CodeBase.Domain.Services
             var files = shellResult.Result.Split("\n")
                 .Select(x => x.Trim())
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToArray();
+                .Select(x => Normalize(x))
+                .Select(x => Path.Combine(basePath, x));
 
             return files;
         }
 
-        private IEnumerable<string> FindGitRepositories(string basePath)
+        private static IEnumerable<string> FindGitRepositories(string basePath)
         {
             return Directory
-                .GetDirectories(basePath, GIT_FOLDER_NAME, SearchOption.AllDirectories)
+                .EnumerateDirectories(basePath, GIT_FOLDER_NAME, SearchOption.AllDirectories)
                 .Select(x => Path.GetDirectoryName(x))
                 .Distinct();
         }
 
-        private List<string> GetAllowedFiles(Project project, IEnumerable<string> files)
+        private static IEnumerable<string> GetAllowedFiles(Project project, IEnumerable<string> files)
         {
             var location = project.Location;
 
-            var allowedFolders = new HashSet<string>();
-            var excludedFolders = new HashSet<string>();
+            var folders = files.Select(x => Path.GetDirectoryName(x)).Distinct().ToArray();
+
+            var allowedFolders = new List<string>();
+            var excludedFolders = new List<string>();
 
             if (project.AllowedFolders?.Count == 0)
             {
-                var dirs = Directory.GetDirectories(location, "*", SearchOption.AllDirectories);
-                dirs.ToList().ForEach(x => allowedFolders.Add(x));
+                allowedFolders.AddRange(folders);
             }
             else
             {
-                var searchRules = project.AllowedFolders.Select(x => x.Replace('/', '\\'));
-
-                var dirs = searchRules
-                    .Select(x => Directory.GetDirectories(location, x, SearchOption.AllDirectories))
-                    .SelectMany(x => x);
-
-                dirs.ToList().ForEach(x => allowedFolders.Add(x));
+                var dirs = SearchFoldersByPattern(location, project.AllowedFolders);
+                allowedFolders.AddRange(dirs);
             }
 
             if (project.ExcludedFolders?.Count != 0)
             {
-                var searchRules = project.ExcludedFolders.Select(x => x.Replace('/', '\\'));
-
-                var dirs = searchRules
-                    .Select(x => Directory.GetDirectories(location, x, SearchOption.AllDirectories))
-                    .SelectMany(x => x);
-
-                dirs.ToList().ForEach(x => excludedFolders.Add(x));
+                var dirs = SearchFoldersByPattern(location, project.ExcludedFolders);
+                excludedFolders.AddRange(dirs);
             }
 
-            return new List<string>();
+            var filteredFiles = files
+                .Where(x => allowedFolders.Any(y => IsChildedPath(y, x, false)))
+                .Where(x => excludedFolders.All(y => !IsChildedPath(y, x, false)));
+
+            return filteredFiles;
         }
 
         public static bool IsChildedPath(string parent, string child, bool normalize = true)
@@ -202,7 +132,7 @@ namespace CodeBase.Domain.Services
 
             if (child.Length > parent.Length)
             {
-                result = child.StartsWith(parent + '/');
+                result = child.StartsWith(parent + '\\');
             }
 
             if (child == parent)
@@ -213,27 +143,36 @@ namespace CodeBase.Domain.Services
             return result;
         }
 
-        public static bool IsRelativeChild(string parent, string child, string pattern, bool normalize = true)
+        public static IEnumerable<string> SearchFoldersByPattern(string location, IEnumerable<string> patterns)
         {
-            var result = false;
-            if (normalize)
+            var normPatterns = patterns.Select(x => x.Replace('/', '\\'));
+            location = NormalizePath(location);
+
+            var result = normPatterns.Select(x => 
             {
-                parent = NormalizePath(parent);
-                child = NormalizePath(child);
-            }
+                var isRelative = x.StartsWith('.');
 
-            var isRelative = pattern.StartsWith(".");
+                if (isRelative)
+                {
+                    return new[] 
+                    {
+                        NormalizePath(Path.Combine(location, x)),
+                    };
+                }
+                else
+                {
+                    return Directory.EnumerateDirectories(location, x, SearchOption.AllDirectories);
+                }
+            });
 
-
-
-            return result;
+            return result.SelectMany(x => x).Distinct();
         }
 
         public static string NormalizePath(string path)
         {
             var words = path.Split(new char[] { '\\', '/' }, System.StringSplitOptions.RemoveEmptyEntries);
 
-            var stack = new Stack<string>();
+            var list = new LinkedList<string>();
 
             foreach (var word in words)
             {
@@ -244,13 +183,13 @@ namespace CodeBase.Domain.Services
 
                 if (word == "..")
                 {
-                    stack.Pop();
+                    list.RemoveLast();
                 }
 
-                stack.Push(word);
+                list.AddLast(word);
             }
 
-            return string.Join('\\', stack);
+            return string.Join('\\', list);
         }
     }
 }
