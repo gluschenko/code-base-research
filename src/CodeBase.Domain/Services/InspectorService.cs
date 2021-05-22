@@ -108,15 +108,15 @@ namespace CodeBase.Domain.Services
                     All = projects.Count
                 });
                 //
-                var projectPath = project.Location.Replace('\\', '/');
-                var files = _fileProvider.GetFilesData(project, extentions, ignoredFiles, (files, dirs, cur) =>
-                {
-                    ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
+                var files = _fileProvider
+                    .GetFilesData(project, extentions, ignoredFiles, (files, dirs, cur) =>
                     {
-                        Used = Math.Min(files, dirs),
-                        All = Math.Max(files, dirs)
+                        ProcessUpdate(InspectorStage.ProgressSecondary, new InspectState
+                        {
+                            Used = Math.Min(files, dirs),
+                            All = Math.Max(files, dirs)
+                        });
                     });
-                });
 
                 project.Info.Clear();
                 //
@@ -195,7 +195,7 @@ namespace CodeBase.Domain.Services
                             project.Info.Error($"File '{file}' thrown {ex.GetType().Name}");
                         }
                         // Calculating lines
-                        var localPath = file.StartsWith(projectPath) ? file[projectPath.Length..] : file;
+                        var localPath = file.StartsWith(project.Location) ? file[project.Location.Length..] : file;
                         var lines = data.Split("\n\r".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                         var linesCount = lines.Length;
                         var sloc = 0;
@@ -204,16 +204,22 @@ namespace CodeBase.Domain.Services
                         foreach (var line in lines)
                         {
                             var s = line.Trim();
-                            //
-                            if (s.StartsWith("/*")) skip = true;
-                            if (s.EndsWith("*/") && skip) skip = false;
-                            //
-                            if (!skip)
+                            
+                            if (s.StartsWith("/*"))
                             {
-                                if (s.StartsWith("//") || s.StartsWith("#")) continue;
-                                if ("{}()[]".Contains(s)) continue;
-                                sloc++;
+                                skip = true;
                             }
+
+                            if (s.EndsWith("*/") && skip)
+                            {
+                                skip = false;
+                            }
+
+                            if (skip) continue;
+
+                            if (s.StartsWith("//") || s.StartsWith("#")) continue;
+                            if ("{}()[]".Contains(s)) continue;
+                            sloc++;
                         }
                         //
                         var volume = new CodeVolume(sloc, linesCount, 1);
