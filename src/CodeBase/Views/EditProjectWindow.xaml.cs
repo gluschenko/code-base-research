@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 
@@ -18,45 +11,45 @@ namespace CodeBase
 {
     public partial class EditProjectWindow : Window
     {
-        public Action onEdit;
-        public Project Project;
+        public Project Project { get; set; }
+        public Action OnEdit { get; set; }
 
-        public EditProjectWindow(Project Project, Action onEdit)
+        public EditProjectWindow(Project project, Action onEdit)
         {
             InitializeComponent();
 
-            Title = Title.Replace("{Title}", Project.Title);
+            Title = Title.Replace("{Title}", project.Title);
             Width *= 2;
 
-            this.onEdit = onEdit;
-            this.Project = Project;
+            OnEdit = onEdit;
+            Project = project;
             //
-            ProjectName.Text = Project.Title;
-            ProjectColor.Text = Project.Color;
-            ProjectPath.Text = Project.Path;
-            ProjectFolders.Text = string.Join(", ", Project.Folders ?? new List<string>());
-            IgnoredProjectFolders.Text = string.Join(", ", Project.IgnoredFolders ?? new List<string>());
-            ProjectIsPublic.IsChecked = Project.IsPublic;
-            ProjectIsLocal.IsChecked = Project.IsLocal;
-            ProjectIsNameHidden.IsChecked = Project.IsNameHidden;
+            ProjectName.Text = project.Title;
+            ProjectColor.Text = project.Color;
+            ProjectPath.Text = project.Path;
+            ProjectFolders.Text = string.Join(", ", project.Folders ?? new List<string>());
+            IgnoredProjectFolders.Text = string.Join(", ", project.IgnoredFolders ?? new List<string>());
+            ProjectIsPublic.IsChecked = project.IsPublic;
+            ProjectIsLocal.IsChecked = project.IsLocal;
+            ProjectIsNameHidden.IsChecked = project.IsNameHidden;
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            List<string> parseFolders(string text)
+            static List<string> ParseFolders(string text)
             {
-                string[] _text = text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                var _folders = new List<string>();
-                foreach (string folder in _text)
+                var textInner = text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var foldersInner = new List<string>();
+                foreach (var folder in textInner)
                 {
                     if (folder.Trim() != "")
                     {
-                        _folders.Add(folder.Trim());
+                        foldersInner.Add(folder.Trim());
                     }
                 }
-                return _folders;
+                return foldersInner;
             }
-            //
+
             if (ProjectPath.Text != "" && ProjectName.Text != "")
             {
                 if (System.IO.Directory.Exists(ProjectPath.Text))
@@ -65,14 +58,14 @@ namespace CodeBase
                     Project.Color = ProjectColor.Text.Trim();
                     Project.Path = ProjectPath.Text.Trim();
                     //
-                    Project.Folders = parseFolders(ProjectFolders.Text);
-                    Project.IgnoredFolders = parseFolders(IgnoredProjectFolders.Text);
+                    Project.Folders = ParseFolders(ProjectFolders.Text);
+                    Project.IgnoredFolders = ParseFolders(IgnoredProjectFolders.Text);
                     //
                     Project.IsPublic = ProjectIsPublic.IsChecked.Value;
                     Project.IsLocal = ProjectIsLocal.IsChecked.Value;
                     Project.IsNameHidden = ProjectIsNameHidden.IsChecked.Value;
                     //
-                    onEdit?.Invoke();
+                    OnEdit?.Invoke();
                     Close();
                 }
                 else

@@ -31,17 +31,17 @@ namespace CodeBase
 
         public static TValue Pop<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
         {
-            dict.TryGetValue(key, out TValue value);
+            dict.TryGetValue(key, out var value);
             return value;
         }
-		
-		public static TValue Pop<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue alt)
-		{
-			if (dict.TryGetValue(key, out TValue value)) 
-			{
-				return value;
-			}
-			return alt;
-		}
+
+        public static TValue Pop<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue alt)
+        {
+            if (dict.TryGetValue(key, out var value))
+            {
+                return value;
+            }
+            return alt;
+        }
     }
 }

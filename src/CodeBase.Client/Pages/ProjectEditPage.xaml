@@ -1,0 +1,38 @@
+﻿<Page x:Class="CodeBase.Client.Pages.ProjectEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CodeBase.Client.Pages"
+      xmlns:controls="clr-namespace:CodeBase.Client.Controls" 
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="400"
+      Title="EditProjectPage">
+
+    <DockPanel Background="#fff">
+        <controls:PageHeader x:Name="PageHeader" Title="Project Settings" DockPanel.Dock="Top" />
+
+        <ScrollViewer DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
+                <Label Content="Project Name" />
+                <TextBox x:Name="ProjectName" />
+                <Label Content="Color" />
+                <TextBox x:Name="ProjectColor" TextChanged="ProjectColor_TextChanged" />
+                <Label Content="Location" />
+                <TextBox x:Name="ProjectLocation" MouseDoubleClick="PathTextBox_MouseDoubleClick" />
+                <Label Content="Folders (foo, bar, baz...)" />
+                <TextBox x:Name="ProjectFolders" />
+                <Label Content="Ignored Folders (foo, bar, baz...)" />
+                <TextBox x:Name="IgnoredProjectFolders" />
+
+                <StackPanel Margin="4">
+                    <CheckBox x:Name="ProjectIsPublic"  Content="Public project" Margin="4"></CheckBox>
+                    <CheckBox x:Name="ProjectIsLocal"  Content="Local project" Margin="4"></CheckBox>
+                    <CheckBox x:Name="ProjectIsNameHidden" Content="Hide name" Margin="4"></CheckBox>
+                </StackPanel>
+
+                <Button Content="Save" Height="30" VerticalAlignment="Bottom" Margin="70,10,70,10" Click="ApplyButton_Click" />
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Page>

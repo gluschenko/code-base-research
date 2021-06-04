@@ -10,7 +10,7 @@ namespace CodeBase
     public delegate void InspectUpdateHandler(InspectorStage stage, InspectState state);
     public delegate void InspectCompleteHandler();
 
-    public struct InspectState 
+    public struct InspectState
     {
         public int Used { get; set; }
         public int All { get; set; }
@@ -37,10 +37,10 @@ namespace CodeBase
         {
             Stop();
 
-            _thread = new Thread(run) { IsBackground = true };
+            _thread = new Thread(Run) { IsBackground = true };
             _thread.Start();
 
-            void run() 
+            void Run()
             {
                 try
                 {
@@ -54,7 +54,7 @@ namespace CodeBase
             }
         }
 
-        private void Stop() 
+        private void Stop()
         {
             if (_thread != null)
             {
@@ -76,14 +76,14 @@ namespace CodeBase
 
             foreach (var project in projects)
             {
-                ProcessUpdate(InspectorStage.Progress, new InspectState 
-                { 
-                    Used = ++i, 
-                    All = projects.Count 
+                ProcessUpdate(InspectorStage.Progress, new InspectState
+                {
+                    Used = ++i,
+                    All = projects.Count
                 });
                 //
                 var projectPath = project.Path.Replace('\\', '/');
-                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) => 
+                var files = project.GetFiles(InspectorConfig.CodeExtensions, InspectorConfig.FilesBlackList, (files, dirs, cur) =>
                 {
                     ProcessUpdate(InspectorStage.Progress2, new InspectState
                     {
@@ -104,7 +104,7 @@ namespace CodeBase
                 j = 0;
                 foreach (var file in files)
                 {
-                    if (j % 10 == 0) 
+                    if (j % 10 == 0)
                     {
                         ProcessUpdate(InspectorStage.Progress2, new InspectState
                         {
@@ -118,7 +118,7 @@ namespace CodeBase
                     {
                         allFiles.Add(file.Path);
 
-                        if (allFiles.Count % 10 == 0) 
+                        if (allFiles.Count % 10 == 0)
                         {
                             ProcessUpdate(InspectorStage.FetchingFiles, new InspectState
                             {
@@ -137,7 +137,7 @@ namespace CodeBase
                 {
                     if (!file.IsMatch) continue;
                     //
-                    if (j % 10 == 0) 
+                    if (j % 10 == 0)
                     {
                         ProcessUpdate(InspectorStage.Progress2, new InspectState
                         {
@@ -155,28 +155,28 @@ namespace CodeBase
                     if (File.Exists(file.Path))
                     {
                         // Geting data
-                        string data = "";
+                        var data = "";
                         try
                         {
                             data = File.ReadAllText(file.Path);
                             //
-                            long newLastEdit = UnixTime.ToTimestamp(File.GetLastWriteTime(file.Path));
+                            var newLastEdit = UnixTime.ToTimestamp(File.GetLastWriteTime(file.Path));
                             project.LastEdit = Math.Max(project.LastEdit, newLastEdit);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             project.Info.Error($"File '{file.Path}' thrown {ex.GetType().Name}");
                         }
                         // Calculating lines
-                        string localPath = file.Path.StartsWith(projectPath) ? file.Path.Substring(projectPath.Length) : file.Path;
-                        string[] lines = data.Split("\n\r".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                        int linesCount = lines.Length;
-                        int sloc = 0;
+                        var localPath = file.Path.StartsWith(projectPath) ? file.Path[projectPath.Length..] : file.Path;
+                        var lines = data.Split("\n\r".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                        var linesCount = lines.Length;
+                        var sloc = 0;
 
-                        bool skip = false;
-                        foreach (string line in lines)
+                        var skip = false;
+                        foreach (var line in lines)
                         {
-                            string s = line.Trim();
+                            var s = line.Trim();
                             //
                             if (s.StartsWith("/*")) skip = true;
                             if (s.EndsWith("*/") && skip) skip = false;
@@ -193,10 +193,10 @@ namespace CodeBase
                         projectVolume += volume;
                         //
 
-                        string ext = Path.GetExtension(file.Path);
+                        var ext = Path.GetExtension(file.Path);
 
                         // Пушим список расширений
-                        project.Info.ExtensionsVolume.Push(ext, volume, (A, B) => A + B);
+                        project.Info.ExtensionsVolume.Push(ext, volume, (a, b) => a + b);
                         // Пушим список файлов
                         project.Info.FilesVolume.Push(localPath, volume);
                     }

@@ -1,61 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CodeBase
 {
     public partial class ServerAccessWindow : Window
     {
-        private ApplicationData Data;
-        private Secure Secure;
-        private Action onDone;
+        private readonly ApplicationData _data;
+        private readonly Secure _secure;
+        private readonly Action _onDone;
+        private string _loggedInfoTemplate = "";
 
-        public ServerAccessWindow(ApplicationData Data, Action onDone)
+        public ServerAccessWindow(ApplicationData data, Action onDone)
         {
-            this.Data = Data;
-            this.Secure = new Secure(Data);
-            this.onDone = onDone;
+            _data = data;
+            _secure = new Secure(data);
+            _onDone = onDone;
             InitializeComponent();
 
-            ReceiverURL.Text = Data.ReceiverURL != "" ? Data.ReceiverURL : App.DefaultReceiverURL;
-            UserID.Text = Data.UserID;
+            ReceiverURL.Text = data.ReceiverURL != "" ? data.ReceiverURL : App.DefaultReceiverURL;
+            UserID.Text = data.UserID;
 
-            Closed += (s,e) => onDone?.Invoke();
+            Closed += (s, e) => onDone?.Invoke();
 
             //
 
-            AutoUpdateCheckBox.IsChecked = Data.AutoUpdate;
-            SendDataCheckBox.IsChecked = Data.SendData;
-            UpdateIntervalTextBox.Text = Data.UpdateInterval.ToString();
+            AutoUpdateCheckBox.IsChecked = data.AutoUpdate;
+            SendDataCheckBox.IsChecked = data.SendData;
+            UpdateIntervalTextBox.Text = data.UpdateInterval.ToString();
 
-            AutoUpdateCheckBox.Click += (sender, e) => {
-                Data.AutoUpdate = AutoUpdateCheckBox.IsChecked.Value;
+            AutoUpdateCheckBox.Click += (sender, e) =>
+            {
+                data.AutoUpdate = AutoUpdateCheckBox.IsChecked.Value;
             };
-            SendDataCheckBox.Click += (sender, e) => {
-                Data.SendData = SendDataCheckBox.IsChecked.Value;
+            SendDataCheckBox.Click += (sender, e) =>
+            {
+                data.SendData = SendDataCheckBox.IsChecked.Value;
             };
-            UpdateIntervalTextBox.TextChanged += (sender, e) => {
-                if (int.TryParse(UpdateIntervalTextBox.Text, out int m))
+            UpdateIntervalTextBox.TextChanged += (sender, e) =>
+            {
+                if (int.TryParse(UpdateIntervalTextBox.Text, out var m))
                 {
-                    Data.UpdateInterval = m;
+                    data.UpdateInterval = m;
                     UpdateIntervalTextBox.Text = m.ToString();
                 }
             };
 
             //
 
-            Secure.CheckLogin(logged => {
-                if (!logged) Data.Token = "";
+            _secure.CheckLogin(logged =>
+            {
+                if (!logged) data.Token = "";
                 WakeUp();
             });
 
@@ -64,23 +59,22 @@ namespace CodeBase
 
         }
 
-        string loggedInfoTemplate = "";
 
         public void WakeUp()
         {
-            Login.Visibility = Secure.IsLogged ? Visibility.Hidden : Visibility.Visible;
-            Logout.Visibility = !Secure.IsLogged ? Visibility.Hidden : Visibility.Visible;
+            Login.Visibility = _secure.IsLogged ? Visibility.Hidden : Visibility.Visible;
+            Logout.Visibility = !_secure.IsLogged ? Visibility.Hidden : Visibility.Visible;
 
-            if (loggedInfoTemplate == "") loggedInfoTemplate = (string)LoggedInfo.Content;
-            LoggedInfo.Content = string.Format(loggedInfoTemplate, Data.UserID);
+            if (_loggedInfoTemplate == "") _loggedInfoTemplate = (string)LoggedInfo.Content;
+            LoggedInfo.Content = string.Format(_loggedInfoTemplate, _data.UserID);
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
             if (ReceiverURL.Text != "" && UserID.Text != "" && Password.Password != "")
             {
-                Data.ReceiverURL = ReceiverURL.Text;
-                WebMethods.ReceiverURL = Data.ReceiverURL;
+                _data.ReceiverURL = ReceiverURL.Text;
+                WebMethods.ReceiverURL = _data.ReceiverURL;
 
                 WebMethods.Login(UserID.Text, Password.Password, res =>
                 {
@@ -88,8 +82,8 @@ namespace CodeBase
                     {
                         if (data != "")
                         {
-                            Data.UserID = UserID.Text;
-                            Data.Token = data;
+                            _data.UserID = UserID.Text;
+                            _data.Token = data;
                         }
                         else
                         {
@@ -97,7 +91,7 @@ namespace CodeBase
                         }
 
                         WakeUp();
-                        onDone?.Invoke();
+                        _onDone?.Invoke();
                     });
                 });
             }
@@ -109,29 +103,30 @@ namespace CodeBase
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            Data.Token = "";
+            _data.Token = "";
             WakeUp();
-            onDone?.Invoke();
+            _onDone?.Invoke();
         }
     }
 
     public class Secure
     {
-        public ApplicationData Data;
+        public ApplicationData _data;
 
-        public Secure(ApplicationData Data)
+        public Secure(ApplicationData data)
         {
-            this.Data = Data;
+            _data = data;
         }
 
-        public bool IsLogged { get => Data.Token != ""; }
+        public bool IsLogged { get => _data.Token != ""; }
 
         public void CheckLogin(Action<bool> onDone)
         {
-            WebMethods.CheckLogin(Data, result => {
+            WebMethods.CheckLogin(_data, result =>
+            {
                 WebClient.ProcessResponse(result, data =>
                 {
-                    bool logged = data == "1";
+                    var logged = data == "1";
                     onDone?.Invoke(logged);
                 });
             });

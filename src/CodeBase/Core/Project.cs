@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Media;
 using PathIO = System.IO.Path;
@@ -26,7 +26,8 @@ namespace CodeBase
 
         public static explicit operator ProjectEntity(Project proj)
         {
-            return new ProjectEntity {
+            return new ProjectEntity
+            {
                 Title = proj.Title,
                 Color = proj.Color,
                 LastEdit = proj.LastEdit,
@@ -38,7 +39,8 @@ namespace CodeBase
                 Lines = proj.Info.Volume.Lines,
                 Files = proj.Info.Volume.Files,
 
-                Extensions = proj.Info.ExtensionsVolume.Select(p => new EntityVolume {
+                Extensions = proj.Info.ExtensionsVolume.Select(p => new EntityVolume
+                {
                     Title = p.Key,
                     SLOC = p.Value.SLOC,
                     Lines = p.Value.Lines,
@@ -49,10 +51,10 @@ namespace CodeBase
 
         public struct EntityVolume
         {
-            public string Title;
-            public int SLOC;
-            public int Lines;
-            public int Files;
+            public string Title { get; set; }
+            public int SLOC { get; set; }
+            public int Lines { get; set; }
+            public int Files { get; set; }
         }
     }
 
@@ -70,8 +72,8 @@ namespace CodeBase
         [DataMember] public long LastEdit { get; set; }
         [DataMember] public ProjectInfo Info { get; set; }
         //
-        public string TitleText { get => GetTitle(); }
-        public Brush BrushColor { get => GetBrush(); }
+        public string TitleText => GetTitle();
+        public Brush BrushColor => GetBrush();
         //
         public delegate void GetFilesUpdate(int files, int dirs, string currentDir);
         //
@@ -92,16 +94,16 @@ namespace CodeBase
 
         //
 
-        public string GetTitle() 
+        public string GetTitle()
         {
-            return string.Join(string.Empty, 
-                Title, 
-                IsPublic ? " ✔" : "", 
-                IsLocal ? " [local]" : "", 
+            return string.Join(string.Empty,
+                Title,
+                IsPublic ? " ✔" : "",
+                IsLocal ? " [local]" : "",
                 IsNameHidden ? " [hidden]" : "");
         }
 
-        public Brush GetBrush() 
+        public Brush GetBrush()
         {
             var color = (Color)ColorConverter.ConvertFromString(Color ?? RandomizeColor());
             return new SolidColorBrush(color);
@@ -109,25 +111,25 @@ namespace CodeBase
 
         public List<FileItem> GetFiles(HashSet<string> extensions, HashSet<string> blackList, GetFilesUpdate onProgress = null)
         {
-            string path = Path;
+            var location = Path;
             var list = new List<FileItem>();
 
-            if (Directory.Exists(path))
+            if (Directory.Exists(location))
             {
                 var allowedDirs = GetAllowedFolders();
                 //
-                var gitIgnores = GitIgnoreReader.Find(path, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
+                var gitIgnores = GitIgnoreReader.Find(location, SearchOption.AllDirectories).Select(p => GitIgnoreReader.Load(p));
                 var queue = new Queue<KeyValuePair<string, IEnumerable<GitIgnoreReader>>>();
 
-                int dirsCount = 0;
+                var dirsCount = 0;
 
-                getFiles(path);
+                GetFiles(location);
 
-                void getFiles(string dir)
+                void GetFiles(string dir)
                 {
                     var relevantGitFiles = gitIgnores.Where(f => GitIgnoreReader.IsChildedPath(f.BaseDir, dir));
 
-                    var isAllowedDir = 
+                    var isAllowedDir =
                         allowedDirs.Count > 0 ? allowedDirs.Any(p => GitIgnoreReader.IsChildedPath(p, dir)) : true;
 
                     var subs = Directory.EnumerateDirectories(dir)
@@ -151,11 +153,11 @@ namespace CodeBase
 
                     foreach (var sub in subs.Select(s => s + '/'))
                     {
-                        bool is_match = relevantGitFiles.All(r => r.IsMatch(sub));
+                        var isMatch = relevantGitFiles.All(r => r.IsMatch(sub));
 
-                        if (is_match)
+                        if (isMatch)
                         {
-                            getFiles(sub);
+                            GetFiles(sub);
                         }
                     }
                 }
@@ -163,7 +165,7 @@ namespace CodeBase
                 while (queue.Count > 0)
                 {
                     var pair = queue.Dequeue();
-                    bool isMatch = pair.Value.All(r => r.IsMatch(pair.Key));
+                    var isMatch = pair.Value.All(r => r.IsMatch(pair.Key));
                     list.Add(new FileItem(pair.Key, isMatch));
 
                     onProgress?.Invoke(queue.Count, 0, pair.Key);
@@ -178,7 +180,7 @@ namespace CodeBase
             return IgnoredFolders?.Any(f => GitIgnoreReader.IsChildedPath(PathIO.Combine(Path, f), path)) ?? false;
         }
 
-        public List<string> GetAllowedFolders() 
+        public List<string> GetAllowedFolders()
         {
             if (Folders?.Count == 0)
             {
@@ -195,14 +197,13 @@ namespace CodeBase
         }
 
         //
-        static Random random;
+        static Random _random;
 
         private string RandomizeColor()
         {
-            if(random == null)
-                random = new Random(GetHashCode());
+            _random ??= new Random(GetHashCode());
 
-            int rgb = random.Next(0, 0xFFFFFF);
+            var rgb = _random.Next(0, 0xFFFFFF);
             Color = "#" + Convert.ToString(rgb, 16).PadLeft(6, '0');
             return Color;
         }
@@ -217,16 +218,15 @@ namespace CodeBase
         //
         public List<string> Errors { get; set; } = new List<string>();
         //
-        public string SourceLinesText {
-            get => Volume + (Errors.Count > 0 ? $" ({Errors.Count} errors)" : "");
-        }
+        public string SourceLinesText
+            => Volume + (Errors.Count > 0 ? $" ({Errors.Count} errors)" : "");
         //
         public void Error(string text)
         {
             Errors.Add(text);
         }
 
-        public void Clear() 
+        public void Clear()
         {
             ExtensionsVolume?.Clear();
             FilesVolume?.Clear();
@@ -236,11 +236,11 @@ namespace CodeBase
 
     public struct CodeVolume
     {
-        public int SLOC;
-        public int Lines;
-        public int Files;
+        public int SLOC { get; set; }
+        public int Lines { get; set; }
+        public int Files { get; set; }
 
-        public double Ratio { get => GetLineRatio(); }
+        public double Ratio => GetLineRatio();
 
         public CodeVolume(int sloc, int lines, int files)
         {
@@ -249,18 +249,18 @@ namespace CodeBase
             Files = files;
         }
 
-        public double GetLineRatio() 
+        public double GetLineRatio()
         {
             return Lines != 0 ? Math.Round((double)SLOC / Lines, 4) : 1;
         }
 
         public override string ToString() => $"{SLOC}/{Lines}";
 
-        public static CodeVolume operator +(CodeVolume A, CodeVolume B) => 
-            new CodeVolume(A.SLOC + B.SLOC, A.Lines + B.Lines, A.Files + B.Files);
+        public static CodeVolume operator +(CodeVolume a, CodeVolume b) =>
+            new CodeVolume(a.SLOC + b.SLOC, a.Lines + b.Lines, a.Files + b.Files);
 
-        public static CodeVolume operator -(CodeVolume A, CodeVolume B) => 
-            new CodeVolume(A.SLOC - B.SLOC, A.Lines - B.Lines, A.Files - B.Files);
+        public static CodeVolume operator -(CodeVolume a, CodeVolume b) =>
+            new CodeVolume(a.SLOC - b.SLOC, a.Lines - b.Lines, a.Files - b.Files);
     }
 
     public struct FileItem

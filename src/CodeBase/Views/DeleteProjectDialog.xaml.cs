@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CodeBase
 {
@@ -19,22 +8,20 @@ namespace CodeBase
     /// </summary>
     public partial class DeleteProjectDialog : Window
     {
-        private Project Project;
-        private Action onDelete;
+        private readonly Action _onDelete;
 
-        public DeleteProjectDialog(Project Project, Action onDelete)
+        public DeleteProjectDialog(Project project, Action onDelete)
         {
             InitializeComponent();
 
-            Title = Title.Replace("{Title}", Project.Title);
+            Title = Title.Replace("{Title}", project.Title);
 
-            this.Project = Project;
-            this.onDelete = onDelete;
+            _onDelete = onDelete;
         }
 
         private void YesButtonClick(object sender, RoutedEventArgs e)
         {
-            onDelete?.Invoke();
+            _onDelete?.Invoke();
             Close();
         }
 
