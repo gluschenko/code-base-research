@@ -23,16 +23,6 @@ namespace CodeBase
             {
                 MessageHelper.Error(ex.ToString(), ex.GetType().Name);
             }
-
-            /*var pairs = new List<string>();
-            foreach (var pair in fields)
-            {
-                pairs.Add($"{pair.Key}={pair.Value}");
-            }
-
-            string url = $"{ReceiverURL}?{string.Join("&", pairs)}";
-
-            WebClient.Request(url, response);*/
         }
 
         public static Dictionary<string, string> AuthForm(ApplicationData data)

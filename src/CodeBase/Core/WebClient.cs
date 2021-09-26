@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 
 namespace CodeBase
 {
@@ -40,14 +41,34 @@ namespace CodeBase
             }
         }
 
-        public static async void PostRequest(string URL, Dictionary<string, string> fields, Action<HttpResponseMessage> response)
+        public static async void PostRequest(string url, Dictionary<string, string> fields, Action<HttpResponseMessage> response)
         {
             InitClient();
 
-            using var message = new HttpRequestMessage(HttpMethod.Post, URL);
-            var pairs = fields.Select(pair => $"{pair.Key}={pair.Value}");
+            using var message = new HttpRequestMessage(HttpMethod.Post, url);
+            var pairs = fields.Select(pair => $"{HttpUtility.UrlEncode(pair.Key)}={HttpUtility.UrlEncode(pair.Value)}");
             var query = string.Join("&", pairs);
             message.Content = new StringContent(query, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            try
+            {
+                var res = await client.SendAsync(message);
+                response(res);
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ThrowException(ex);
+            }
+        }
+
+        public static async void GetRequest(string url, Dictionary<string, string> fields, Action<HttpResponseMessage> response)
+        {
+            InitClient();
+
+            var pairs = fields.Select(pair => $"{pair.Key}={pair.Value}");
+            var query = string.Join("&", pairs);
+
+            using var message = new HttpRequestMessage(HttpMethod.Get, $"{url}?{query}");
 
             try
             {
