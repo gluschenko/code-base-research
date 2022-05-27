@@ -148,13 +148,13 @@ namespace CodeBase.Domain.Services
             var normPatterns = patterns.Select(x => x.Replace('/', '\\'));
             location = NormalizePath(location);
 
-            var result = normPatterns.Select(x => 
+            var result = normPatterns.Select(x =>
             {
                 var isRelative = x.StartsWith('.');
 
                 if (isRelative)
                 {
-                    return new[] 
+                    return new[]
                     {
                         NormalizePath(Path.Combine(location, x)),
                     };

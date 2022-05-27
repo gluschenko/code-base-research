@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using CodeBase.Domain.Services;
+using Wishmaster.DataAccess;
 using Wishmaster.Models;
 using Wishmaster.Views.Pages;
 using Context = Wishmaster.Models.Context;
@@ -14,9 +15,12 @@ namespace Wishmaster.Views
         private readonly AppData _appData;
         private readonly DataManager<AppData> _dataManager;
 
-        public MainWindow()
+        private readonly Db _db;
+
+        public MainWindow(Db db)
         {
             InitializeComponent();
+            _db = db;
 
             _dataManager = new DataManager<AppData>("prefs.json");
 
