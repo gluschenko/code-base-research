@@ -33,21 +33,41 @@ namespace Wishmaster.Views
             try
             {
                 _appData = _appDataProvider.GetAppData();
+
+                Width = _appData.WindowWidth ?? ActualWidth;
+                Height = _appData.WindowHeight ?? ActualHeight;
+                WindowState = _appData.WindowState ?? WindowState;
+
+                Navigate<MainPage>();
+                ToggleLoading(false);
             }
             catch (Exception ex)
             {
                 MessageHelper.Error(ex.Message);
                 Close();
             }
-
-            Navigate<MainPage>();
-            ToggleLoading(false);
         }
 
         private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             try
             {
+                if (_appData is not null)
+                {
+                    if (WindowState == WindowState.Normal)
+                    {
+                        _appData.WindowWidth = (int)ActualWidth;
+                        _appData.WindowHeight = (int)ActualHeight;
+                        _appData.WindowState = WindowState;
+                    }
+                    else
+                    {
+                        _appData.WindowWidth = null;
+                        _appData.WindowHeight = null;
+                        _appData.WindowState = null;
+                    }
+                }
+
                 _appDataProvider.SaveAppData(_appData!);
             }
             catch (Exception ex)

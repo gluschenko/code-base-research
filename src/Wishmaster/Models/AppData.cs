@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace Wishmaster.Models
 {
     public class AppData
     {
-        public string AccessToken { get; set; }
+        public int? WindowWidth { get; set; }
+        public int? WindowHeight { get; set; }
+        public WindowState? WindowState { get; set; }
+
+        public string AccessToken { get; set; } = "";
         public List<ScopeDataItem> Scopes { get; set; } = new List<ScopeDataItem>();
     }
 
