@@ -1,4 +1,4 @@
-﻿<Page x:Class="Wishmaster.Views.Pages.MainPage"
+﻿<Page x:Class="Wishmaster.Views.Pages.SettingsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,10 +6,10 @@
       xmlns:local="clr-namespace:Wishmaster.Views.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="400"
-      Title="MainPage"
+      Title="SettingsPage"
       d:Background="#333">
 
     <Grid>
-        <Button Content="Main" Width="100" />
+        <Button Content="Settings" Width="100" />
     </Grid>
 </Page>

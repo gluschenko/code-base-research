@@ -1,46 +1,28 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using CodeBase.Domain.Services;
-using Wishmaster.DataAccess;
+using System.Windows.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using Wishmaster.Models;
+using Wishmaster.Services;
 using Wishmaster.Views.Pages;
-using Context = Wishmaster.Models.Context;
+using WPFUI.Appearance;
 
 namespace Wishmaster.Views
 {
     public partial class MainWindow : Window
     {
-        private readonly Context _context;
-        private readonly AppData _appData;
-        private readonly DataManager<AppData> _dataManager;
+        private readonly IAppDataProvider _appDataProvider;
+        private readonly IServiceProvider _serviceProvider;
 
-        private readonly Db _db;
+        private AppData? _appData;
 
-        public MainWindow(Db db)
+        public MainWindow(IAppDataProvider appDataProvider, IServiceProvider serviceProvider)
         {
             InitializeComponent();
-            _db = db;
 
-            _dataManager = new DataManager<AppData>("prefs.json");
-
-            try
-            {
-                _appData = _dataManager.Load();
-            }
-            catch (Exception ex)
-            {
-                MessageHelper.Error(ex.Message);
-                Close();
-            }
-
-            _context = new Context
-            {
-                AppData = _appData,
-                DataManager = _dataManager,
-                Navigate = Navigate,
-                ToggleLoading = ToggleLoading,
-            };
+            _appDataProvider = appDataProvider;
+            _serviceProvider = serviceProvider;
 
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
@@ -48,7 +30,17 @@ namespace Wishmaster.Views
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Navigate(typeof(MainPage));
+            try
+            {
+                _appData = _appDataProvider.GetAppData();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.Error(ex.Message);
+                Close();
+            }
+
+            Navigate<MainPage>();
             ToggleLoading(false);
         }
 
@@ -56,7 +48,7 @@ namespace Wishmaster.Views
         {
             try
             {
-                _dataManager.Save(_appData);
+                _appDataProvider.SaveAppData(_appData!);
             }
             catch (Exception ex)
             {
@@ -64,9 +56,32 @@ namespace Wishmaster.Views
             }
         }
 
-        private void Navigate(Type pageType)
+        private void OnNavigationClick(object sender, RoutedEventArgs e)
         {
-            var page = Activator.CreateInstance(pageType, _context);
+            var item = sender as WPFUI.Controls.NavigationItem;
+            UpdateNavigator(item!);
+
+            var tag = item?.Tag?.ToString() ?? "";
+
+            switch (tag)
+            {
+                case "main":
+                    Navigate<MainPage>();
+                    break;
+                case "settings":
+                    Navigate<SettingsPage>();
+                    break;
+                default:
+                    MessageHelper.Error("No page found");
+                    break;
+            }
+        }
+
+        private void Navigate<T>() where T : Page
+        {
+            using var scope = _serviceProvider.CreateScope();
+
+            var page = scope.ServiceProvider.GetRequiredService<T>();
             PageFrame.Navigate(page);
         }
 
@@ -93,6 +108,15 @@ namespace Wishmaster.Views
                     }
                     : null;
             });
+        }
+
+        private void OnToggleThemeClick(object sender, RoutedEventArgs e)
+        {
+            var themeType = Theme.GetAppTheme() == ThemeType.Dark
+                ? ThemeType.Light
+                : ThemeType.Dark;
+
+            Theme.Apply(themeType, BackgroundType.Mica, false, false);
         }
     }
 }

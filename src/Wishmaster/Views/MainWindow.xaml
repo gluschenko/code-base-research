@@ -26,23 +26,27 @@
             SelectedPageIndex="1">
             <wpfui:NavigationCompact.Items>
                 <wpfui:NavigationItem
-                    Content="Login"
-                    Icon="Person24"
-                    Tag="login" />
+                    Content="Home"
+                    Icon="Home32"
+                    Click="OnNavigationClick"
+                    Tag="main" />
                 <wpfui:NavigationItem
                     Content="Scopes"
                     Icon="Apps24"
-                    Tag="scopes" />
+                    Click="OnNavigationClick"
+                    Tag="spaces" />
             </wpfui:NavigationCompact.Items>
             <wpfui:NavigationCompact.Footer>
                 <wpfui:NavigationItem
                     Content="Theme"
                     Icon="DarkTheme24"
+                    Click="OnToggleThemeClick"
                     Tag="theme" />
                 <wpfui:NavigationItem
                     Content="Settings"
                     Icon="Settings24"
-                    Tag="app_settings" />
+                    Click="OnNavigationClick"
+                    Tag="settings" />
             </wpfui:NavigationCompact.Footer>
         </wpfui:NavigationCompact>
 
