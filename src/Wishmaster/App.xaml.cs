@@ -39,6 +39,7 @@ namespace Wishmaster
                     services.AddSingleton<MainWindow>();
                     services.AddScoped<MainPage>();
                     services.AddScoped<SettingsPage>();
+                    services.AddScoped<SpaceListPage>();
                 })
                 .ConfigureLogging(logging =>
                 {

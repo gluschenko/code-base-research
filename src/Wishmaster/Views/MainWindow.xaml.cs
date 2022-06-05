@@ -26,6 +26,16 @@ namespace Wishmaster.Views
 
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
+
+            Start();
+        }
+        
+        private void Start()
+        {
+            ToggleTheme(ThemeType.Dark);
+
+            var activeItem = (WPFUI.Controls.NavigationItem)RootNavigation.Items.First();
+            UpdateNavigator(activeItem);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -88,6 +98,9 @@ namespace Wishmaster.Views
                 case "main":
                     Navigate<MainPage>();
                     break;
+                case "spaces":
+                    Navigate<SpaceListPage>();
+                    break;
                 case "settings":
                     Navigate<SettingsPage>();
                     break;
@@ -97,12 +110,20 @@ namespace Wishmaster.Views
             }
         }
 
-        private void Navigate<T>() where T : Page
+        private bool Navigate<T>() where T : Page
         {
-            using var scope = _serviceProvider.CreateScope();
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
 
-            var page = scope.ServiceProvider.GetRequiredService<T>();
-            PageFrame.Navigate(page);
+                var page = scope.ServiceProvider.GetRequiredService<T>();
+                return PageFrame.Navigate(page);
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.Error(ex.Message);
+                return false;
+            }
         }
 
         private void UpdateNavigator(WPFUI.Controls.NavigationItem item)
@@ -136,7 +157,19 @@ namespace Wishmaster.Views
                 ? ThemeType.Light
                 : ThemeType.Dark;
 
-            Theme.Apply(themeType, BackgroundType.Mica, false, false);
+            ToggleTheme(themeType);
+        }
+
+        private static void ToggleTheme(ThemeType type)
+        {
+            // SystemParameters.WindowGlassColor
+            var mainColor = System.Windows.Media.Color.FromRgb(0xF9, 0x62, 0x09);
+            var color1 = System.Windows.Media.Color.FromRgb(0xF9, 0x62, 0x09);
+            var color2 = System.Windows.Media.Color.FromRgb(0xF4, 0x73, 0x0B);
+            var color3 = System.Windows.Media.Color.FromRgb(0xF6, 0x8A, 0x06);
+
+            Accent.Apply(mainColor, color1, color2, color3);
+            Theme.Apply(type, BackgroundType.Mica, false, false);
         }
     }
 }
