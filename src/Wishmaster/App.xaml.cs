@@ -35,8 +35,10 @@ namespace Wishmaster
                     });
 
                     services.AddSingleton<IAppDataProvider, AppDataProvider>();
+                    services.AddScoped<ISpaceService, SpaceService>();
 
                     services.AddSingleton<MainWindow>();
+
                     services.AddScoped<MainPage>();
                     services.AddScoped<SettingsPage>();
                     services.AddScoped<SpaceListPage>();

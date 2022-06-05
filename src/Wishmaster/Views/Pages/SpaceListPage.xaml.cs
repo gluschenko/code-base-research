@@ -12,17 +12,47 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wishmaster.Services;
 
 namespace Wishmaster.Views.Pages
 {
-    /// <summary>
-    /// Interaction logic for ScopeListPage.xaml
-    /// </summary>
     public partial class SpaceListPage : Page
     {
-        public SpaceListPage()
+        private readonly ISpaceService _spaceService;
+
+        public SpaceListPage(ISpaceService spaceService)
         {
             InitializeComponent();
+
+            _spaceService = spaceService;
+        }
+
+        private void SpaceItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var uid = GetUidFromTag(sender);
+            ;
+        }
+
+        private void SpaceEdit_Click(object sender, RoutedEventArgs e)
+        {
+            var uid = GetUidFromTag(sender);
+
+        }
+
+        private void SpaceDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var uid = GetUidFromTag(sender);
+
+        }
+
+        private static Guid GetUidFromTag(object sender)
+        {
+            if (sender is FrameworkElement item)
+            {
+                return Guid.Parse(item.Tag?.ToString() ?? "");
+            }
+
+            throw new Exception();
         }
     }
 }
