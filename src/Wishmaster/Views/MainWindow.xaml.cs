@@ -26,13 +26,16 @@ namespace Wishmaster.Views
 
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
-
-            Start();
         }
         
         private void Start()
         {
-            ToggleTheme(ThemeType.Dark);
+            _appData = _appDataProvider.GetAppData();
+
+            Width = _appData.WindowWidth ?? ActualWidth;
+            Height = _appData.WindowHeight ?? ActualHeight;
+            WindowState = _appData.WindowState ?? WindowState;
+            ToggleTheme(_appData.WindowThemeType ?? ThemeType.Dark);
 
             var activeItem = (WPFUI.Controls.NavigationItem)RootNavigation.Items.First();
             UpdateNavigator(activeItem);
@@ -42,14 +45,10 @@ namespace Wishmaster.Views
         {
             try
             {
-                _appData = _appDataProvider.GetAppData();
-
-                Width = _appData.WindowWidth ?? ActualWidth;
-                Height = _appData.WindowHeight ?? ActualHeight;
-                WindowState = _appData.WindowState ?? WindowState;
-
                 Navigate<MainPage>();
                 ToggleLoading(false);
+
+                Start();
             }
             catch (Exception ex)
             {
@@ -76,6 +75,8 @@ namespace Wishmaster.Views
                         _appData.WindowHeight = null;
                         _appData.WindowState = null;
                     }
+                    
+                    _appData.WindowThemeType = Theme.GetAppTheme();
                 }
 
                 _appDataProvider.SaveAppData(_appData!);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using WPFUI.Appearance;
 
 namespace Wishmaster.Models
 {
@@ -8,6 +9,7 @@ namespace Wishmaster.Models
         public int? WindowWidth { get; set; }
         public int? WindowHeight { get; set; }
         public WindowState? WindowState { get; set; }
+        public ThemeType? WindowThemeType { get; set; }
 
         public string AccessToken { get; set; } = "";
         public List<ScopeDataItem> Scopes { get; set; } = new List<ScopeDataItem>();

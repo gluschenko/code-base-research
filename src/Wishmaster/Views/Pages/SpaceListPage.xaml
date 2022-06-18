@@ -23,7 +23,7 @@
         
         <ScrollViewer Grid.Row="1"  VerticalScrollBarVisibility="Auto">
 
-            <ItemsControl Margin="10">
+            <ItemsControl x:Name="SpacesList" Margin="10">
                 <models:SpaceItemViewModel Name="Lorem ipsum #1" IsChosen="True" />
                 <models:SpaceItemViewModel Name="Lorem ipsum #2" />
                 <models:SpaceItemViewModel Name="Lorem ipsum #3" />
