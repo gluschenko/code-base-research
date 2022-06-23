@@ -1,0 +1,58 @@
+﻿<Page x:Class="Wishmaster.Views.Pages.SpaceListPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Wishmaster.Views.Pages"
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
+      xmlns:wpfuiCommon="clr-namespace:WPFUI.Common;assembly=WPFUI"
+      xmlns:models="clr-namespace:Wishmaster.ViewModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="400"
+      Title="SpaceListPage"
+      d:Background="#333">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="10" Orientation="Horizontal">
+            <Button Content="New space" />
+        </StackPanel>
+        
+        <ScrollViewer Grid.Row="1"  VerticalScrollBarVisibility="Auto">
+
+            <ItemsControl x:Name="SpacesList" Margin="10">
+                <models:SpaceItemViewModel Name="Lorem ipsum #1" IsChosen="True" />
+                <models:SpaceItemViewModel Name="Lorem ipsum #2" />
+                <models:SpaceItemViewModel Name="Lorem ipsum #3" />
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <wpfui:CardExpander
+                            Margin="0,0,0,8"
+                            Header="{Binding Path=Name}"
+                            Subtitle="{Binding Path=Description}"
+                            Icon="Heart28"
+                            IconFilled="True"
+                            Tag="{Binding Path=Uid}"
+                            MouseDoubleClick="SpaceItem_MouseDoubleClick">
+                            <StackPanel Orientation="Horizontal">
+                                <Button 
+                                    Content="Edit"
+                                    Tag="{Binding Path=Uid}"
+                                    Click="SpaceEdit_Click"/>
+                                <TextBlock Width="10" />
+                                <Button 
+                                    Content="Delete" 
+                                    Tag="{Binding Path=Uid}"
+                                    Click="SpaceDelete_Click"/>
+                            </StackPanel>
+                        </wpfui:CardExpander>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Page>

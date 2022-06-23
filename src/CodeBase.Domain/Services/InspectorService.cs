@@ -204,7 +204,7 @@ namespace CodeBase.Domain.Services
                         foreach (var line in lines)
                         {
                             var s = line.Trim();
-                            
+
                             if (s.StartsWith("/*"))
                             {
                                 skip = true;
