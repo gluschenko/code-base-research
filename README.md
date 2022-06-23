@@ -4,9 +4,9 @@
 
 [![.NET Core Desktop](https://github.com/Gluschenko/Code-Base-Research/actions/workflows/build.yml/badge.svg)](https://github.com/Gluschenko/Code-Base-Research/actions/workflows/build.yml)
 
-### Abstract
+### About
 
-Set of utilities for codebase analysis. 
+Utilities for static code analysis
 
 ### Solution
 
@@ -15,12 +15,13 @@ Set of utilities for codebase analysis.
 |CodeBase | Legacy client version (.NET Core 3.1) |
 |CodeBase.Client | Modern client version |
 |CodeBase.Domain | Main logic |
+|Wishmaster | Work in progress |
 
 ### Requirements
 
-* Windows 10
-* Visual Studio 2019 with WPF
-* .NET Core 5.0 SDK
+* Windows 10 / 11
+* Visual Studio 2022 with WPF
+* .NET Core 6.0 SDK
 
 ### Screenshots
 
