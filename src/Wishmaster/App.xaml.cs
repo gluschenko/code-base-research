@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Wishmaster.DataAccess;
-using Wishmaster.Models;
 using Wishmaster.Services;
 using Wishmaster.Views;
 using Wishmaster.Views.Pages;
@@ -28,7 +27,7 @@ namespace Wishmaster
                 .ConfigureServices((context, services) =>
                 {
                     services.AddSingleton<INavigationService, NavigationService>();
-                    services.AddDbContext<Db>(options => 
+                    services.AddDbContext<Db>(options =>
                     {
                         var connectionString = context.Configuration.GetConnectionString("SQLite");
                         options.UseSqlite(connectionString);

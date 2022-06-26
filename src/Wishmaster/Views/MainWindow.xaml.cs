@@ -27,7 +27,7 @@ namespace Wishmaster.Views
             Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
         }
-        
+
         private void Start()
         {
             _appData = _appDataProvider.GetAppData();
@@ -75,7 +75,7 @@ namespace Wishmaster.Views
                         _appData.WindowHeight = null;
                         _appData.WindowState = null;
                     }
-                    
+
                     _appData.WindowThemeType = Theme.GetAppTheme();
                 }
 
