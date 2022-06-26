@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Windows;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     [DataContract]
     public class ApplicationData

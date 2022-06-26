@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public static class DictionaryExtension
     {

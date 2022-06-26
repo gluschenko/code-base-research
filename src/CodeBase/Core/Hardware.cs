@@ -1,6 +1,6 @@
 ﻿using System.Management;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public class Hardware
     {

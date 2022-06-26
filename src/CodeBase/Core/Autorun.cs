@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Microsoft.Win32;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public class Autorun
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     /// <summary>
     /// Easy templating of System.Windows.MessageBox

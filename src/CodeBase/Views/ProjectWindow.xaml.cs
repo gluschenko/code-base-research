@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Effects;
+using CodeBase.Core;
 using CodeBase.Models;
 
 namespace CodeBase

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using PathIO = System.IO.Path;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     /* 
      * Данный класс является контейнером правил, выделенных из .gitignore файлов, найденных в репозитории.
@@ -112,11 +112,11 @@ namespace CodeBase
                 var mt = matches.Cast<Match>().Select(m =>
                 {
                     var res = new List<string>();
-                    for (int i = 0; i < m.Groups.Count; i++)
+                    for (var i = 0; i < m.Groups.Count; i++)
                     {
                         var group = m.Groups[i];
                         var captures = new List<string>();
-                        for (int j = 0; j < group.Captures.Count; j++)
+                        for (var j = 0; j < group.Captures.Count; j++)
                         {
                             captures.Add(group.Captures[j].Value);
                         }
@@ -169,7 +169,7 @@ namespace CodeBase
 
         public static bool IsChildedPath(string parent, string child)
         {
-            bool result = false;
+            var result = false;
             parent = parent.Replace('\\', '/').TrimEnd('\\', '/');
             child = child.Replace('\\', '/').TrimEnd('\\', '/');
 
@@ -262,7 +262,7 @@ namespace CodeBase
 
         internal static Regex BuildRegex(string[] items)
         {
-            string regex = items.Length > 0 ?
+            var regex = items.Length > 0 ?
                 "((" + string.Join(")|(", items) + "))" : "$^";
 
             return new Regex(regex);

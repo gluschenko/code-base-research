@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public class WebMethods
     {
@@ -50,7 +50,7 @@ namespace CodeBase
 
         public static void UpdateProjects(ApplicationData AppData, ProjectEntity[] projects, Action<HttpResponseMessage> response)
         {
-            string data = JsonUtility.ToJson(projects);
+            var data = JsonUtility.ToJson(projects);
             data = Secure.Base64Encode(data);
 
             var form = AuthForm(AppData);

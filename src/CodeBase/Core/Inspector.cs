@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Threading;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public delegate void InspectStartHandler();
     public delegate void InspectUpdateHandler(InspectorStage stage, InspectState state);

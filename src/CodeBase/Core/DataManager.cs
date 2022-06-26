@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public class DataManager<T>
     {
@@ -18,7 +18,7 @@ namespace CodeBase
             {
                 try
                 {
-                    string data = File.ReadAllText(Path);
+                    var data = File.ReadAllText(Path);
                     return JsonUtility.FromJson<T>(data);
                 }
                 catch (Exception ex)
@@ -33,7 +33,7 @@ namespace CodeBase
         {
             try
             {
-                string data = JsonUtility.ToJson(obj);
+                var data = JsonUtility.ToJson(obj);
                 File.WriteAllText(Path, data);
             }
             catch (Exception ex)

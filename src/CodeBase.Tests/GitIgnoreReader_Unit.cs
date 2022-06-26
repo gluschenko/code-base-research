@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeBase.Core;
 using NUnit.Framework;
 
 namespace CodeBase.Tests

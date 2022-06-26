@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public static class UnixTime
     {

@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public class WebClient
     {
@@ -90,9 +90,9 @@ namespace CodeBase
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                Stream stream = response.GetResponseStream();
-                using StreamReader reader = new StreamReader(stream);
-                string data = reader.ReadToEnd();
+                var stream = response.GetResponseStream();
+                using var reader = new StreamReader(stream);
+                var data = reader.ReadToEnd();
                 onSuccess?.Invoke(data);
             }
             else
@@ -110,7 +110,7 @@ namespace CodeBase
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                string data = await response.Content.ReadAsStringAsync();
+                var data = await response.Content.ReadAsStringAsync();
                 onSuccess?.Invoke(data);
             }
             else

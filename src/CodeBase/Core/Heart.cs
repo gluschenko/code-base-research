@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public class Heart
     {

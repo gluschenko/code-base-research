@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     public class InspectorConfig
     {

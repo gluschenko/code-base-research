@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Windows.Media;
 using PathIO = System.IO.Path;
 
-namespace CodeBase
+namespace CodeBase.Core
 {
     // Сущность кастуемая от Project для передачи по WebAPI
     public struct ProjectEntity

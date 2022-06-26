@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CodeBase.Core;
 using NotifyIcon = System.Windows.Forms.NotifyIcon;
 
 namespace CodeBase
