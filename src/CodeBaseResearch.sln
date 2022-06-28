@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wishmaster.CodeBaseResearch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wishmaster.DataAccess", "Wishmaster.DataAccess\Wishmaster.DataAccess.csproj", "{EAB7D67C-B7CA-4AD8-A733-B012659FF478}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wishmaster.Helpers.ContainerDependency", "Wishmaster.Helpers.ContainerDependency\Wishmaster.Helpers.ContainerDependency.csproj", "{48853DBB-1129-4165-82CA-D46DF79AB4A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{EAB7D67C-B7CA-4AD8-A733-B012659FF478}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAB7D67C-B7CA-4AD8-A733-B012659FF478}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAB7D67C-B7CA-4AD8-A733-B012659FF478}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48853DBB-1129-4165-82CA-D46DF79AB4A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48853DBB-1129-4165-82CA-D46DF79AB4A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48853DBB-1129-4165-82CA-D46DF79AB4A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48853DBB-1129-4165-82CA-D46DF79AB4A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +97,7 @@ Global
 		{0F1F3C3B-8A79-4AD9-8BBD-A3E388BFEE38} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 		{A8491BC6-AEF0-4D60-AB08-24AF10481529} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 		{EAB7D67C-B7CA-4AD8-A733-B012659FF478} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
+		{48853DBB-1129-4165-82CA-D46DF79AB4A7} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32FDA729-10C6-4F1C-A4ED-3CF3428EA708}
