@@ -1,4 +1,5 @@
 ﻿using System;
+using Wishmaster.DataAccess.Models;
 
 namespace Wishmaster.ViewModels
 {
@@ -8,5 +9,15 @@ namespace Wishmaster.ViewModels
         public string? Name { get; set; }
         public bool IsChosen { get; set; }
         public string? Description => IsChosen ? "Chosen" : "";
+
+        public SpaceItemViewModel()
+        {
+        }
+
+        public SpaceItemViewModel(Space space)
+        {
+            Uid = space.Uid;
+            Name = space.Name;
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace Wishmaster.Views
         private readonly IServiceProvider _serviceProvider;
 
         private AppData? _appData;
+        private IServiceScope? _serviceScope;
 
         public MainWindow(IAppDataProvider appDataProvider, IServiceProvider serviceProvider)
         {
@@ -115,9 +116,11 @@ namespace Wishmaster.Views
         {
             try
             {
-                using var scope = _serviceProvider.CreateScope();
+                _serviceScope?.Dispose();
+                _serviceScope = null;
+                _serviceScope = _serviceProvider.CreateScope();
 
-                var page = scope.ServiceProvider.GetRequiredService<T>();
+                var page = _serviceScope.ServiceProvider.GetRequiredService<T>();
                 return PageFrame.Navigate(page);
             }
             catch (Exception ex)

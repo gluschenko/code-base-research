@@ -11,22 +11,28 @@ namespace Wishmaster.Views.Pages
 {
     public partial class SpaceListPage : Page
     {
-
         private readonly ISpaceService _spaceService;
 
-        private readonly ObservableCollection<SpaceItemViewModel> _spaces;
+        private readonly ObservableCollection<SpaceItemViewModel> _spaces = new();
 
         public SpaceListPage(ISpaceService spaceService)
         {
             InitializeComponent();
+            Loaded += SpaceListPage_Loaded;
 
             _spaceService = spaceService;
+        }
 
-            _spaces = new ObservableCollection<SpaceItemViewModel>();
+        private async void SpaceListPage_Loaded(object sender, RoutedEventArgs e)
+        {
             SpacesList.Items.Clear();
             SpacesList.ItemsSource = _spaces;
 
-            _spaces.Add(new SpaceItemViewModel { Name = "123" });
+            var spaces = await _spaceService.GetListAsync();
+            foreach(var space in spaces)
+            {
+                _spaces.Add(new SpaceItemViewModel(space));
+            }
         }
 
         private void SpaceItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)

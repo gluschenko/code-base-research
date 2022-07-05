@@ -8,6 +8,7 @@ namespace Wishmaster.DataAccess.Models
     {
         [Key]
         public int Id { get; set; }
+        public Guid Uid { get; set; }
         public string? Name { get; set; }
         public DateTime Created { get; set; }
     }
