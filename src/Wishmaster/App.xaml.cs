@@ -50,10 +50,15 @@ namespace Wishmaster
                 })
                 .ConfigureWebHostDefaults(webBuilder => 
                 {
+                    var envName = Environments.Production;
+#if DEBUG
+                    envName = Environments.Development;
+#endif
+
                     webBuilder
                         .UseKestrel(x => x.ListenLocalhost(5080))
+                        .UseEnvironment(envName)
                         .UseContentRoot(AppContext.BaseDirectory)
-                        .UseStaticWebAssets()
                         .UseStartup<WebStartup>();
                 })
                 .Build();

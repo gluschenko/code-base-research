@@ -12,7 +12,7 @@
     <Grid>
         <wv2:WebView2 
             Name="WebView"
-            Source="https://gluschenko.net"
+            Source="http://localhost:5080/index.html"
         />
     </Grid>
 </Page>
