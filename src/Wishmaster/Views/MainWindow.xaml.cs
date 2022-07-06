@@ -95,20 +95,19 @@ namespace Wishmaster.Views
 
             var tag = item?.Tag?.ToString() ?? "";
 
-            switch (tag)
+            _ = tag switch 
             {
-                case "main":
-                    Navigate<MainPage>();
-                    break;
-                case "spaces":
-                    Navigate<SpaceListPage>();
-                    break;
-                case "settings":
-                    Navigate<SettingsPage>();
-                    break;
-                default:
-                    MessageHelper.Error("No page found");
-                    break;
+                "main" => Navigate<MainPage>(),
+                "spaces" => Navigate<SpaceListPage>(),
+                "settings" => Navigate<SettingsPage>(),
+                "browser" => Navigate<BrowserPage>(),
+                _ => NotFound(tag),
+            };
+
+            static bool NotFound(string tag)
+            {
+                MessageHelper.Error($"No page found: {tag}");
+                return false;
             }
         }
 

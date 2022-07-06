@@ -29,7 +29,7 @@ namespace Wishmaster.Views.Pages
             SpacesList.ItemsSource = _spaces;
 
             var spaces = await _spaceService.GetListAsync();
-            foreach(var space in spaces)
+            foreach (var space in spaces)
             {
                 _spaces.Add(new SpaceItemViewModel(space));
             }

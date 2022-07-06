@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,10 +42,19 @@ namespace Wishmaster
                     services.AddScoped<MainPage>();
                     services.AddScoped<SettingsPage>();
                     services.AddScoped<SpaceListPage>();
+                    services.AddScoped<BrowserPage>();
                 })
                 .ConfigureLogging(logging =>
                 {
                     logging.AddConsole();
+                })
+                .ConfigureWebHostDefaults(webBuilder => 
+                {
+                    webBuilder
+                        .UseKestrel(x => x.ListenLocalhost(5080))
+                        .UseContentRoot(AppContext.BaseDirectory)
+                        .UseStaticWebAssets()
+                        .UseStartup<WebStartup>();
                 })
                 .Build();
         }

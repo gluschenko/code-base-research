@@ -35,6 +35,11 @@
                     Icon="Apps24"
                     Click="OnNavigationClick"
                     Tag="spaces" />
+                <wpfui:NavigationItem
+                    Content="Browser"
+                    Icon="WebAsset20"
+                    Click="OnNavigationClick"
+                    Tag="browser" />
             </wpfui:NavigationCompact.Items>
             <wpfui:NavigationCompact.Footer>
                 <wpfui:NavigationItem
