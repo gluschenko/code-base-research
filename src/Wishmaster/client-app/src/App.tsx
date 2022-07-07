@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import logo from './logo.svg'
-import './App.css'
+import './App.scss'
 
 function App() {
     const [count, setCount] = useState(0)
+
+    window.chrome.webview.postMessage({ test: 111 });
 
     return (
         <div className="App">
