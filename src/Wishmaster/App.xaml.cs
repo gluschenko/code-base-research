@@ -66,10 +66,17 @@ namespace Wishmaster
 
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
-            await _host.StartAsync();
+            try
+            {
+                await _host.StartAsync();
 
-            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+                var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+                mainWindow.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, ex.GetType().Name);
+            }
         }
 
         private async void Application_Exit(object sender, ExitEventArgs e)
