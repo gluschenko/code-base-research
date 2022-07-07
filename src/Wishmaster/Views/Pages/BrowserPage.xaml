@@ -5,14 +5,37 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Wishmaster.Views.Pages"
       xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="400"
       Title="BrowserPage">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0" x:Name="AddressTextBox" Text="https://google.com" />
+            <Button Grid.Column="1" Content="Go" Click="GoButton_Click" />
+        </Grid>
+
         <wv2:WebView2 
+            Grid.Row="1"
             Name="WebView"
-            Source="http://localhost:5080/index.html"
+            Source="https://google.com"
+            NavigationStarting="WebView_NavigationStarting"
+            NavigationCompleted="WebView_NavigationCompleted"
         />
+
+        <Grid x:Name="LoadingOverlay" Background="#C222" Grid.Row="1">
+            <wpfui:ProgressRing IsIndeterminate="True" />
+        </Grid>
     </Grid>
 </Page>
