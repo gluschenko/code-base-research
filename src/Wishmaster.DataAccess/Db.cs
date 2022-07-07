@@ -10,6 +10,6 @@ namespace Wishmaster.DataAccess
             Database.EnsureCreated();
         }
 
-        public DbSet<Space>? Spaces { get; set; }
+        public DbSet<Space> Spaces { get; set; } = null!;
     }
 }

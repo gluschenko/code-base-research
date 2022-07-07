@@ -22,7 +22,7 @@ namespace Wishmaster.Services
 
         public async Task<IEnumerable<Space>> GetListAsync()
         {
-            return await _db.Spaces!.AsNoTracking().ToArrayAsync();
+            return await _db.Spaces.AsNoTracking().ToArrayAsync();
         }
     }
 }
