@@ -34,6 +34,11 @@
                     Click="OnNavigationClick"
                     Tag="spaces" />
                 <wpfui:NavigationItem
+                    Content="Solution Viewer"
+                    Icon="WebAsset20"
+                    Click="OnNavigationClick"
+                    Tag="solution-viewer" />
+                <wpfui:NavigationItem
                     Content="Browser"
                     Icon="WebAsset20"
                     Click="OnNavigationClick"

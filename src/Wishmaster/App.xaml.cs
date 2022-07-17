@@ -43,12 +43,13 @@ namespace Wishmaster
                     services.AddScoped<SettingsPage>();
                     services.AddScoped<SpaceListPage>();
                     services.AddScoped<BrowserPage>();
+                    services.AddScoped<SolutionViewerPage>();
                 })
                 .ConfigureLogging(logging =>
                 {
                     logging.AddConsole();
                 })
-                .ConfigureWebHostDefaults(webBuilder => 
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
                     var envName = Environments.Production;
 #if DEBUG

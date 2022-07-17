@@ -95,12 +95,13 @@ namespace Wishmaster.Views
 
             var tag = item?.Tag?.ToString() ?? "";
 
-            _ = tag switch 
+            _ = tag switch
             {
                 "main" => Navigate<MainPage>(),
                 "spaces" => Navigate<SpaceListPage>(),
                 "settings" => Navigate<SettingsPage>(),
                 "browser" => Navigate<BrowserPage>(),
+                "solution-viewer" => Navigate<SolutionViewerPage>(),
                 _ => NotFound(tag),
             };
 

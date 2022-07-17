@@ -11,29 +11,10 @@
              d:DesignWidth="400">
     <Grid>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <TextBox Grid.Column="0" Text="https://google.com" />
-            <Button Grid.Column="1" Content="Go"/>
-        </Grid>
-
         <wv2:WebView2 
-            Grid.Row="1"
             Name="WebViewElement"
             Source="http://localhost:5080/index.html"
         />
 
-        <Grid x:Name="LoadingOverlay" Background="#C222" Grid.Row="1">
-            <wpfui:ProgressRing IsIndeterminate="True" />
-        </Grid>
     </Grid>
 </UserControl>
