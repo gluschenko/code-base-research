@@ -37,7 +37,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wishmaster.DataAccess", "Wi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wishmaster.Helpers.ContainerDependency", "Wishmaster.Helpers.ContainerDependency\Wishmaster.Helpers.ContainerDependency.csproj", "{48853DBB-1129-4165-82CA-D46DF79AB4A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wishmaster.Helpers.ContainerDependency.Tool", "Wishmaster.Helpers.ContainerDependency.Tool\Wishmaster.Helpers.ContainerDependency.Tool.csproj", "{FEAED6DE-3420-4C7A-AC7B-E982E1152DE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wishmaster.Helpers.ContainerDependency.Tool", "Wishmaster.Helpers.ContainerDependency.Tool\Wishmaster.Helpers.ContainerDependency.Tool.csproj", "{FEAED6DE-3420-4C7A-AC7B-E982E1152DE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wishmaster.Helpers.ContainerDependency.Console", "Wishmaster.Helpers.ContainerDependency.Console\Wishmaster.Helpers.ContainerDependency.Console.csproj", "{A690C0A7-3F3A-4518-B16B-91D91A7CCCF8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "helpers", "helpers", "{34CB587C-1143-49CD-998B-9D2EC0433B8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +93,10 @@ Global
 		{FEAED6DE-3420-4C7A-AC7B-E982E1152DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEAED6DE-3420-4C7A-AC7B-E982E1152DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEAED6DE-3420-4C7A-AC7B-E982E1152DE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A690C0A7-3F3A-4518-B16B-91D91A7CCCF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A690C0A7-3F3A-4518-B16B-91D91A7CCCF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A690C0A7-3F3A-4518-B16B-91D91A7CCCF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A690C0A7-3F3A-4518-B16B-91D91A7CCCF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,8 +111,10 @@ Global
 		{0F1F3C3B-8A79-4AD9-8BBD-A3E388BFEE38} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 		{A8491BC6-AEF0-4D60-AB08-24AF10481529} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 		{EAB7D67C-B7CA-4AD8-A733-B012659FF478} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
-		{48853DBB-1129-4165-82CA-D46DF79AB4A7} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
-		{FEAED6DE-3420-4C7A-AC7B-E982E1152DE9} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
+		{48853DBB-1129-4165-82CA-D46DF79AB4A7} = {34CB587C-1143-49CD-998B-9D2EC0433B8A}
+		{FEAED6DE-3420-4C7A-AC7B-E982E1152DE9} = {34CB587C-1143-49CD-998B-9D2EC0433B8A}
+		{A690C0A7-3F3A-4518-B16B-91D91A7CCCF8} = {34CB587C-1143-49CD-998B-9D2EC0433B8A}
+		{34CB587C-1143-49CD-998B-9D2EC0433B8A} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32FDA729-10C6-4F1C-A4ED-3CF3428EA708}
