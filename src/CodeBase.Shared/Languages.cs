@@ -25,7 +25,7 @@ namespace CodeBase.Shared
             new Language("C/C++", "#00e640", ".h", ".cpp", ".hpp", ".c"),
             new Language("Assembly", "#67809f", ".s"),
             new Language("HLSL", "#db0a5b", ".shader"),
-            new Language("OpenGL","#db0a5b", ".fs", ".vs"),
+            new Language("OpenGL","#db0a5b", ".fs", ".vs", ".frag", ".vert", ".glsl"),
         };
     }
 
