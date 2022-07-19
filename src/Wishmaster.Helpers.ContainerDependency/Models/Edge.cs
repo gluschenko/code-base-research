@@ -8,14 +8,12 @@ namespace Wishmaster.Helpers.ContainerDependency.Models
 {
     public class Edge<T>
     {
-        public Guid Uid { get; private set; }
         public Guid From { get; private set; }
         public Guid To { get; private set; }
         public T Value { get; private set; }
 
         public Edge(T value, Guid from, Guid to)
         {
-            Uid = Guid.NewGuid();
             From = from;
             To = to;
             Value = value;
@@ -28,7 +26,7 @@ namespace Wishmaster.Helpers.ContainerDependency.Models
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Uid, From, To, Value);
+            return HashCode.Combine(From, To, Value);
         }
     }
 }

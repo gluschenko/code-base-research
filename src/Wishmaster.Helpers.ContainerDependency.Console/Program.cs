@@ -16,6 +16,9 @@ namespace Wishmaster.Helpers.ContainerDependency.Console
             graph.SetEdge(b, c, new EdgeData(EdgeType.ProjectReference, ""));
             graph.SetEdge(c, a, new EdgeData(EdgeType.ProjectReference, ""));
 
+            graph.RemoveNode(b);
+            graph.RemoveEdge(c, a);
+
             return 0;
         }
     }

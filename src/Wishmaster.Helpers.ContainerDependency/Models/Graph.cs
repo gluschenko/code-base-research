@@ -42,9 +42,31 @@ namespace Wishmaster.Helpers.ContainerDependency.Models
             return node;
         }
 
-        public void RemoveNode()
+        public void RemoveNode(Node<TNode> node)
         {
+            if (node is null)
+            {
+                throw new ArgumentNullException(nameof(node));
+            }
 
+            var identity = new NodeIdentity(node.Uid);
+
+            if (!_nodes.ContainsKey(identity))
+            {
+                throw new Exception($"Node {node.Uid} is not found");
+            }
+
+            var edges = _edges
+                .Where(x => x.Key.From == node.Uid || x.Key.To == node.Uid)
+                .Select(x => x.Key)
+                .ToArray();
+
+            foreach (var edge in edges)
+            {
+                RemoveEdge(edge.From, edge.To);
+            }
+
+            _nodes.Remove(identity);
         }
 
         public void SetEdge(Node<TNode> from, Node<TNode> to, TEdge value)
@@ -68,9 +90,31 @@ namespace Wishmaster.Helpers.ContainerDependency.Models
             _edges[identity] = new Edge<TEdge>(value, from, to);
         }
 
-        public void RemoveEdge()
+        public void RemoveEdge(Node<TNode> from, Node<TNode> to)
         {
+            if (from is null)
+            {
+                throw new ArgumentNullException(nameof(from));
+            }
 
+            if (to is null)
+            {
+                throw new ArgumentNullException(nameof(to));
+            }
+
+            RemoveEdge(from.Uid, to.Uid);
+        }
+
+        public void RemoveEdge(Guid from, Guid to)
+        {
+            var identity = new EdgeIdentity(from, to);
+
+            if (!_edges.ContainsKey(identity))
+            {
+                throw new Exception($"Edge {identity} is not found");
+            }
+
+            _edges.Remove(identity);
         }
 
         public override int GetHashCode()
