@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
@@ -17,6 +19,11 @@ namespace Wishmaster
             _env = env;
         }
 
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+        }
+
         public void Configure(IApplicationBuilder app)
         {
             app.UseStatusCodePages("text/plain", "Error. Status code: {0}");
@@ -25,6 +32,15 @@ namespace Wishmaster
             {
                 await context.Response.WriteAsync($"OK (uptime: {DateTime.Now - Process.GetCurrentProcess().StartTime})");
             }));
+
+            app.UseRouting();
+
+            app.UseStaticFiles();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
 
             if (_env.IsProduction())
             {

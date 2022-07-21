@@ -1,0 +1,27 @@
+{
+  "assemblies": [],
+  "fileNameConverters": [],
+  "typeNameConverters": null,
+  "propertyNameConverters": null,
+  "enumValueNameConverters": [ "UnderscoreCaseToPascalCase" ],
+  "typeScriptFileExtension": "ts",
+  "tabLength": 4,
+  "explicitPublicAccessor": true,
+  "defaultValuesForTypes": {
+    "number": "-1",
+    "Date | null": "null",
+    "string": "\"\""
+  },
+  "customTypeMappings": {
+    "System.DateTime": "string",
+    "Some.Custom.Type": "number"
+  },
+  "typeUnionsForTypes": {
+    "Guid": [ "string" ],
+    "Date": [ "string" ]
+  },
+  "csNullableTranslation": "null",
+  "clearOutputDirectory": true,
+  "outputPath": "./client-app/src/models",
+  "createIndexFile": true
+}

@@ -13,7 +13,7 @@
 
         <wv2:WebView2 
             Name="WebViewElement"
-            Source="http://localhost:5080/index.html"
+            Source=""
         />
 
     </Grid>

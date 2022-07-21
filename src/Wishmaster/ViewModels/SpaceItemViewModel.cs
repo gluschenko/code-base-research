@@ -1,8 +1,10 @@
 ﻿using System;
+using TypeGen.Core.TypeAnnotations;
 using Wishmaster.DataAccess.Models;
 
 namespace Wishmaster.ViewModels
 {
+    [ExportTsInterface]
     public class SpaceItemViewModel
     {
         public Guid Uid { get; set; }
@@ -19,5 +21,12 @@ namespace Wishmaster.ViewModels
             Uid = space.Uid;
             Name = space.Name;
         }
+    }
+
+    [ExportTsEnum]
+    public enum TestEnum
+    {
+        A = 1,
+        B = 2
     }
 }

@@ -9,8 +9,13 @@
     <RootNamespace>Wishmaster</RootNamespace>
   </PropertyGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Release'">
-    <Exec Command="PowerShell -ExecutionPolicy Unrestricted -File ./Scripts/build-spa.ps1" Condition="'$(OS)' == 'Windows_NT'" />
+  <Target Name="PreBuildDebug" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' != 'Release'">
+    <Exec Command="PowerShell -ExecutionPolicy Unrestricted -File ./Scripts/typegen-run.ps1" Condition="'$(OS)' == 'Windows_NT'" />
+  </Target>
+
+  <Target Name="PreBuildRelease" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Release'">
+    <Exec Command="PowerShell -ExecutionPolicy Unrestricted -File ./Scripts/typegen-run.ps1" Condition="'$(OS)' == 'Windows_NT'" />
+    <Exec Command="PowerShell -ExecutionPolicy Unrestricted -File ./Scripts/client-app-build.ps1" Condition="'$(OS)' == 'Windows_NT'" />
   </Target>
 
   <ItemGroup>
@@ -31,6 +36,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1264.42" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="TypeGen" Version="3.0.0" />
     <PackageReference Include="WPF-UI" Version="1.2.7" />
   </ItemGroup>
 
