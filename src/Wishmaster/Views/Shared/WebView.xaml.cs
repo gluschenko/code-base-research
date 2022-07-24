@@ -14,7 +14,10 @@ namespace Wishmaster.Views.Shared
         private async void WebView_Loaded(object sender, RoutedEventArgs e)
         {
             await WebViewElement.EnsureCoreWebView2Async();
-            WebViewElement.CoreWebView2.Navigate("http://localhost:5080/index.html");
+            if (WebViewElement.CoreWebView2 is not null)
+            {
+                WebViewElement.CoreWebView2.Navigate("http://localhost:5080/index.html");
+            }
         }
     }
 }

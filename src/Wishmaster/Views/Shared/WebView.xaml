@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Wishmaster.Views.Shared"
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-             xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
              mc:Ignorable="d" 
              d:DesignHeight="400" 
              d:DesignWidth="400">

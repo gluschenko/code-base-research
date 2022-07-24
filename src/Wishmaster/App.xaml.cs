@@ -10,7 +10,6 @@ using Wishmaster.DataAccess;
 using Wishmaster.Mvc;
 using Wishmaster.Services;
 using Wishmaster.Views;
-using Wishmaster.Views.Pages;
 
 namespace Wishmaster
 {
@@ -39,12 +38,6 @@ namespace Wishmaster
                     services.AddScoped<ISpaceService, SpaceService>();
 
                     services.AddSingleton<MainWindow>();
-
-                    services.AddScoped<MainPage>();
-                    services.AddScoped<SettingsPage>();
-                    services.AddScoped<SpaceListPage>();
-                    services.AddScoped<BrowserPage>();
-                    services.AddScoped<SolutionViewerPage>();
 
                     services.AddUrlHelperAccessor();
                 })
