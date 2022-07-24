@@ -1,22 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Wishmaster.Mvc;
+using Wishmaster.Services;
+using Wishmaster.ViewModels;
 
 namespace Wishmaster.Controllers
 {
     [Route("api")]
-    public class AppDataController : Controller
+    public class AppDataController : BaseController
     {
-        public AppDataController()
-        {
+        private readonly INavigationService _navigationService;
 
+        public AppDataController(INavigationService navigationService)
+        {
+            _navigationService = navigationService;
         }
 
         [HttpGet("get-app-data")]
         public IActionResult GetAppData()
         {
-            return Json(new
+            var links = _navigationService.GetSidebarLinks();
+
+            var viewModel = new AppDataViewModel 
             {
-                Asd = 1,
-            });
+                SidebarNavigation = links.Select(x => x.ToViewModel()).ToArray(),
+            };
+
+            return Success(viewModel);
         }
     }
 }
