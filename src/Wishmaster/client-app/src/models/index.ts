@@ -7,3 +7,5 @@ export * from './AppDataViewModel';
 export * from './NavLinkViewModel';
 export * from './SpaceItemViewModel';
 export * from './TestEnum';
+export * from './ApiResponse';
+export * from './ResultCode';
