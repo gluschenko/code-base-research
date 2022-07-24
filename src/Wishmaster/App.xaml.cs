@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Wishmaster.DataAccess;
+using Wishmaster.Mvc;
 using Wishmaster.Services;
 using Wishmaster.Views;
 using Wishmaster.Views.Pages;
@@ -44,6 +45,8 @@ namespace Wishmaster
                     services.AddScoped<SpaceListPage>();
                     services.AddScoped<BrowserPage>();
                     services.AddScoped<SolutionViewerPage>();
+
+                    services.AddUrlHelperAccessor();
                 })
                 .ConfigureLogging(logging =>
                 {
