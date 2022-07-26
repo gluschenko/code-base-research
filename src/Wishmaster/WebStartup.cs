@@ -21,7 +21,9 @@ namespace Wishmaster
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(x => x.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented);
         }
 
         public void Configure(IApplicationBuilder app)
