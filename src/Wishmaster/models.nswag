@@ -1,6 +1,6 @@
 {
   "runtime": "Net60",
-  "defaultVariables": null,
+  "defaultVariables": "Configuration=Debug",
   "documentGenerator": {
     "typesToOpenApi": {
       "classNames": [
@@ -61,7 +61,7 @@
       "useTransformResultMethod": false,
       "generateDtoTypes": true,
       "operationGenerationMode": "MultipleClientsFromOperationId",
-      "markOptionalProperties": true,
+      "markOptionalProperties": false,
       "generateCloneMethod": false,
       "typeStyle": "Interface",
       "enumStyle": "Enum",

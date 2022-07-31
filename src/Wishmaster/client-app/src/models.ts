@@ -12,8 +12,8 @@ import * as dayjs from 'dayjs';
 
 
 export interface AppDataViewModel {
-    sidebarNavigation?: NavLinkViewModel[] | null;
-    item?: Test | null;
+    sidebarNavigation: NavLinkViewModel[] | null;
+    item: Test | null;
 }
 
 export interface NavLinkViewModel {
@@ -22,14 +22,14 @@ export interface NavLinkViewModel {
 }
 
 export interface Test {
-    text?: string | null;
+    text: string | null;
 }
 
 export interface SpaceItemViewModel {
     uid: string;
-    name?: string | null;
+    name: string | null;
     isChosen: boolean;
-    description?: string | null;
+    description: string | null;
 }
 
 export enum TestEnum {
