@@ -1,9 +1,7 @@
 ﻿using System;
-using TypeGen.Core.TypeAnnotations;
 
 namespace Wishmaster.Mvc
 {
-    [ExportTsInterface]
     public class ApiResponse<T>
     {
         public T? Response { get; set; }
@@ -37,7 +35,6 @@ namespace Wishmaster.Mvc
         }
     }
 
-    [ExportTsEnum]
     public enum ResultCode : short
     {
         Success = 0,

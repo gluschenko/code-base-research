@@ -40,11 +40,11 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1264.42" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Octokit" Version="1.0.0" />
-    <PackageReference Include="TypeGen" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Wishmaster.DataAccess\Wishmaster.DataAccess.csproj" />
+    <ProjectReference Include="..\Wishmaster.ViewModels\Wishmaster.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
