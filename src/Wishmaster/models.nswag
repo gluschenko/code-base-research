@@ -4,12 +4,9 @@
   "documentGenerator": {
     "typesToOpenApi": {
       "classNames": [
-        "Wishmaster.ViewModels.TestEnum",
-        "Wishmaster.ViewModels.SpaceItemViewModel",
-        "Wishmaster.ViewModels.NavLinkViewModel",
-        "Wishmaster.ViewModels.AppDataViewModel"
+        "Wishmaster.ViewModels.*"
       ],
-      "defaultPropertyNameHandling": "Default",
+      "defaultPropertyNameHandling": "CamelCase",
       "defaultReferenceTypeNullHandling": "Null",
       "defaultDictionaryValueReferenceTypeNullHandling": "NotNull",
       "defaultEnumHandling": "Integer",
@@ -25,7 +22,7 @@
       "outputType": "Swagger2",
       "newLineBehavior": "Auto",
       "assemblyPaths": [
-        "../Wishmaster.ViewModels/bin/Debug/net6.0/Wishmaster.ViewModels.dll"
+        "../Wishmaster.ViewModels/bin/$(Configuration)/net6.0/Wishmaster.ViewModels.dll"
       ],
       "assemblyConfig": null,
       "referencePaths": [],
@@ -47,7 +44,7 @@
       "rxJsVersion": 6.0,
       "dateTimeType": "DayJS",
       "nullValue": "Null",
-      "generateClientClasses": true,
+      "generateClientClasses": false,
       "generateClientInterfaces": false,
       "generateOptionalParameters": false,
       "exportTypes": true,
@@ -93,7 +90,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "client-app/src/models/index.ts",
+      "output": "client-app/src/models.ts",
       "newLineBehavior": "Auto"
     }
   }
