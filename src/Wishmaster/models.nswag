@@ -46,7 +46,7 @@
       "injectionTokenType": "OpaqueToken",
       "rxJsVersion": 6.0,
       "dateTimeType": "DayJS",
-      "nullValue": "Undefined",
+      "nullValue": "Null",
       "generateClientClasses": true,
       "generateClientInterfaces": false,
       "generateOptionalParameters": false,

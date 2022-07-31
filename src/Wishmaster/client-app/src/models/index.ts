@@ -18,9 +18,9 @@ export enum TestEnum {
 
 export interface SpaceItemViewModel {
     Uid: string;
-    Name?: string | undefined;
+    Name?: string | null;
     IsChosen: boolean;
-    Description?: string | undefined;
+    Description?: string | null;
 }
 
 export interface NavLinkViewModel {
@@ -29,6 +29,6 @@ export interface NavLinkViewModel {
 }
 
 export interface AppDataViewModel {
-    SidebarNavigation?: NavLinkViewModel[] | undefined;
+    SidebarNavigation?: NavLinkViewModel[] | null;
 }
 
