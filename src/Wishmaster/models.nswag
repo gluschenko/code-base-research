@@ -4,7 +4,11 @@
   "documentGenerator": {
     "typesToOpenApi": {
       "classNames": [
-        "Wishmaster.ViewModels.*"
+        "Wishmaster.ViewModels.*",
+        "Wishmaster.ViewModels.*.*",
+        "Wishmaster.ViewModels.*.*.*",
+        "Wishmaster.ViewModels.*.*.*.*",
+        "Wishmaster.ViewModels.*.*.*.*.*"
       ],
       "defaultPropertyNameHandling": "CamelCase",
       "defaultReferenceTypeNullHandling": "Null",
