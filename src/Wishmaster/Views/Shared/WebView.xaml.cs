@@ -16,7 +16,7 @@ namespace Wishmaster.Views.Shared
             await WebViewElement.EnsureCoreWebView2Async();
             if (WebViewElement.CoreWebView2 is not null)
             {
-                WebViewElement.CoreWebView2.Navigate("http://localhost:5080/index.html");
+                WebViewElement.CoreWebView2.Navigate("http://localhost:5080");
             }
         }
     }
