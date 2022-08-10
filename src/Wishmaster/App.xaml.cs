@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Wishmaster.DataAccess;
-using Wishmaster.Mvc;
-using Wishmaster.Services;
+using Wishmaster.Backend.Mvc;
+using Wishmaster.Backend.Services;
 using Wishmaster.Views;
 
 namespace Wishmaster
@@ -27,6 +27,7 @@ namespace Wishmaster
                 })
                 .ConfigureServices((context, services) =>
                 {
+                    services.AddOpenApiDocument();
                     services.AddSingleton<INavigationService, NavigationService>();
                     services.AddDbContext<Db>(options =>
                     {

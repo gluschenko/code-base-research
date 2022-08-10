@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Wishmaster.Services
+namespace Wishmaster.Backend.Services
 {
     public class DataManager<T>
     {

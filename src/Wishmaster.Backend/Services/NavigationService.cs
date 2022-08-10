@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Wishmaster.Controllers;
-using Wishmaster.Models.Navigation;
-using Wishmaster.Mvc;
+using Wishmaster.Backend.Controllers;
+using Wishmaster.Backend.Models.Navigation;
+using Wishmaster.Backend.Mvc;
 
-namespace Wishmaster.Services
+namespace Wishmaster.Backend.Services
 {
     public interface INavigationService
     {
@@ -23,7 +23,7 @@ namespace Wishmaster.Services
         {
             var urlHelper = _urlHelperAccessor.GetHelper();
 
-            return new[] 
+            return new[]
             {
                 new NavLink("Spaces", urlHelper.Action<SpaceController>(x => nameof(x.List))),
             };

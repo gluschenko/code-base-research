@@ -2,11 +2,13 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Wishmaster.Backend.Controllers;
 
 namespace Wishmaster
 {
@@ -23,6 +25,7 @@ namespace Wishmaster
         {
             services
                 .AddControllers()
+                .AddApplicationPart(Assembly.Load(typeof(AppDataController).Assembly.FullName!))
                 .AddNewtonsoftJson(x => x.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented);
         }
 

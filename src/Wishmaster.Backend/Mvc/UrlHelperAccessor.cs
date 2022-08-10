@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Wishmaster.Mvc
+namespace Wishmaster.Backend.Mvc
 {
     public class UrlHelperAccessor
     {
@@ -23,7 +24,7 @@ namespace Wishmaster.Mvc
         {
             return _actionContextAccessor.ActionContext != null
                 ? _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext)
-                : throw new System.Exception("Service currently created not by controller action");
+                : throw new Exception("Service currently created not by controller action");
         }
     }
 

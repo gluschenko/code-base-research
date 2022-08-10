@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <Target Name="NSwag" AfterTargets="Build">
-    <Exec Command="$(NSwagExe_Net60) run models.nswag /variables:Configuration=$(Configuration)" />
+    <Exec Command="$(NSwagExe_Net60) run models_new.nswag /variables:Configuration=$(Configuration)" />
   </Target>
 
   <Target Name="PreBuildRelease" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Release'">
@@ -29,25 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitLabApiClient" Version="1.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1264.42" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NSwag.MSBuild" Version="13.16.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Octokit" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wishmaster.DataAccess\Wishmaster.DataAccess.csproj" />
-    <ProjectReference Include="..\Wishmaster.ViewModels\Wishmaster.ViewModels.csproj" />
+    <ProjectReference Include="..\Wishmaster.Backend\Wishmaster.Backend.csproj" />
   </ItemGroup>
 
   <ItemGroup>

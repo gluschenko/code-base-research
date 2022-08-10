@@ -1,6 +1,6 @@
-﻿using Wishmaster.Models;
+﻿using Wishmaster.Backend.Models;
 
-namespace Wishmaster.Services
+namespace Wishmaster.Backend.Services
 {
     public interface IAppDataProvider
     {

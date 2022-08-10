@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Wishmaster.Mvc
+namespace Wishmaster.Backend.Mvc
 {
     public class ApiResponse<T>
     {

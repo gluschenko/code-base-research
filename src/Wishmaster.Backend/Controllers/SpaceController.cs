@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using Wishmaster.Mvc;
+using Wishmaster.Backend.Mvc;
 
-namespace Wishmaster.Controllers
+namespace Wishmaster.Backend.Controllers
 {
     [Route("api/space")]
     public class SpaceController : BaseController
@@ -13,9 +13,9 @@ namespace Wishmaster.Controllers
         }
 
         [HttpGet("list")]
-        public IActionResult List()
+        public ActionResult<string> List()
         {
-            return Success("HELLO");
+            return Json("HELLO");
         }
     }
 }

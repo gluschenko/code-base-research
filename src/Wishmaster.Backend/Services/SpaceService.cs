@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Wishmaster.DataAccess;
 using Wishmaster.DataAccess.Models;
 
-namespace Wishmaster.Services
+namespace Wishmaster.Backend.Services
 {
     public interface ISpaceService
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
-using Wishmaster.Models;
+using Wishmaster.Backend.Models;
+using Wishmaster.Backend.Services;
 using Wishmaster.Services;
 
 namespace Wishmaster.Views
@@ -26,7 +27,7 @@ namespace Wishmaster.Views
 
             Width = _appData.WindowWidth ?? ActualWidth;
             Height = _appData.WindowHeight ?? ActualHeight;
-            WindowState = _appData.WindowState ?? WindowState;
+            WindowState = (WindowState?)_appData.WindowState ?? WindowState;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -52,7 +53,7 @@ namespace Wishmaster.Views
                     {
                         _appData.WindowWidth = (int)ActualWidth;
                         _appData.WindowHeight = (int)ActualHeight;
-                        _appData.WindowState = WindowState;
+                        _appData.WindowState = (int)WindowState;
                     }
                     else
                     {

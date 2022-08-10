@@ -45,7 +45,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "helpers", "helpers", "{34CB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{1A11F1C7-3BEF-41B9-AA32-4089A82D52F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wishmaster.ViewModels", "Wishmaster.ViewModels\Wishmaster.ViewModels.csproj", "{2C0C33D9-F77C-4BC9-A76B-6E4684C44484}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wishmaster.ViewModels", "Wishmaster.ViewModels\Wishmaster.ViewModels.csproj", "{2C0C33D9-F77C-4BC9-A76B-6E4684C44484}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wishmaster.Backend", "Wishmaster.Backend\Wishmaster.Backend.csproj", "{88324AD6-95BB-4005-A3A6-8F5BBE67FDDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +107,10 @@ Global
 		{2C0C33D9-F77C-4BC9-A76B-6E4684C44484}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C0C33D9-F77C-4BC9-A76B-6E4684C44484}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C0C33D9-F77C-4BC9-A76B-6E4684C44484}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88324AD6-95BB-4005-A3A6-8F5BBE67FDDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88324AD6-95BB-4005-A3A6-8F5BBE67FDDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88324AD6-95BB-4005-A3A6-8F5BBE67FDDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88324AD6-95BB-4005-A3A6-8F5BBE67FDDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +131,7 @@ Global
 		{34CB587C-1143-49CD-998B-9D2EC0433B8A} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 		{1A11F1C7-3BEF-41B9-AA32-4089A82D52F5} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 		{2C0C33D9-F77C-4BC9-A76B-6E4684C44484} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
+		{88324AD6-95BB-4005-A3A6-8F5BBE67FDDA} = {1F050E3A-0A38-4AF1-B07C-B617830BF970}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {32FDA729-10C6-4F1C-A4ED-3CF3428EA708}

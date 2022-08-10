@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Wishmaster.ViewModels;
 
-namespace Wishmaster.Models.Navigation
+namespace Wishmaster.Backend.Models.Navigation
 {
     public class NavLink
     {
