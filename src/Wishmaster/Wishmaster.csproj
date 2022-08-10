@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <Target Name="NSwag" AfterTargets="Build">
-    <Exec Command="$(NSwagExe_Net60) run models_new.nswag /variables:Configuration=$(Configuration)" />
+    <Exec Command="$(NSwagExe_Net60) run models.nswag /variables:Configuration=$(Configuration)" />
   </Target>
 
   <Target Name="PreBuildRelease" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Release'">

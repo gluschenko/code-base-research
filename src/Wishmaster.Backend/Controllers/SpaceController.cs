@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Wishmaster.Backend.Mvc;
 
 namespace Wishmaster.Backend.Controllers
