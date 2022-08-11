@@ -25,6 +25,11 @@ body {
     src: url(./Assets/fonts/Roboto-Regular.ttf) format("truetype");
 }
 
+@font-face {
+    font-family: "Kraft";
+    src: url(./Assets/fonts/Kraft.otf) format("truetype");
+}
+
 /* Кастомная прокрутка (desktop-only) */
 
 @media not all and (pointer: coarse) {

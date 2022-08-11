@@ -1,6 +1,9 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
 import AppDataContext from '../../Layout/AppData/AppDataContext/AppDataContext';
 import MainLayout from '../../Layout/MainLayout/MainLayout';
+import Box from '../../Shared/Box/Box';
+import PageViewContainer from '../../Shared/PageViewContainer/PageViewContainer';
 
 const MainPage: React.FC = () => {
 
@@ -8,13 +11,38 @@ const MainPage: React.FC = () => {
 
     return (
         <MainLayout>
-            <div>
-                <div>
-                    <pre>
-                        {JSON.stringify(appDataContext.data, null, 2)}
-                    </pre>
-                </div>
-            </div>
+            <PageViewContainer>
+                <Box>
+                    <div>
+                        <div>
+                            <pre>
+                                {JSON.stringify(appDataContext.data, null, 2)}
+                            </pre>
+                        </div>
+                        <FontAwesomeIcon icon={["fas", "cog"]} />
+                    </div>
+                </Box>
+                <Box>
+                    <div>
+                        <div>
+                            <pre>
+                                {JSON.stringify(appDataContext.data, null, 2)}
+                            </pre>
+                        </div>
+                        <FontAwesomeIcon icon={["fas", "cog"]} />
+                    </div>
+                </Box>
+                <Box>
+                    <div>
+                        <div>
+                            <pre>
+                                {JSON.stringify(appDataContext.data, null, 2)}
+                            </pre>
+                        </div>
+                        <FontAwesomeIcon icon={["fas", "cog"]} />
+                    </div>
+                </Box>
+            </PageViewContainer>
         </MainLayout>
     );
 };
