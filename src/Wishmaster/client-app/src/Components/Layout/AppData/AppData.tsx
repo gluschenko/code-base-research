@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { AppDataClient, AppDataViewModel } from '../../../models';
+import AppDataContext from './AppDataContext/AppDataContext';
 
 interface IAppDataProps {
     children?: React.ReactNode;
@@ -7,6 +8,7 @@ interface IAppDataProps {
 
 const AppData: React.FC<IAppDataProps> = (props) => {
 
+    const [isReady, toggleReady] = React.useState<boolean>(false);
     const [appData, setAppData] = React.useState<AppDataViewModel | null>(null);
 
     React.useEffect(() => {
@@ -16,17 +18,14 @@ const AppData: React.FC<IAppDataProps> = (props) => {
             .then(x => setAppData(x))
             // TODO
             .catch(x => console.log(x));
+
+        toggleReady(true);
     }, []);
 
     return (
-        <div>
-            <div>
-                <pre>
-                    {JSON.stringify(appData, null, 2)}
-                </pre>
-            </div>
-            {props.children}
-        </div>
+        <AppDataContext.Provider value={{ data: appData }}>
+            {isReady ? <>{props.children}</> : <div>Loading...</div>}
+        </AppDataContext.Provider>
     );
 };
 

@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Link, Routes } from "react-router-dom";
 import MainPage from './Components/Pages/MainPage/MainPage';
 import SettingsPage from './Components/Pages/SettingsPage/SettingsPage';
 import AppData from './Components/Layout/AppData/AppData';
+import './App.scss';
 
 function App() {
     return (
@@ -17,4 +18,4 @@ function App() {
     );
 }
 
-export default App
+export default App;

@@ -1,0 +1,14 @@
+.container {
+    display: flex;
+    height: 100vh;
+
+    .sidebar {
+        min-width: 200px;
+        background-color: #ff0;
+    }
+
+    .content {
+        flex-grow: 1;
+        background-color: #00f;
+    }
+}
